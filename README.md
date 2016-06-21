@@ -162,7 +162,7 @@ By enabling captcha support, a captcha will be served as part of the block page 
 ```php
 $perimeterxConfig = [
 	..
-    'catpcha_enabled' => true
+    'captcha_enabled' => true
     ..
 ]
 ```
