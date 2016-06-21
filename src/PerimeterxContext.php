@@ -1,0 +1,291 @@
+<?php
+
+namespace Perimeterx;
+
+function pp($arr)
+{
+    $retStr = '<ul>';
+    if (is_array($arr)) {
+        foreach ($arr as $key => $val) {
+            if (is_array($val)) {
+                $retStr .= '<li>' . $key . ' => ' . pp($val) . '</li>';
+            } else {
+                $retStr .= '<li>' . $key . ' => ' . $val . '</li>';
+            }
+        }
+    }
+    $retStr .= '</ul>';
+    return $retStr;
+}
+
+class PerimeterxContext
+{
+    public function __construct()
+    {
+        if (isset($_SERVER['HTTP_COOKIE'])) {
+            foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
+                list($k, $v) = explode('=', $rawcookie, 2);
+                if ($k == '_px') {
+                    $this->px_cookie = $v;
+                }
+                if ($k == '_pxCaptcha') {
+                    $this->px_captcha = $v;
+                }
+            }
+        }
+
+        $this->headers = getallheaders();
+        $this->hostname = $_SERVER['SERVER_NAME'];
+        $this->userAgent = $_SERVER['HTTP_USER_AGENT'];
+        $this->uri = $_SERVER['REQUEST_URI'];
+        $this->full_url = $this->selfURL();
+        $this->score = 0;
+        if (function_exists('pxCustomUserIP')) {
+            call_user_func('pxCustomUserIP', $this);
+        } else {
+            $this->ip = $_SERVER['REMOTE_ADDR'];
+        }
+    }
+
+    /**
+     * @var string perimeterx risk cookie.
+     */
+    protected $px_cookie;
+
+    /**
+     * @var string perimeterx captcha cookie.
+     */
+    protected $px_captcha;
+
+    /**
+     * @var string user's ip.
+     */
+    protected $ip;
+
+
+    /**
+     * @var array request headers.
+     */
+    protected $headers;
+
+    /**
+     * @var string request hostname.
+     */
+    protected $hostname;
+
+    /**
+     * @var string request uri.
+     */
+    protected $uri;
+
+    /**
+     * @var string user's user agent.
+     */
+    protected $userAgent;
+
+
+    /**
+     * @var string request full url.
+     */
+    protected $full_url;
+
+    /**
+     * @var string server2server call reason - get populated if cookie verification fails.
+     */
+    protected $s2s_call_reason;
+
+    /**
+     * @var string user's score.
+     */
+    protected $score;
+
+
+    /**
+     * @var string user's visitor id.
+     */
+    protected $vid;
+
+    /**
+     * @var string block reason - get populated when user cross score
+     */
+    protected $block_reason;
+
+    /**
+     * @var string user's score.
+     */
+    protected $uuid;
+
+    /**
+     * @return string
+     */
+    public function getVid()
+    {
+        return $this->vid;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBlockReason()
+    {
+        return $this->vid;
+    }
+
+    /**
+     * @param string $ip
+     */
+    public function setIp($ip)
+    {
+        $this->ip = $ip;
+    }
+    /**
+     * @param string $vid
+     */
+    public function setVid($vid)
+    {
+        $this->vid = $vid;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUuid()
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * @param string $uuid
+     */
+    public function setUuid($uuid)
+    {
+        $this->uuid = $uuid;
+    }
+
+    /**
+     * @param string $block_reason
+     */
+    public function setBlockReason($block_reason)
+    {
+        $this->block_reason = $block_reason;
+    }
+
+    /**
+     * @return string
+     */
+    public function getScore()
+    {
+        return $this->score;
+    }
+
+    /**
+     * @param string $score
+     */
+    public function setScore($score)
+    {
+        $this->score = $score;
+    }
+
+    /**
+     * @return string
+     */
+    public function getS2SCallReason()
+    {
+        return $this->s2s_call_reason;
+    }
+
+    /**
+     * @param string $s2s_call_reason
+     */
+    public function setS2SCallReason($s2s_call_reason)
+    {
+        //echo 'set call reason';
+        $this->s2s_call_reason = $s2s_call_reason;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserAgent()
+    {
+        return $this->userAgent;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPxCookie()
+    {
+        return $this->px_cookie;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIp()
+    {
+        return $this->ip;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHostname()
+    {
+        return $this->hostname;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUri()
+    {
+        return $this->uri;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullUrl()
+    {
+        return $this->full_url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPxCaptcha()
+    {
+        return $this->px_captcha;
+    }
+
+    /**
+     * @param string $px_captcha
+     */
+    public function setPxCaptcha($px_captcha)
+    {
+        $this->px_captcha = $px_captcha;
+    }
+
+    private function selfURL()
+    {
+        function strleft($s1, $s2)
+        {
+            return substr($s1, 0, strpos($s1, $s2));
+        }
+
+        $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
+        $protocol = strleft(strtolower($_SERVER["SERVER_PROTOCOL"]), "/") . $s;
+        $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
+        return $protocol . "://" . $_SERVER['SERVER_NAME'] . $port . $_SERVER['REQUEST_URI'];
+    }
+
+}

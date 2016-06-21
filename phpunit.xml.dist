@@ -1,0 +1,22 @@
+<phpunit
+        colors="true"
+        stderr="true"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        stopOnFailure="false"
+        bootstrap="tests/bootstrap.php">
+    <testsuites>
+        <testsuite name="Perimeterx PHP SDK Test Suite">
+            <directory suffix='.php'>./tests</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./src</directory>
+        </whitelist>
+    </filter>
+    <listeners>
+        <listener class="\Mockery\Adapter\Phpunit\TestListener"/>
+    </listeners>
+</phpunit>
