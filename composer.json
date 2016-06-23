@@ -8,7 +8,8 @@
     "bots",
     "sdk"
   ],
-  "license": "PerimeterX, Inc",
+  "license": "PerimeterX Inc",
+  "hompage": "http://www.perimeterx.com",
   "type": "library",
   "require": {
     "guzzlehttp/guzzle": "~6.0",
