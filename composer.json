@@ -16,6 +16,7 @@
     "guzzlehttp/guzzle": "~6.0",
     "php": ">=5.5"
   },
+  "minimum-stability": "dev",
   "config": {
     "optimize-autoloader": true
   },
