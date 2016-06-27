@@ -38,7 +38,7 @@ Table of Contents
 Installation can be done using composer
 
 ```sh
-$ composer require perimeterx/perimeterx-php-sdk
+$ composer require perimeterx/php-sdk
 ```
 
 Or by downoading the sources for this repository and run `composer install`
@@ -50,7 +50,8 @@ use Perimeterx\Perimeterx;
 $perimeterxConfig = [
     'app_id' => 'APP_ID',
     'cookie_key' => 'COOKIE_SECRET',
-    'auth_token' => 'AUTH_TOKEN',
+    'auth_token' => 'AUTH_
+    TOKEN',
     'blocking_score' => 60
 ];
 
