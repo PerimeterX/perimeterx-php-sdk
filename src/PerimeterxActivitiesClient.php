@@ -2,8 +2,6 @@
 
 namespace Perimeterx;
 
-use Psr\Http\Message\ResponseInterface;
-
 
 class PerimeterxActivitiesClient
 {
@@ -80,7 +78,6 @@ class PerimeterxActivitiesClient
         }
         
         array_push($this->activities, $pxData);
-        error_log(count($this->activities));
         $this->sendActivities();
     }
 

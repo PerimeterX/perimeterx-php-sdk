@@ -45,6 +45,14 @@ class PerimeterxContext
         } else {
             $this->ip = $_SERVER['REMOTE_ADDR'];
         }
+
+        if (isset($_SERVER['SERVER_PROTOCOL'])) {
+            $httpVer = explode("/", $_SERVER['SERVER_PROTOCOL']);
+            if (isset($httpVer[1])) {
+                $this->http_version = $httpVer[1];
+            }
+        }
+        $this->http_method = $_SERVER['REQUEST_METHOD'];
     }
 
     /**
@@ -62,6 +70,15 @@ class PerimeterxContext
      */
     protected $ip;
 
+    /**
+     * @var string current request http version.
+     */
+    protected $http_version;
+
+    /**
+     * @var string current request http version.
+     */
+    protected $http_method;
 
     /**
      * @var array request headers.
@@ -286,6 +303,22 @@ class PerimeterxContext
         $protocol = strleft(strtolower($_SERVER["SERVER_PROTOCOL"]), "/") . $s;
         $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
         return $protocol . "://" . $_SERVER['SERVER_NAME'] . $port . $_SERVER['REQUEST_URI'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getHttpVersion()
+    {
+        return $this->http_version;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHttpMethod()
+    {
+        return $this->http_method;
     }
 
 }

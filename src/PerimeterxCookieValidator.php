@@ -82,7 +82,7 @@ class PerimeterxCookieValidator
     {
         try {
             if (!isset($this->pxCookie)) {
-                $this->pxCtx->setS2SCallReason('cookie_missing');
+                $this->pxCtx->setS2SCallReason('no_cookie');
                 return false;
             }
 

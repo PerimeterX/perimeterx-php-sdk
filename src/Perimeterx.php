@@ -1,6 +1,5 @@
 <?php
 /** Copyright © 2016 PerimeterX, Inc.
-
  ** Permission is hereby granted, free of charge, to any
  ** person obtaining a copy of this software and associated
  ** documentation files (the "Software"), to deal in the
@@ -81,7 +80,7 @@ final class Perimeterx
                 'sensitive_headers' => [],
                 'max_buffer_len' => 1,
                 'send_page_activities' => false,
-                'sdk_name' => 'PHP SDK v1.0',
+                'sdk_name' => 'PHP SDK v1.1',
                 'debug_mode' => false,
                 'api_timeout' => 1,
                 'perimeterx_server_host' => 'http://collector.perimeterx.net',
@@ -129,7 +128,7 @@ final class Perimeterx
     {
         $score = $pxCtx->getScore();
         if (isset($score) and $score >= $this->pxConfig['blocking_score']) {
-            $this->pxActivitiesClient->sendToPerimeterx('block', $pxCtx, ['block_uuid' => $pxCtx->getUuid(), 'block_score' => $pxCtx->getScore(), 'block_reason' => $pxCtx->getBlockReason(), 'block_module' => $this->pxConfig['sdk_name']]);
+            $this->pxActivitiesClient->sendToPerimeterx('block', $pxCtx, ['block_uuid' => $pxCtx->getUuid(), 'block_score' => $pxCtx->getScore(), 'block_reason' => $pxCtx->getBlockReason(), 'module_version' => $this->pxConfig['sdk_name']]);
             if (function_exists('pxCustomBlockHandler')) {
                 call_user_func('pxCustomBlockHandler', $pxCtx);
             } else {
@@ -146,7 +145,7 @@ final class Perimeterx
                 die();
             }
         } else {
-            $this->pxActivitiesClient->sendToPerimeterx('page_requested', $pxCtx, ['block_module' => $this->pxConfig['sdk_name']]);
+            $this->pxActivitiesClient->sendToPerimeterx('page_requested', $pxCtx, ['module_version' => $this->pxConfig['sdk_name'], 'http_version' => $pxCtx->getHttpVersion(), 'http_method' => $pxCtx->getHttpMethod()]);
             return 1;
         }
     }

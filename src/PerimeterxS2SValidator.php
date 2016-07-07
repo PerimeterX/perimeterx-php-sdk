@@ -41,25 +41,21 @@ class PerimeterxS2SValidator
             'request' => [
                 'ip' => $this->pxCtx->getIp(),
                 'headers' => $this->formatHeaders(),
-                'uri' => $this->pxCtx->getUri()
+                'uri' => $this->pxCtx->getUri(),
+                'url' => $this->pxCtx->getFullUrl()
             ],
             'additional' => [
-                's2s_call_reason' => $this->pxCtx->getS2SCallReason()
+                's2s_call_reason' => $this->pxCtx->getS2SCallReason(),
+                'module_version' => $this->pxConfig['sdk_name'],
+                'http_method' => $this->pxCtx->getHttpMethod(),
+                'http_version' => $this->pxCtx->getHttpVersion()
             ]
         ];
-
-        if (isset($_SERVER['SERVER_PROTOCOL'])) {
-            $httpVer = explode("/", $_SERVER['SERVER_PROTOCOL']);
-            if (isset($httpVer[1])) {
-                $requestBody['additional']['http_version'] = $httpVer[1];
-            }
-        }
         
         $vid = $this->pxCtx->getVid();
         if (!isset($vid)) {
             $requestBody['vid'] = $vid;
         }
-        
         $headers = [
             'Authorization' => 'Bearer ' . $this->pxConfig['auth_token'],
             'Content-Type' => 'application/json'
