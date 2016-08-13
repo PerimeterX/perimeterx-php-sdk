@@ -82,8 +82,9 @@ final class Perimeterx
                 'send_page_activities' => false,
                 'sdk_name' => 'PHP SDK v1.1',
                 'debug_mode' => false,
+                'monitor_mode' => false,
                 'api_timeout' => 1,
-                'perimeterx_server_host' => 'http://collector.perimeterx.net',
+                'perimeterx_server_host' => 'https://collector.perimeterx.net',
                 'http_client' => $httpClient
             ], $pxConfig);
 
@@ -111,6 +112,9 @@ final class Perimeterx
             if (!$cookieValidator->verify()) {
                 $s2sValidator = new PerimeterxS2SValidator($pxCtx, $this->pxConfig);
                 $s2sValidator->verify();
+                if ($this->pxConfig['monitor_mode']) {
+                    return 1;
+                }
             };
 
             return $this->handleVerification($pxCtx);
