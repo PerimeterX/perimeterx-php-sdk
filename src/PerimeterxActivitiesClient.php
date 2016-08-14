@@ -89,7 +89,7 @@ class PerimeterxActivitiesClient
             $headers = [
                 'Content-Type' => 'application/json'
             ];
-            $this->httpClient->send('/api/v1/collector/s2s', 'POST', $tempActivities, $headers);
+            $this->httpClient->sendAsync('/api/v1/collector/s2s', 'POST', $tempActivities, $headers);
         }
     }
 }
