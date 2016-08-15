@@ -39,6 +39,10 @@ final class Perimeterx
 
     private static $instance;
 
+    public static $MONITOR_MODE_SYNC = 1;
+    public static $MONITOR_MODE_ASYNC = 2;
+    public static $ACTIVE_MODE = 3;
+
     /**
      * Call this method to get singleton
      * @param array
@@ -46,7 +50,6 @@ final class Perimeterx
      */
     public static function Instance(array $pxConfig = [])
     {
-        error_log(gettype(self::$instance));
         if (self::$instance === null) {
             self::$instance = new Perimeterx($pxConfig);
         }
@@ -82,8 +85,9 @@ final class Perimeterx
                 'send_page_activities' => false,
                 'sdk_name' => 'PHP SDK v1.1',
                 'debug_mode' => false,
+                'module_mode' => Perimeterx::$ACTIVE_MODE,
                 'api_timeout' => 1,
-                'perimeterx_server_host' => 'http://collector.perimeterx.net',
+                'perimeterx_server_host' => 'https://collector.perimeterx.net',
                 'http_client' => $httpClient
             ], $pxConfig);
 
@@ -111,8 +115,10 @@ final class Perimeterx
             if (!$cookieValidator->verify()) {
                 $s2sValidator = new PerimeterxS2SValidator($pxCtx, $this->pxConfig);
                 $s2sValidator->verify();
+                if ($this->pxConfig['module_mode'] == Perimeterx::$MONITOR_MODE_ASYNC) {
+                    return 1;
+                }
             };
-
             return $this->handleVerification($pxCtx);
         } catch (\Exception $e) {
             error_log('Uncaught exception while verifying perimiterx score' . $e->getCode() . ' ' . $e->getMessage());
@@ -131,7 +137,7 @@ final class Perimeterx
             $this->pxActivitiesClient->sendToPerimeterx('block', $pxCtx, ['block_uuid' => $pxCtx->getUuid(), 'block_score' => $pxCtx->getScore(), 'block_reason' => $pxCtx->getBlockReason(), 'module_version' => $this->pxConfig['sdk_name']]);
             if (function_exists('pxCustomBlockHandler')) {
                 call_user_func('pxCustomBlockHandler', $pxCtx);
-            } else {
+            } elseif ($this->pxConfig['module_mode'] == Perimeterx::$ACTIVE_MODE) {
                 $block_uuid = $pxCtx->getUuid();
                 $full_url = $pxCtx->getFullUrl();
                 if ($this->pxConfig['captcha_enabled']) {
