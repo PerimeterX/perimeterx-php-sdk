@@ -62,8 +62,8 @@ class PerimeterxS2SValidator
         ];
 
         if ($this->pxConfig['module_mode'] == Perimeterx::$MONITOR_MODE_ASYNC) {
-            $this->httpClient->sendAsync('/api/v1/risk', 'POST', $requestBody, $headers);
-            return 1;
+            error_log('sending async');
+            $this->httpClient->sendAsync(json_encode($requestBody), $this->pxConfig['auth_token']);
         } else {
             $response = $this->httpClient->send('/api/v1/risk', 'POST', $requestBody, $headers);
             return $response;
@@ -86,7 +86,7 @@ class PerimeterxS2SValidator
     public function verify()
     {
         $response = json_decode($this->sendRiskRequest());
-        if (isset($response->scores, $response->scores->non_human)) {
+        if (isset($response, $response->scores, $response->scores->non_human)) {
             $score = $response->scores->non_human;
             $this->pxCtx->setScore($score);
             $this->pxCtx->setUuid($response->uuid);
