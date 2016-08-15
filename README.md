@@ -73,7 +73,7 @@ Configuration options are set in `$perimeterxConfig`
 - cookie_key
 - auth_token
 
-##### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
+#### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
 
 **default:** 70
 
@@ -153,6 +153,23 @@ function pxCustomBlockHandler($pxCtx) {
 $px = Perimeterx::Instance($perimeterxConfig);
 $px->pxVerify();
 ```
+#### <a name="module-score"></a> Module Mode
+
+**default:** `Perimeterx::$ACTIVE_MODE`
+
+**Possible Values:** 
+
+- `Perimeterx::$ACTIVE_MODE` - Module block user crossing the block threshold, server-to-server requests are being sent synchrouniously 
+- `Perimeterx::$MONITOR_MODE_SYNC` - Module does not block users crossing the block threshold, but does eval the pxCustomBlockHandler function in case it's defined on score threshold cross. server-to-server requests are being sent synchrouniously.
+- `Perimeterx::$MONITOR_MODE_ASYNC` - Server-to-server requests are being sent asynchrouniously. module eval the pxCustomBlockHandler function in case it's defined on score threshold cross, when cookie score is cross threshold
+
+```php
+$perimeterxConfig = [
+	..
+    'module_mode' => Perimeterx::$MONITOR_MODE_SYNC
+    ..
+]
+```
 
 #### <a name="captcha-support"></a>Enable/disable captcha in the block page
 
@@ -168,7 +185,7 @@ $perimeterxConfig = [
 ]
 ```
 
-##### <a name="real-ip"></a>Extracting the Real User IP Address From HTTP Headers or by defining a function
+#### <a name="real-ip"></a>Extracting the Real User IP Address
 
 In order to evaluate user's score properly, the PerimeterX module
 requires the real socket ip (client IP address that created the HTTP
