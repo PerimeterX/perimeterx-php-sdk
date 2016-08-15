@@ -25,18 +25,22 @@ class PerimeterxHttpClient
      * @inheritdoc
      * @return string
      */
-    public function sendAsync($url, $method, $json, $headers)
+    function sendAsync($json, $token)
     {
-        $params = array('http' => array(
-            'method' => $method,
-            'content' => $json
-        ));
-        if ($headers !== null) {
-            $params['http']['header'] = $headers;
-        }
-        $ctx = stream_context_create($params);
-        @fopen($url, 'rb', false, $ctx);
+        $host = "collector.perimeterx.net";
+        $port = 443;
 
+        $fp = fsockopen("ssl://" . $host, $port, $errno, $errstr, 1);
+        $out = "POST /api/v1/risk/ HTTP/1.1\r\n";
+        $out .= "Content-Type: application/json\r\n";
+        $out .= "Host: collector.perimeterx.net\r\n";
+        $out .= "Content-Length: " . strlen($json) . "\r\n";
+        $out .= "Authorization: Bearer " . $token . "\r\n";
+        $out .= "Connection: Close\r\n\r\n";
+        $out .= $json;
+
+        fwrite($fp, $out);
+        fclose($fp);
         return true;
     }
 
@@ -56,4 +60,5 @@ class PerimeterxHttpClient
         $rawBody = (string)$rawResponse->getBody();
         return $rawBody;
     }
+
 }
