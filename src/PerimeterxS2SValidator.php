@@ -60,12 +60,14 @@ class PerimeterxS2SValidator
             'Authorization' => 'Bearer ' . $this->pxConfig['auth_token'],
             'Content-Type' => 'application/json'
         ];
-        
-        if ($this->pxConfig['monitor_mode'] == true) {
+
+        if ($this->pxConfig['module_mode'] == Perimeterx::$MONITOR_MODE_ASYNC) {
             $this->httpClient->sendAsync('/api/v1/risk', 'POST', $requestBody, $headers);
+            return 1;
+        } else {
+            $response = $this->httpClient->send('/api/v1/risk', 'POST', $requestBody, $headers);
+            return $response;
         }
-        $response = $this->httpClient->send('/api/v1/risk', 'POST', $requestBody, $headers);
-        return $response;
     }
 
     /**
