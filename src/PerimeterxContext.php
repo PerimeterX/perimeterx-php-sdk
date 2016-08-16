@@ -34,6 +34,7 @@ class PerimeterxContext
             }
         }
 
+        $this->start_time = microtime(true);
         $this->headers = getallheaders();
         $this->hostname = $_SERVER['SERVER_NAME'];
         $this->userAgent = $_SERVER['HTTP_USER_AGENT'];
@@ -105,6 +106,11 @@ class PerimeterxContext
      * @var string request full url.
      */
     protected $full_url;
+
+    /**
+     * @var string request full url.
+     */
+    public $start_time;
 
     /**
      * @var string server2server call reason - get populated if cookie verification fails.
@@ -313,6 +319,10 @@ class PerimeterxContext
         return $this->http_version;
     }
 
+
+    public function printStage($stage) {
+        error_log($stage . ' ' . ((microtime(true) - $this->start_time)*1000));
+    }
     /**
      * @return string
      */
