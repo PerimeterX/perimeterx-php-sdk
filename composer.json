@@ -20,7 +20,7 @@
     "optimize-autoloader": true
   },
   "autoload": {
-    "psr-0": {
+    "psr-4": {
       "Perimeterx\\": "src/"
     }
   },
