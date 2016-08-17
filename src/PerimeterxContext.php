@@ -318,11 +318,7 @@ class PerimeterxContext
     {
         return $this->http_version;
     }
-
-
-    public function printStage($stage) {
-        error_log($stage . ' ' . ((microtime(true) - $this->start_time)*1000));
-    }
+    
     /**
      * @return string
      */

@@ -106,22 +106,15 @@ final class Perimeterx
             }
 
             $pxCtx = new PerimeterxContext();
-            $pxCtx->printStage('starting request');
             $captchaValidator = new PerimeterxCaptchaValidator($pxCtx, $this->pxConfig);
-            $pxCtx->printStage('created captcha validator');
             if ($captchaValidator->verify()) {
-                $pxCtx->printStage('verified captcha');
                 return $this->handleVerification($pxCtx);
             };
 
             $cookieValidator = new PerimeterxCookieValidator($pxCtx, $this->pxConfig);
-            $pxCtx->printStage('created cookie validator');
             if (!$cookieValidator->verify()) {
-                $pxCtx->printStage('verified cookie');
                 $s2sValidator = new PerimeterxS2SValidator($pxCtx, $this->pxConfig);
-                $pxCtx->printStage('created s2s validator');
                 $s2sValidator->verify();
-                $pxCtx->printStage('verified s2s');
                 if ($this->pxConfig['module_mode'] == Perimeterx::$MONITOR_MODE_ASYNC) {
                     return 1;
                 }
