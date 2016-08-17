@@ -27,7 +27,7 @@ class PerimeterxHttpClient
      */
     function sendAsync($json, $token)
     {
-        $host = "collector.perimeterx.net";
+        $host = "sapi-cdn.perimeterx.net";
         $port = 443;
 
         $fp = fsockopen("ssl://" . $host, $port, $errno, $errstr, 1);
