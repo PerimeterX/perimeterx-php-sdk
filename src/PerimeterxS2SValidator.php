@@ -51,7 +51,7 @@ class PerimeterxS2SValidator
                 'http_version' => $this->pxCtx->getHttpVersion()
             ]
         ];
-        
+
         $vid = $this->pxCtx->getVid();
         if (!isset($vid)) {
             $requestBody['vid'] = $vid;
@@ -61,12 +61,12 @@ class PerimeterxS2SValidator
             'Content-Type' => 'application/json'
         ];
 
+
         if ($this->pxConfig['module_mode'] == Perimeterx::$MONITOR_MODE_ASYNC) {
-            error_log('sending async');
-            $this->httpClient->sendAsync(json_encode($requestBody), $this->pxConfig['auth_token']);
-        } else {
-            $response = $this->httpClient->send('/api/v1/risk', 'POST', $requestBody, $headers);
-            return $response;
+                $this->httpClient->sendAsync(json_encode($requestBody), $this->pxConfig['auth_token'], $this->pxConfig['local_proxy']);
+            } else {
+                $response = $this->httpClient->send('/api/v1/risk', 'POST', $requestBody, $headers);
+                return $response;
         }
     }
 

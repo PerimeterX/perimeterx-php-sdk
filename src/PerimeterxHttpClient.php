@@ -18,22 +18,28 @@ class PerimeterxHttpClient
      */
     public function __construct(Client $client = null)
     {
-        $this->client = $client ?: new Client(['base_uri' => 'https://sapi-cdn.perimeterx.net']);
+        $this->client = $client ?: new Client(['base_uri' => 'https://sapi.perimeterx.net']);
     }
 
     /**
      * @inheritdoc
      * @return string
      */
-    function sendAsync($json, $token)
+    function sendAsync($json, $token, $local_proxy)
     {
-        $host = "sapi-cdn.perimeterx.net";
-        $port = 443;
+        if ($local_proxy) {
+            $host = "localhost";
+            $port = 8095;
+            $fp = fsockopen("tcp://" . $host, $port, $errno, $errstr, 1);
+        } else {
+            $host = "sapi.perimeterx.net";
+            $port = 443;
+            $fp = fsockopen("ssl://" . $host, $port, $errno, $errstr, 1);
+        }
 
-        $fp = fsockopen("ssl://" . $host, $port, $errno, $errstr, 1);
         $out = "POST /api/v1/risk/ HTTP/1.1\r\n";
         $out .= "Content-Type: application/json\r\n";
-        $out .= "Host: collector.perimeterx.net\r\n";
+        $out .= "Host: sapi.perimeterx.net\r\n";
         $out .= "Content-Length: " . strlen($json) . "\r\n";
         $out .= "Authorization: Bearer " . $token . "\r\n";
         $out .= "Connection: Close\r\n\r\n";

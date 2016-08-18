@@ -87,8 +87,9 @@ final class Perimeterx
                 'debug_mode' => false,
                 'module_mode' => Perimeterx::$ACTIVE_MODE,
                 'api_timeout' => 1,
-                'perimeterx_server_host' => 'https://sapi-cdn.perimeterx.net',
-                'http_client' => $httpClient
+                'perimeterx_server_host' => 'https://sapi.perimeterx.net',
+                'http_client' => $httpClient,
+                'local_proxy' => false
             ], $pxConfig);
 
             $this->pxActivitiesClient = new PerimeterxActivitiesClient($this->pxConfig);
