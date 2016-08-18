@@ -1,7 +1,7 @@
 {
   "name": "perimeterx/php-sdk",
   "description": "PerimeterX SDK for PHP",
-  "version" : "1.2.2",
+  "version" : "1.2.3",
   "keywords": [
     "perimeterx",
     "websecurity",
@@ -20,7 +20,7 @@
     "optimize-autoloader": true
   },
   "autoload": {
-    "psr-0": {
+    "psr-4": {
       "Perimeterx\\": "src/"
     }
   },
