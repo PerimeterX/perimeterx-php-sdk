@@ -6,11 +6,6 @@ namespace Perimeterx;
 class PerimeterxActivitiesClient
 {
     /**
-     * @var string
-     */
-    private $pxAuthToken;
-
-    /**
      * @var object - perimeterx configuration object
      */
     private $pxConfig;
@@ -26,13 +21,11 @@ class PerimeterxActivitiesClient
     private $activities;
 
     /**
-     * @param PerimeterxContext - perimeterx context
-     * @param array - perimeterx configurations
+     * @param array $pxConfig - perimeterx configurations
      */
     public function __construct($pxConfig)
     {
         $this->pxConfig = $pxConfig;
-        $this->pxAuthToken = $pxConfig['auth_token'];
         $this->httpClient = $pxConfig['http_client'];
         $this->activities = [];
     }
@@ -76,12 +69,12 @@ class PerimeterxActivitiesClient
         if (isset($vid)) {
             $pxData['vid'] = $vid;
         }
-        
+
         array_push($this->activities, $pxData);
         $this->sendActivities();
     }
 
-    public function sendActivities()
+    private function sendActivities()
     {
         if (count($this->activities) >= $this->pxConfig['max_buffer_len']) {
             $tempActivities = array_merge(array(), $this->activities);

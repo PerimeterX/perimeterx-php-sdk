@@ -32,6 +32,7 @@ class PerimeterxS2SValidator
         $this->pxConfig = $pxConfig;
         $this->pxAuthToken = $pxConfig['auth_token'];
         $this->httpClient = $pxConfig['http_client'];
+        $this->httpRiskClient = isset($pxConfig['custom_risk_handler']) ? $pxConfig['custom_risk_handler'] : $pxConfig['http_client'];
         $this->pxCtx = $pxCtx;
     }
 
@@ -62,12 +63,12 @@ class PerimeterxS2SValidator
         ];
 
 
-        if ($this->pxConfig['module_mode'] == Perimeterx::$MONITOR_MODE_ASYNC) {
-                $this->httpClient->sendAsync(json_encode($requestBody), $this->pxConfig['auth_token'], $this->pxConfig['local_proxy']);
-            } else {
-                $response = $this->httpClient->send('/api/v1/risk', 'POST', $requestBody, $headers);
-                return $response;
-        }
+        //if ($this->pxConfig['module_mode'] == Perimeterx::$MONITOR_MODE_ASYNC) {
+            //$this->httpClient->sendAsync(json_encode($requestBody), $this->pxConfig['auth_token'], $this->pxConfig['local_proxy']);
+        //} else {
+        $response = $this->httpRiskClient->send('/api/v1/risk', 'POST', $requestBody, $headers);
+        return $response;
+        //}
     }
 
     /**
@@ -94,6 +95,5 @@ class PerimeterxS2SValidator
                 $this->pxCtx->setBlockReason('s2s_high_score');
             }
         }
-
     }
 }

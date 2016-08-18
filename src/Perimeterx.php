@@ -106,7 +106,7 @@ final class Perimeterx
                 return 1;
             }
 
-            $pxCtx = new PerimeterxContext();
+            $pxCtx = new PerimeterxContext($this->pxConfig);
             $captchaValidator = new PerimeterxCaptchaValidator($pxCtx, $this->pxConfig);
             if ($captchaValidator->verify()) {
                 return $this->handleVerification($pxCtx);
@@ -116,9 +116,9 @@ final class Perimeterx
             if (!$cookieValidator->verify()) {
                 $s2sValidator = new PerimeterxS2SValidator($pxCtx, $this->pxConfig);
                 $s2sValidator->verify();
-                if ($this->pxConfig['module_mode'] == Perimeterx::$MONITOR_MODE_ASYNC) {
-                    return 1;
-                }
+                //if ($this->pxConfig['module_mode'] == Perimeterx::$MONITOR_MODE_ASYNC) {
+                    //return 1;
+                //}
             };
             return $this->handleVerification($pxCtx);
         } catch (\Exception $e) {
@@ -136,8 +136,8 @@ final class Perimeterx
         $score = $pxCtx->getScore();
         if (isset($score) and $score >= $this->pxConfig['blocking_score']) {
             $this->pxActivitiesClient->sendToPerimeterx('block', $pxCtx, ['block_uuid' => $pxCtx->getUuid(), 'block_score' => $pxCtx->getScore(), 'block_reason' => $pxCtx->getBlockReason(), 'module_version' => $this->pxConfig['sdk_name']]);
-            if (function_exists('pxCustomBlockHandler')) {
-                call_user_func('pxCustomBlockHandler', $pxCtx);
+            if (isset($this->pxConfig['custom_block_handler'])) {
+                $this->pxConfig['custom_block_handler']($pxCtx);
             } elseif ($this->pxConfig['module_mode'] == Perimeterx::$ACTIVE_MODE) {
                 $block_uuid = $pxCtx->getUuid();
                 $full_url = $pxCtx->getFullUrl();

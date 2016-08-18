@@ -20,7 +20,7 @@ function pp($arr)
 
 class PerimeterxContext
 {
-    public function __construct()
+    public function __construct($pxConfig)
     {
         if (isset($_SERVER['HTTP_COOKIE'])) {
             foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
@@ -41,8 +41,8 @@ class PerimeterxContext
         $this->uri = $_SERVER['REQUEST_URI'];
         $this->full_url = $this->selfURL();
         $this->score = 0;
-        if (function_exists('pxCustomUserIP')) {
-            call_user_func('pxCustomUserIP', $this);
+        if (isset($pxConfig['custom_user_ip'])) {
+            $this->ip = $pxConfig['custom_user_ip']($this);
         } else {
             $this->ip = $_SERVER['REMOTE_ADDR'];
         }
@@ -318,7 +318,7 @@ class PerimeterxContext
     {
         return $this->http_version;
     }
-    
+
     /**
      * @return string
      */
