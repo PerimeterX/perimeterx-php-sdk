@@ -39,9 +39,8 @@ final class Perimeterx
 
     private static $instance;
 
-    public static $MONITOR_MODE_SYNC = 1;
-    public static $MONITOR_MODE_ASYNC = 2;
-    public static $ACTIVE_MODE = 3;
+    public static $MONITOR_MODE = 1;
+    public static $ACTIVE_MODE = 2;
 
     /**
      * Call this method to get singleton
@@ -116,9 +115,6 @@ final class Perimeterx
             if (!$cookieValidator->verify()) {
                 $s2sValidator = new PerimeterxS2SValidator($pxCtx, $this->pxConfig);
                 $s2sValidator->verify();
-                //if ($this->pxConfig['module_mode'] == Perimeterx::$MONITOR_MODE_ASYNC) {
-                    //return 1;
-                //}
             };
             return $this->handleVerification($pxCtx);
         } catch (\Exception $e) {

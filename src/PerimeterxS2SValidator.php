@@ -3,6 +3,7 @@ namespace Perimeterx;
 
 class PerimeterxS2SValidator
 {
+    const RISK_API_ENDPOINT = '/api/v1/risk';
     /**
      * @var string
      */
@@ -32,7 +33,6 @@ class PerimeterxS2SValidator
         $this->pxConfig = $pxConfig;
         $this->pxAuthToken = $pxConfig['auth_token'];
         $this->httpClient = $pxConfig['http_client'];
-        $this->httpRiskClient = isset($pxConfig['custom_risk_handler']) ? $pxConfig['custom_risk_handler'] : $pxConfig['http_client'];
         $this->pxCtx = $pxCtx;
     }
 
@@ -62,13 +62,13 @@ class PerimeterxS2SValidator
             'Content-Type' => 'application/json'
         ];
 
-
-        //if ($this->pxConfig['module_mode'] == Perimeterx::$MONITOR_MODE_ASYNC) {
-            //$this->httpClient->sendAsync(json_encode($requestBody), $this->pxConfig['auth_token'], $this->pxConfig['local_proxy']);
-        //} else {
-        $response = $this->httpRiskClient->send('/api/v1/risk', 'POST', $requestBody, $headers);
+        $custom_risk_handler = $pxConfig['custom_risk_handler'];
+        if (isset($custom_risk_handler)) {
+            $response = $custom_risk_handler($this->pxConfig['perimeterx_server_host'] . self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers);
+        } else {
+            $response = $this->httpClient->send(self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers);
+        }
         return $response;
-        //}
     }
 
     /**

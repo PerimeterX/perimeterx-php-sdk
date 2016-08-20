@@ -160,13 +160,12 @@ $px->pxVerify();
 **Possible Values:** 
 
 - `Perimeterx::$ACTIVE_MODE` - Module block user crossing the block threshold, server-to-server requests are being sent synchrouniously 
-- `Perimeterx::$MONITOR_MODE_SYNC` - Module does not block users crossing the block threshold, but does eval the pxCustomBlockHandler function in case it's defined on score threshold cross. server-to-server requests are being sent synchrouniously.
-- `Perimeterx::$MONITOR_MODE_ASYNC` - Server-to-server requests are being sent asynchrouniously. module eval the pxCustomBlockHandler function in case it's defined on score threshold cross, when cookie score is cross threshold
+- `Perimeterx::$MONITOR_MODE` - Module does not block users crossing the block threshold, but does eval the pxCustomBlockHandler function in case it's defined on score threshold cross.
 
 ```php
 $perimeterxConfig = [
 	..
-    'module_mode' => Perimeterx::$MONITOR_MODE_SYNC
+    'module_mode' => Perimeterx::$MONITOR_MODE
     ..
 ]
 ```
