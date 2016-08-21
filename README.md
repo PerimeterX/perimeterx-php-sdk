@@ -86,22 +86,22 @@ $perimeterxConfig = [
 ```
 
 #### <a name="custom-block"></a> Custom Blocking Actions
-Setting a custom block handler customizes is done by creating a user function named `pxCustomBlockHandler` before running the verify and the SDK will execute it using `call_user_func('pxCustomBlockHandler', $pxCtx);`. 
+Setting a custom block handler customizes is done by setting 'custom_block_handler' with a user function named on the '$perimeterxConfig'. 
 
-Cusom handler should contain the action that is taken when a user visits with a high score. Common customizations are to present a reCAPTHA or custom branded block page.
+Custom handler should contain the action that is taken when a user visits with a high score. Common customizations are to present a reCAPTHA or custom branded block page.
 
-**default:** pxBlockHandler - return HTTP status code 403 and serve the
-Perimeterx block page.
+**default:** return HTTP status code 403 and serve the Perimeterx block page.
 
 ```php
 /**
  * @param \Perimeterx\PerimeterxContext $pxCtx
  */
-function pxCustomBlockHandler($pxCtx) {
+$perimeterxConfig['custom_block_handler'] = function ($pxCtx)
+{
     $block_score = $pxCtx->getScore();
     $block_uuid = $pxCtx->getUuid();
 
-    /* user defined logic comes here */
+    // user defined logic comes here
 };
 
 $px = Perimeterx::Instance($perimeterxConfig);
@@ -112,11 +112,12 @@ $px->pxVerify();
 
 **Serve a Custom HTML Page**
 
-```javascript
+```php
 /**
  * @param \Perimeterx\PerimeterxContext $pxCtx
  */
-function pxCustomBlockHandler($pxCtx) {
+$perimeterxConfig['custom_block_handler'] = function ($pxCtx)
+{
     $block_score = $pxCtx->getScore();
     $block_uuid = $pxCtx->getUuid();
     $full_url = $pxCtx->getFullUrl();
@@ -128,7 +129,7 @@ function pxCustomBlockHandler($pxCtx) {
 	//echo $html;
 	header("Status: 403");
 	die();
-}
+};
 
 $px = Perimeterx::Instance($perimeterxConfig);
 $px->pxVerify();
@@ -136,23 +137,22 @@ $px->pxVerify();
 
 **Do Not Block, Monitor Only**
 
-```javascript
+```php
 /**
  * @param \Perimeterx\PerimeterxContext $pxCtx
  */
-function pxCustomBlockHandler($pxCtx) {
+$perimeterxConfig['custom_block_handler'] = function ($pxCtx)
     $block_score = $pxCtx->getScore();
     $block_uuid = $pxCtx->getUuid();
     $full_url = $pxCtx->getFullUrl();
 
-	/* user logic defined here */
-	
-	return;
- }
+	// user logic defined here
+};
 
 $px = Perimeterx::Instance($perimeterxConfig);
 $px->pxVerify();
 ```
+
 #### <a name="module-score"></a> Module Mode
 
 **default:** `Perimeterx::$ACTIVE_MODE`
@@ -188,16 +188,15 @@ $perimeterxConfig = [
 
 In order to evaluate user's score properly, the PerimeterX module
 requires the real socket ip (client IP address that created the HTTP
-request). The user ip can be passed to the PerimeterX module using a custom user function defined before the verify.
+request). The user ip can be returned to the PerimeterX module using a custom user function defined on $perimeterxConfig.
 
 **default with no predefined header:** `$_SERVER['REMOTE_ADDR']`
 
-```javascript
-
+```php
 /**
  * @param \Perimeterx\PerimeterxContext $pxCtx
  */
-function pxCustomUserIP($pxCtx)
+$perimeterxConfig['custom_user_ip'] = function ($pxCtx)
 {
     $headers = getallheaders();
 
@@ -211,8 +210,8 @@ function pxCustomUserIP($pxCtx)
     /* using ip from custom header */
     $ip = $headers['X-REAL-CLIENT-IP'];
 
-    $pxCtx->setIp($ip);
-}
+    return $ip;
+};
 
 $px = Perimeterx::Instance($perimeterxConfig);
 $px->pxVerify();
