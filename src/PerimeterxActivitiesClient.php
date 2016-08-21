@@ -16,11 +16,6 @@ class PerimeterxActivitiesClient
     private $httpClient;
 
     /**
-     * @var object
-     */
-    private $activities;
-
-    /**
      * @param array $pxConfig - perimeterx configurations
      */
     public function __construct($pxConfig)
