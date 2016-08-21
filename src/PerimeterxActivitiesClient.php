@@ -27,7 +27,6 @@ class PerimeterxActivitiesClient
     {
         $this->pxConfig = $pxConfig;
         $this->httpClient = $pxConfig['http_client'];
-        $this->activities = [];
     }
 
     /**
@@ -47,12 +46,15 @@ class PerimeterxActivitiesClient
 
     /**
      * @param $activityType
-     * @param $details
      * @param PerimeterxContext $pxCtx
+     * @param $details
      */
     public function sendToPerimeterx($activityType, $pxCtx, $details = [])
     {
         if ($activityType == 'page_requested' and !$this->pxConfig['send_page_activities']) {
+            return;
+        }
+        if ($activityType == 'block' and !$this->pxConfig['send_block_activities']) {
             return;
         }
 
@@ -70,19 +72,8 @@ class PerimeterxActivitiesClient
             $pxData['vid'] = $vid;
         }
 
-        array_push($this->activities, $pxData);
-        $this->sendActivities();
-    }
-
-    private function sendActivities()
-    {
-        if (count($this->activities) >= $this->pxConfig['max_buffer_len']) {
-            $tempActivities = array_merge(array(), $this->activities);
-            $this->activities = array_splice($this->activities, count($tempActivities));
-            $headers = [
-                'Content-Type' => 'application/json'
-            ];
-            $this->httpClient->sendAsync('/api/v1/collector/s2s', 'POST', $tempActivities, $headers);
-        }
+        $activities = [ $pxData ];
+        $headers = [ 'Content-Type' => 'application/json' ];
+        $this->httpClient->send('/api/v1/collector/s2s', 'POST', $activities, $headers, $this->pxConfig['api_timeout']);
     }
 }
