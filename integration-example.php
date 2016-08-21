@@ -10,14 +10,14 @@ $perimeterxConfig = [
     'blocking_score' => 70,
     'module_mode' => Perimeterx::$MONITOR_MODE,
     /*
-     * 'custom_user_ip' => function ($pxContext)
+     * 'custom_user_ip' => function ($pxCtx)
      * {
      *      return $_SERVER['X-REAL-IP'];
      * },
      */
 
     /*
-     * 'custom_block_handler' => function ($pxContext)
+     * 'custom_block_handler' => function ($pxCtx)
      * {
      *      // $block_score = $pxCtx->getScore();
      *      // $block_uuid = $pxCtx->getUuid();
