@@ -83,7 +83,7 @@ final class Perimeterx
                 'max_buffer_len' => 1,
                 'send_page_activities' => false,
                 'send_block_activities' => true,
-                'sdk_name' => 'PHP SDK v1.2.4',
+                'sdk_name' => 'PHP SDK v1.3.0',
                 'debug_mode' => false,
                 'module_mode' => Perimeterx::$ACTIVE_MODE,
                 'api_timeout' => 1,
@@ -136,7 +136,7 @@ final class Perimeterx
             if (isset($this->pxConfig['custom_block_handler'])) {
                 $this->pxConfig['custom_block_handler']($pxCtx);
             } elseif (function_exists('pxCustomBlockHandler')) {
-                call_user_func('pxCustomBlockHandler', $this);
+                call_user_func('pxCustomBlockHandler', $pxCtx);
             } elseif ($this->pxConfig['module_mode'] == Perimeterx::$ACTIVE_MODE) {
                 $block_uuid = $pxCtx->getUuid();
                 $full_url = $pxCtx->getFullUrl();
