@@ -133,7 +133,6 @@ final class Perimeterx
         $score = $pxCtx->getScore();
         if (isset($score) and $score >= $this->pxConfig['blocking_score']) {
             $this->pxActivitiesClient->sendToPerimeterx('block', $pxCtx, ['block_uuid' => $pxCtx->getUuid(), 'block_score' => $pxCtx->getScore(), 'block_reason' => $pxCtx->getBlockReason(), 'module_version' => $this->pxConfig['sdk_name']]);
-            if (
             if (isset($this->pxConfig['custom_block_handler'])) {
                 $this->pxConfig['custom_block_handler']($pxCtx);
             } elseif (function_exists('pxCustomBlockHandler')) {
