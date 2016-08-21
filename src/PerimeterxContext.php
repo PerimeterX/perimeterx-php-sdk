@@ -42,12 +42,12 @@ class PerimeterxContext
         $this->full_url = $this->selfURL();
         $this->score = 0;
         if (isset($pxConfig['custom_user_ip'])) {
-            $this->ip = $pxConfig['custom_user_ip']($this);
-        } elseif (function_exists('pxCustomUserIP')) {
-            call_user_func('pxCustomUserIP', $this);
-        } else {
-            $this->ip = $_SERVER['REMOTE_ADDR'];
-        }
+            $this->ip = $pxConfig['custom_user_ip']($this);
+        } elseif (function_exists('pxCustomUserIP')) {
+            call_user_func('pxCustomUserIP', $this);
+        } else {
+            $this->ip = $_SERVER['REMOTE_ADDR'];
+        }
 
         if (isset($_SERVER['SERVER_PROTOCOL'])) {
             $httpVer = explode("/", $_SERVER['SERVER_PROTOCOL']);
