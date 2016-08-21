@@ -62,7 +62,7 @@ class PerimeterxS2SValidator
             'Content-Type' => 'application/json'
         ];
 
-        $custom_risk_handler = $pxConfig['custom_risk_handler'];
+        $custom_risk_handler = $this->pxConfig['custom_risk_handler'];
         if (isset($custom_risk_handler)) {
             $response = $custom_risk_handler($this->pxConfig['perimeterx_server_host'] . self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers);
         } else {
