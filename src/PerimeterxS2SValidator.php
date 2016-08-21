@@ -65,7 +65,7 @@ class PerimeterxS2SValidator
         if (isset($this->pxConfig['custom_risk_handler'])) {
             $response = $this>pxConfig['custom_risk_handler']($this->pxConfig['perimeterx_server_host'] . self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers);
         } else {
-            $response = $this->httpClient->send(self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers);
+            $response = $this->httpClient->send(self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers, $this->pxConfig['api_timeout']);
         }
         return $response;
     }
