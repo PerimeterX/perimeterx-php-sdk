@@ -12,7 +12,7 @@ $perimeterxConfig = [
     /*
      * 'custom_user_ip' => function ($pxContext)
      * {
-     *      return $_SERVER['X-MYHER-USER-IP'];
+     *      return $_SERVER['X-REAL-IP'];
      * },
      */
 
