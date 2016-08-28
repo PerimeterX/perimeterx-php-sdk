@@ -79,7 +79,7 @@ final class Perimeterx
                 'captcha_enabled' => true,
                 'encryption_enabled' => true,
                 'blocking_score' => 70,
-                'sensitive_headers' => [],
+                'sensitive_headers' => ['cookie', 'cookies'],
                 'max_buffer_len' => 1,
                 'send_page_activities' => false,
                 'send_block_activities' => true,
