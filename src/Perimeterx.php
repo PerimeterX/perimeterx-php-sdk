@@ -83,11 +83,11 @@ final class Perimeterx
                 'max_buffer_len' => 1,
                 'send_page_activities' => false,
                 'send_block_activities' => true,
-                'sdk_name' => 'PHP SDK v1.3.1',
+                'sdk_name' => 'PHP SDK v1.3.2',
                 'debug_mode' => false,
                 'module_mode' => Perimeterx::$ACTIVE_MODE,
                 'api_timeout' => 1,
-                'perimeterx_server_host' => 'https://sapi.perimeterx.net',
+                'perimeterx_server_host' => 'https://sapi-cdn.perimeterx.net',
                 'http_client' => $httpClient,
                 'local_proxy' => false
             ], $pxConfig);

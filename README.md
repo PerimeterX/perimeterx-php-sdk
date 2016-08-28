@@ -219,7 +219,7 @@ $px->pxVerify();
 
 #### <a name="sensitive-headers"></a> Filter sensitive headers
 
-A user can define a list of sensitive header he want to prevent from being send to perimeterx servers, filtering cookie header for privacy is set by default and will be overriden if a user set the configuration
+A user can define a list of sensitive header he want to prevent from being send to perimeterx servers (lowered case header name), filtering cookie header for privacy is set by default and will be overriden if a user set the configuration
 
 **default: cookie, cookies**
 

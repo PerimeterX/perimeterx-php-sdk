@@ -64,7 +64,7 @@ class PerimeterxS2SValidator
         }
 
         if (in_array($this->pxCtx->getS2SCallReason(), ['cookie_expired', 'cookie_validation_failed'])) {
-            if (!isset($vid)) {
+            if ($this->pxCtx->getDecodedCookie()) {
                 $requestBody['additional']['px_cookie'] = $this->pxCtx->getDecodedCookie();
             }
         }
