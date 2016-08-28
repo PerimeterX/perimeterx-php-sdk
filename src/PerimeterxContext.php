@@ -64,6 +64,11 @@ class PerimeterxContext
     protected $px_cookie;
 
     /**
+     * @var string perimeterx risk cookie.
+     */
+    protected $decoded_px_cookie;
+
+    /**
      * @var string perimeterx captcha cookie.
      */
     protected $px_captcha;
@@ -298,6 +303,22 @@ class PerimeterxContext
     public function setPxCaptcha($px_captcha)
     {
         $this->px_captcha = $px_captcha;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDecodedCookie()
+    {
+        return $this->decoded_px_cookie;
+    }
+
+    /**
+     * @param string $cookie
+     */
+    public function setDecodedCookie($cookie)
+    {
+        $this->decoded_px_cookie = $cookie;
     }
 
     private function selfURL()

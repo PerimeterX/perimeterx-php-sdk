@@ -57,6 +57,18 @@ class PerimeterxS2SValidator
         if (!isset($vid)) {
             $requestBody['vid'] = $vid;
         }
+
+        $uuid = $this->pxCtx->getUuid();
+        if (!isset($vid)) {
+            $requestBody['uuid'] = $uuid;
+        }
+
+        if (in_array($this->pxCtx->getS2SCallReason(), ['cookie_expired', 'cookie_validation_failed'])) {
+            if (!isset($vid)) {
+                $requestBody['additional']['px_cookie'] = $this->pxCtx->getDecodedCookie();
+            }
+        }
+
         $headers = [
             'Authorization' => 'Bearer ' . $this->pxConfig['auth_token'],
             'Content-Type' => 'application/json'
@@ -77,7 +89,9 @@ class PerimeterxS2SValidator
     {
         $retval = [];
         foreach ($this->pxCtx->getHeaders() as $key => $value) {
-            array_push($retval, ['name' => $key, 'value' => $value]);
+            if (!in_array(strtolower($key), $this->pxConfig['sensitive_headers'])) {
+                array_push($retval, ['name' => $key, 'value' => $value]);
+            }
         }
         return $retval;
 
