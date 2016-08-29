@@ -53,6 +53,10 @@ class PerimeterxActivitiesClient
             return;
         }
 
+        if ($this->pxConfig['module_mode'] != Perimeterx::$ACTIVE_MODE) {
+            return;
+        }
+
         $pxData = [];
         $pxData['type'] = $activityType;
         $pxData['headers'] = $this->filterSensitiveHeaders($pxCtx);
