@@ -16,7 +16,7 @@ Table of Contents
   *   [Enable/Disable Captcha](#captcha-support)
   *   [Extracting Real IP Address](#real-ip)
   *   [Filter Sensitive Headers](#sensitive-headers)
-  *   [API Timeout Milliseconds](#api-timeout)
+  *   [API Timeouts](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
   *   [Debug Mode](#debug-mode)
 -   [Contributing](#contributing)
@@ -231,11 +231,12 @@ $perimeterxConfig = [
 ]
 ```
 
-#### <a name="api-timeout"></a>API Timeout Milliseconds
+#### <a name="api-timeout"></a>API Timeouts
 
-Timeout in seconds (float) to wait for the PerimeterX server API response.
-The API is called when the risk cookie does not exist, or is expired or
-invalid.
+Control the timeouts for PerimeterX requests. The API is called when the risk cookie does not exist, or is expired or invalid.
+
+API Timeout in seconds (float) to wait for the PerimeterX server API response.
+
 
 **default:** 1
 
@@ -246,6 +247,21 @@ $perimeterxConfig = [
     ..
 ]
 ```
+
+API Connection Timeout in seconds (float) to wait for the connection to the PerimeterX server API.
+
+
+**default:** 1
+
+```php
+$perimeterxConfig = [
+  ..
+    'api_connect_timeout' => 2
+    ..
+]
+```
+
+
 
 #### <a name="send-page-activities"></a> Send Page Activities
 
