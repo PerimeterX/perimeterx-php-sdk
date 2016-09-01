@@ -73,6 +73,6 @@ class PerimeterxActivitiesClient
 
         $activities = [ $pxData ];
         $headers = [ 'Content-Type' => 'application/json' ];
-        $this->httpClient->send('/api/v1/collector/s2s', 'POST', $activities, $headers, $this->pxConfig['api_timeout']);
+        $this->httpClient->send('/api/v1/collector/s2s', 'POST', $activities, $headers, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout']);
     }
 }
