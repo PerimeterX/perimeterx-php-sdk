@@ -86,7 +86,7 @@ $perimeterxConfig = [
 ```
 
 #### <a name="custom-block"></a> Custom Blocking Actions
-Setting a custom block handler customizes is done by setting 'custom_block_handler' with a user function named on the '$perimeterxConfig'. 
+Setting a custom block handler customizes is done by setting 'custom_block_handler' with a user function named on the '$perimeterxConfig'.
 
 Custom handler should contain the action that is taken when a user visits with a high score. Common customizations are to present a reCAPTHA or custom branded block page.
 
@@ -157,9 +157,9 @@ $px->pxVerify();
 
 **default:** `Perimeterx::$ACTIVE_MODE`
 
-**Possible Values:** 
+**Possible Values:**
 
-- `Perimeterx::$ACTIVE_MODE` - Module block user crossing the block threshold, server-to-server requests are being sent synchrouniously 
+- `Perimeterx::$ACTIVE_MODE` - Module block user crossing the block threshold, server-to-server requests are being sent synchrouniously
 - `Perimeterx::$MONITOR_MODE` - Module does not block users crossing the block threshold, but does eval the pxCustomBlockHandler function in case it's defined on score threshold cross.
 
 ```php
@@ -219,7 +219,7 @@ $px->pxVerify();
 
 #### <a name="sensitive-headers"></a> Filter sensitive headers
 
-A user can define a list of sensitive header he want to prevent from being send to perimeterx servers (lowered case header name), filtering cookie header for privacy is set by default and will be overriden if a user set the configuration
+A user can define a list of sensitive header he want to prevent from being send to perimeterx servers (lowered case header name), filtering cookie header for privacy is set by default and will be overridden if a user set the configuration
 
 **default: cookie, cookies**
 
@@ -295,4 +295,3 @@ $perimeterxConfig = [
 ```
 <a name="contributing"></a> Contributing
 ----------------------------------------
-
