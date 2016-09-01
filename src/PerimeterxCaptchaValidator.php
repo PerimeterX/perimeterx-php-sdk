@@ -58,7 +58,7 @@ class PerimeterxCaptchaValidator
             'Authorization' => 'Bearer ' . $this->pxConfig['auth_token'],
             'Content-Type' => 'application/json'
         ];
-        $response = $this->httpClient->send('/api/v1/risk/captcha', 'POST', $requestBody, $headers, $pxConfig['api_timeout'], $pxConfig['api_connect_timeout']);
+        $response = $this->httpClient->send('/api/v1/risk/captcha', 'POST', $requestBody, $headers, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout']);
         return $response;
     }
 

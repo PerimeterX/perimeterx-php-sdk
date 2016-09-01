@@ -18,7 +18,7 @@ class PerimeterxHttpClient
      */
     public function __construct(Client $client = null)
     {
-        $this->client = $client ?: new Client(['base_uri' => 'https://sapi.perimeterx.net']);
+        $this->client = $client ?: new Client(['base_uri' => 'https://sapi-cdn.perimeterx.net']);
     }
 
     /**
