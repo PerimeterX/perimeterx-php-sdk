@@ -35,7 +35,12 @@ class PerimeterxContext
         }
 
         $this->start_time = microtime(true);
-        $this->headers = getallheaders();
+        if (function_exists('getallheaders')) {
+            $this->headers = getallheaders();
+        } else {
+            $this->headers = [];
+        }
+
         $this->hostname = $_SERVER['SERVER_NAME'];
         $this->userAgent = $_SERVER['HTTP_USER_AGENT'];
         $this->uri = $_SERVER['REQUEST_URI'];

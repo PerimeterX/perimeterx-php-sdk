@@ -54,12 +54,12 @@ class PerimeterxS2SValidator
         ];
 
         $vid = $this->pxCtx->getVid();
-        if (!isset($vid)) {
+        if (isset($vid)) {
             $requestBody['vid'] = $vid;
         }
 
         $uuid = $this->pxCtx->getUuid();
-        if (!isset($vid)) {
+        if (isset($uuid)) {
             $requestBody['uuid'] = $uuid;
         }
 
