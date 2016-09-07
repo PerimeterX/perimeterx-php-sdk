@@ -2,24 +2,11 @@
 
 namespace Perimeterx;
 
-function pp($arr)
-{
-    $retStr = '<ul>';
-    if (is_array($arr)) {
-        foreach ($arr as $key => $val) {
-            if (is_array($val)) {
-                $retStr .= '<li>' . $key . ' => ' . pp($val) . '</li>';
-            } else {
-                $retStr .= '<li>' . $key . ' => ' . $val . '</li>';
-            }
-        }
-    }
-    $retStr .= '</ul>';
-    return $retStr;
-}
-
 class PerimeterxContext
 {
+    /**
+     * @param $pxConfig array - perimeterx configurations
+     */
     public function __construct($pxConfig)
     {
         if (isset($_SERVER['HTTP_COOKIE'])) {
@@ -46,6 +33,7 @@ class PerimeterxContext
         $this->uri = $_SERVER['REQUEST_URI'];
         $this->full_url = $this->selfURL();
         $this->score = 0;
+
         if (isset($pxConfig['custom_user_ip'])) {
             $this->ip = $pxConfig['custom_user_ip']($this);
         } elseif (function_exists('pxCustomUserIP')) {

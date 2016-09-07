@@ -25,8 +25,8 @@ class PerimeterxS2SValidator
     private $httpClient;
 
     /**
-     * @param PerimeterxContext - perimeterx context
-     * @param array - perimeterx configurations
+     * @param $pxCtx PerimeterxContext - perimeterx context
+     * @param $pxConfig array - perimeterx configurations
      */
     public function __construct($pxCtx, $pxConfig)
     {
