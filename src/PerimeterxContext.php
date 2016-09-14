@@ -151,7 +151,7 @@ class PerimeterxContext
      */
     public function getBlockReason()
     {
-        return $this->vid;
+        return $this->block_reason;
     }
 
     /**
