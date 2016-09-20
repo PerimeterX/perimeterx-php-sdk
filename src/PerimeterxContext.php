@@ -11,12 +11,14 @@ class PerimeterxContext
     {
         if (isset($_SERVER['HTTP_COOKIE'])) {
             foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
-                list($k, $v) = explode('=', $rawcookie, 2);
-                if ($k == '_px') {
-                    $this->px_cookie = $v;
-                }
-                if ($k == '_pxCaptcha') {
-                    $this->px_captcha = $v;
+                if (!empty($rawcookie)) {
+                    list($k, $v) = explode('=', $rawcookie, 2);
+                    if ($k == '_px') {
+                        $this->px_cookie = $v;
+                    }
+                    if ($k == '_pxCaptcha') {
+                        $this->px_captcha = $v;
+                    }
                 }
             }
         }
@@ -29,7 +31,8 @@ class PerimeterxContext
         }
 
         $this->hostname = $_SERVER['SERVER_NAME'];
-        $this->userAgent = $_SERVER['HTTP_USER_AGENT'];
+        // User Agent isn't always sent by bots so handle it gracefully.
+        $this->userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
         $this->uri = $_SERVER['REQUEST_URI'];
         $this->full_url = $this->selfURL();
         $this->score = 0;
