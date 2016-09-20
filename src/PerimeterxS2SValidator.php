@@ -38,6 +38,11 @@ class PerimeterxS2SValidator
 
     private function sendRiskRequest()
     {
+        if ($this->pxConfig['module_mode'] == Perimeterx::$ACTIVE_MODE) {
+            $risk_mode = 'active_blocking';
+        } else {
+            $risk_mode = 'monitor';
+        }
         $requestBody = [
             'request' => [
                 'ip' => $this->pxCtx->getIp(),
@@ -49,7 +54,8 @@ class PerimeterxS2SValidator
                 's2s_call_reason' => $this->pxCtx->getS2SCallReason(),
                 'module_version' => $this->pxConfig['sdk_name'],
                 'http_method' => $this->pxCtx->getHttpMethod(),
-                'http_version' => $this->pxCtx->getHttpVersion()
+                'http_version' => $this->pxCtx->getHttpVersion(),
+                'risk_mode' => $risk_mode
             ]
         ];
 
