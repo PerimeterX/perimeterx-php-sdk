@@ -9,17 +9,12 @@ class PerimeterxContext
      */
     public function __construct($pxConfig)
     {
-        if (isset($_SERVER['HTTP_COOKIE'])) {
-            foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
-                if (!empty($rawcookie)) {
-                    list($k, $v) = explode('=', $rawcookie, 2);
-                    if ($k == '_px') {
-                        $this->px_cookie = $v;
-                    }
-                    if ($k == '_pxCaptcha') {
-                        $this->px_captcha = $v;
-                    }
-                }
+        if (!empty($_COOKIE)) {
+            if (isset($_COOKIE["_px"])) {
+                $this->px_cookie = $_COOKIE["_px"];
+            }
+            if (isset($_COOKIE["_pxCaptcha"])) {
+                $this->px_captcha = $_COOKIE["_pxCaptcha"];
             }
         }
 
