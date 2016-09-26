@@ -16,9 +16,9 @@ class PerimeterxHttpClient
     /**
      * @param \GuzzleHttp\Client|null The Guzzle client.
      */
-    public function __construct(Client $client = null)
+    public function __construct($config)
     {
-        $this->client = $client ?: new Client(['base_uri' => 'https://sapi-cdn.perimeterx.net']);
+        $this->client = new Client(['base_uri' => $config['perimeterx_server_host']]);
     }
 
     /**
@@ -28,7 +28,7 @@ class PerimeterxHttpClient
     public function send($url, $method, $json, $headers, $timeout = 0, $connect_timeout = 0)
     {
         try {
-            $rawResponse = $this->client->request($method, $url, 
+            $rawResponse = $this->client->request($method, $url,
                 [
                 'json' => $json, 
                 'headers' => $headers, 

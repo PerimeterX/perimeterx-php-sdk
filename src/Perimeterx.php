@@ -70,7 +70,6 @@ final class Perimeterx
             throw new PerimeterxException(PerimeterxException::$AUTH_TOKEN_MISSING);
         }
         try {
-            $httpClient = new PerimeterxHttpClient();
             $this->pxConfig = array_merge([
                 'app_id' => null,
                 'cookie_key' => null,
@@ -89,10 +88,11 @@ final class Perimeterx
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
                 'perimeterx_server_host' => 'https://sapi-cdn.perimeterx.net',
-                'http_client' => $httpClient,
                 'local_proxy' => false
             ], $pxConfig);
 
+            $httpClient = new PerimeterxHttpClient($this->pxConfig);
+            $this->pxConfig['http_client'] = $httpClient;
             $this->pxActivitiesClient = new PerimeterxActivitiesClient($this->pxConfig);
         } catch (\Exception $e) {
             throw new PerimeterxException('Uncaught exception ' . $e->getCode() . ' ' . $e->getMessage());
