@@ -87,7 +87,7 @@ final class Perimeterx
                 'module_mode' => Perimeterx::$ACTIVE_MODE,
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
-                'perimeterx_server_host' => 'https://sapi-cdn.perimeterx.net',
+                'perimeterx_server_host' => 'https://sapi.perimeterx.net',
                 'local_proxy' => false
             ], $pxConfig);
 
