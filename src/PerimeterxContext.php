@@ -14,10 +14,10 @@ class PerimeterxContext
                 if (!empty($rawcookie) && strpos($rawcookie, '=') !== false) {
                     list($k, $v) = explode('=', $rawcookie, 2);
                     if ($k == '_px') {
-                       $this->px_cookie = $v;
+                        $this->px_cookie = $v;
                     }
                     if ($k == '_pxCaptcha') {
-                       $this->px_captcha = $v;
+                        $this->px_captcha = $v;
                     }
                 }
             }
@@ -27,7 +27,11 @@ class PerimeterxContext
         if (function_exists('getallheaders')) {
             $this->headers = getallheaders();
         } else {
-            $this->headers = [];
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
+            }
         }
 
         $this->hostname = $_SERVER['SERVER_NAME'];
@@ -164,6 +168,7 @@ class PerimeterxContext
     {
         $this->ip = $ip;
     }
+
     /**
      * @param string $vid
      */
