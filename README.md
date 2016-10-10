@@ -61,6 +61,7 @@ $px = Perimeterx::Instance($perimeterxConfig);
 /* run verify at the beginning of a page request */
 $px->pxVerify();
 ```
+
 ### <a name="configuration"></a> Configuration Options
 
 #### Configuring Required Parameters
@@ -186,9 +187,9 @@ $perimeterxConfig = [
 
 #### <a name="real-ip"></a>Extracting the Real User IP Address
 
-In order to evaluate user's score properly, the PerimeterX module
-requires the real socket ip (client IP address that created the HTTP
-request). The user ip can be returned to the PerimeterX module using a custom user function defined on $perimeterxConfig.
+> Note: IP extraction according to your network setup is important. It is common to have a load balancer/proxy on top of your applications, in this case the PerimeterX module will send an internal IP as the user's. In order to perform processing and detection for server-to-server calls, PerimeterX module need the real user ip.
+
+The user ip can be returned to the PerimeterX module using a custom user function defined on $perimeterxConfig.
 
 **default with no predefined header:** `$_SERVER['REMOTE_ADDR']`
 
