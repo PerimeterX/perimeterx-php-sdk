@@ -35,7 +35,7 @@ class PerimeterxContext
             }
         }
 
-        $this->hostname = $_SERVER['SERVER_NAME'];
+        $this->hostname = $_SERVER['HTTP_HOST'];
         // User Agent isn't always sent by bots so handle it gracefully.
         $this->userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
         $this->uri = $_SERVER['REQUEST_URI'];
