@@ -329,7 +329,7 @@ class PerimeterxContext
         $l = strtolower($_SERVER["SERVER_PROTOCOL"]);
         $protocol = substr($l, 0, strpos($l, "/")) . $s;
         $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
-        return $protocol . "://" . $_SERVER['SERVER_NAME'] . $port . $_SERVER['REQUEST_URI'];
+        return $protocol . "://" . $_SERVER['HTTP_HOST'] . $port . $_SERVER['REQUEST_URI'];
     }
 
     /**
