@@ -82,7 +82,7 @@ final class Perimeterx
                 'max_buffer_len' => 1,
                 'send_page_activities' => false,
                 'send_block_activities' => true,
-                'sdk_name' => 'PHP SDK v1.3.11',
+                'sdk_name' => 'PHP SDK v1.3.12',
                 'debug_mode' => false,
                 'module_mode' => Perimeterx::$ACTIVE_MODE,
                 'api_timeout' => 1,
