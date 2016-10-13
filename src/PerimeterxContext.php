@@ -38,7 +38,11 @@ class PerimeterxContext
         $this->hostname = $_SERVER['HTTP_HOST'];
         // User Agent isn't always sent by bots so handle it gracefully.
         $this->userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
-        $this->uri = $_SERVER['REQUEST_URI'];
+        if (isset($pxConfig['custom_uri'])) {
+            $this->uri = $pxConfig['custom_uri']($this);
+        } else {
+            $this->uri = $_SERVER['REQUEST_URI'];
+        }
         $this->full_url = $this->selfURL();
         $this->score = 0;
 
@@ -329,7 +333,7 @@ class PerimeterxContext
         $l = strtolower($_SERVER["SERVER_PROTOCOL"]);
         $protocol = substr($l, 0, strpos($l, "/")) . $s;
         $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
-        return $protocol . "://" . $_SERVER['HTTP_HOST'] . $port . $_SERVER['REQUEST_URI'];
+        return $protocol . "://" . $_SERVER['HTTP_HOST'] . $port . $this->uri;
     }
 
     /**
