@@ -15,6 +15,7 @@ Table of Contents
   *   [Custom Block Action](#custom-block)
   *   [Enable/Disable Captcha](#captcha-support)
   *   [Extracting Real IP Address](#real-ip)
+  *   [Custom URI](#custom-uri)
   *   [Filter Sensitive Headers](#sensitive-headers)
   *   [API Timeouts](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
@@ -212,6 +213,25 @@ $perimeterxConfig['custom_user_ip'] = function ($pxCtx)
     $ip = $headers['X-REAL-CLIENT-IP'];
 
     return $ip;
+};
+
+$px = Perimeterx::Instance($perimeterxConfig);
+$px->pxVerify();
+```
+
+#### <a name="custom-uri"></a>Custom URI
+
+The URI can be returned to the PerimeterX module using a custom user function defined on $perimeterxConfig.
+
+**default:** `$_SERVER['REQUEST_URI']`
+
+```php
+/**
+ * @param \Perimeterx\PerimeterxContext $pxCtx
+ */
+$perimeterxConfig['custom_uri'] = function ($pxCtx)
+{
+    return $_SERVER['HTTP_X_CUSTOM_URI'];
 };
 
 $px = Perimeterx::Instance($perimeterxConfig);
