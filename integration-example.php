@@ -30,6 +30,13 @@ $perimeterxConfig = [
      *      // user defined logic comes here
      * },
      */
+
+    /*
+     * 'custom_uri' => function ($pxCtx)
+     * {
+     *      return $_SERVER['HTTP_X_CUSTOM_URI'];
+     * },
+     */
 ];
 
 $px = Perimeterx::Instance($perimeterxConfig);
