@@ -149,6 +149,16 @@ class PerimeterxContext
      * @var string user's score.
      */
     protected $uuid;
+    
+    /**
+     * @var bool true if request was sent to S2S risk api
+     */
+    protected $is_made_s2s_api_call;
+    
+    /**
+     * @var string S2S api call HTTP error message
+     */
+    protected $s2s_http_error_msg;
 
     /**
      * @return string
@@ -196,6 +206,38 @@ class PerimeterxContext
     public function setUuid($uuid)
     {
         $this->uuid = $uuid;
+    }
+    
+    /**
+     * @param string $is_made_s2s_api_call
+     */
+    public function setIsMadeS2SRiskApiCall($is_made_s2s_api_call)
+    {
+        $this->is_made_s2s_api_call = $is_made_s2s_api_call;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIsMadeS2SRiskApiCall()
+    {
+        return $this->is_made_s2s_api_call;
+    }
+
+    /**
+     * @param string $s2s_http_error_msg
+     */
+    public function setS2SHttpErrorMsg($s2s_http_error_msg)
+    {
+        $this->s2s_http_error_msg = $s2s_http_error_msg;
+    }
+
+    /**
+     * @return string
+     */
+    public function getS2SHttpErrorMsg()
+    {
+        return $this->s2s_http_error_msg;
     }
 
     /**
