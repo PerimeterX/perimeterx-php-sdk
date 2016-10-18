@@ -106,6 +106,7 @@ class PerimeterxS2SValidator
     public function verify()
     {
         $response = json_decode($this->sendRiskRequest());
+        $this->pxCtx->setIsMadeS2SRiskApiCall(true);
         if (isset($response, $response->scores, $response->scores->non_human)) {
             $score = $response->scores->non_human;
             $this->pxCtx->setScore($score);
@@ -113,6 +114,9 @@ class PerimeterxS2SValidator
             if ($score >= $this->pxConfig['blocking_score']) {
                 $this->pxCtx->setBlockReason('s2s_high_score');
             }
+        }
+        if (isset($response, $response->error_msg)) {
+            $this->pxCtx->setS2SHttpErrorMsg($response->error_msg);
         }
     }
 }
