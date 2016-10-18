@@ -38,7 +38,7 @@ class PerimeterxHttpClient
             );
         } catch (RequestException $e) {
             error_log('http error ' . $e->getCode() . ' ' . $e->getMessage());
-            return null;
+            return json_encode(['error_msg' => $e->getMessage()]);
         }
 
         $rawBody = (string)$rawResponse->getBody();
