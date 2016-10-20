@@ -126,15 +126,9 @@ class PerimeterxCookieValidator
                 return false;
             }
 
-            /* hmac string with ip - for backward support */
-            $hmac_str_withip = $c_time . $c_score->a . $c_score->b . $c_uuid . $c_vid . $this->pxCtx->getIp() . $this->pxCtx->getUserAgent();
-            $hmac_withip = hash_hmac('sha256', $hmac_str_withip, $this->cookieSecret);
+            $is_cookie_ok = self::is_cookie_ok($cookie, $this->pxCtx, $this->cookieSecret);
 
-            /* hmac string with no ip */
-            $hmac_str_withoutip = $c_time . $c_score->a . $c_score->b . $c_uuid . $c_vid . $this->pxCtx->getUserAgent();
-            $hmac_withoutip = hash_hmac('sha256', $hmac_str_withoutip, $this->cookieSecret);
-
-            if ($hmac_withip == $c_hmac or $hmac_withoutip == $c_hmac) {
+            if ($is_cookie_ok) {
                 error_log('cookie ok');
                 $this->pxCtx->setScore($c_score->b);
                 return true;
@@ -149,5 +143,46 @@ class PerimeterxCookieValidator
             return false;
         }
 
+    }
+
+    static private function hmac_matches($hmac_str, $cookie_hmac, $cookieSecret)
+    {
+        global $hmac_matches_count;
+        $hmac_matches_count++;
+
+        $hmac = hash_hmac('sha256', $hmac_str, $cookieSecret);
+
+        if (function_exists('hash_equals')) {
+            return hash_equals($hmac, $cookie_hmac);
+        }
+
+        // @see http://php.net/manual/en/function.hash-equals.php#115635
+        if (strlen($hmac) != strlen($cookie_hmac)) {
+            return false;
+        } else {
+            $res = $hmac ^ $cookie_hmac;
+            $ret = false;
+            for ($i = strlen($res) - 1; $i >= 0; $i--) {
+                $ret |= ord($res[$i]);
+            }
+
+            return !$ret;
+        }
+    }
+
+    static public function is_cookie_ok($cookie, PerimeterxContext $pxCtx, $cookieSecret) {
+        $c_time = $cookie->t;
+        $c_score = $cookie->s;
+        $c_uuid = $cookie->u;
+        $c_vid = $cookie->v;
+        $c_hmac = $cookie->h;
+
+        /* hmac string with ip - for backward support */
+        $hmac_str_withip = $c_time . $c_score->a . $c_score->b . $c_uuid . $c_vid . $pxCtx->getIp() . $pxCtx->getUserAgent();
+
+        /* hmac string with no ip */
+        $hmac_str_withoutip = $c_time . $c_score->a . $c_score->b . $c_uuid . $c_vid . $pxCtx->getUserAgent();
+
+        return (self::hmac_matches($hmac_str_withoutip, $c_hmac, $cookieSecret) or self::hmac_matches($hmac_str_withip, $c_hmac, $cookieSecret));
     }
 }
