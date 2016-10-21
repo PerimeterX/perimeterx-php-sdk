@@ -28,7 +28,7 @@ Table of Contents
 <a name="dependencies"></a> Dependencies
 ----------------------------------------
 
--   [PHP >= v5.6](http://php.net/downloads.php)
+-   [PHP >= v5.5](http://php.net/downloads.php)
 -   [mcrypt](http://php.net/manual/en/book.mcrypt.php)
 
 
