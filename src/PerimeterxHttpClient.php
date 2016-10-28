@@ -14,11 +14,17 @@ class PerimeterxHttpClient
     protected $client;
 
     /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @param \GuzzleHttp\Client|null The Guzzle client.
      */
     public function __construct($config)
     {
         $this->client = new Client(['base_uri' => $config['perimeterx_server_host']]);
+        $this->logger = $config['logger'];
     }
 
     /**
@@ -30,14 +36,14 @@ class PerimeterxHttpClient
         try {
             $rawResponse = $this->client->request($method, $url,
                 [
-                'json' => $json, 
-                'headers' => $headers, 
+                'json' => $json,
+                'headers' => $headers,
                 'timeout' => $timeout,
                 'connect_timeout' => $connect_timeout
                 ]
             );
         } catch (RequestException $e) {
-            error_log('http error ' . $e->getCode() . ' ' . $e->getMessage());
+            $this->logger->error('http error ' . $e->getCode() . ' ' . $e->getMessage());
             return json_encode(['error_msg' => $e->getMessage()]);
         }
 

@@ -129,7 +129,7 @@ final class Perimeterx
             };
             return $this->handleVerification($pxCtx);
         } catch (\Exception $e) {
-            error_log('Uncaught exception while verifying perimiterx score' . $e->getCode() . ' ' . $e->getMessage());
+            $this->pxConfig['logger']->error('Uncaught exception while verifying perimeterx score' . $e->getCode() . ' ' . $e->getMessage());
             return 1;
         }
     }
