@@ -91,6 +91,10 @@ final class Perimeterx
                 'local_proxy' => false
             ], $pxConfig);
 
+            if (empty($this->pxConfig['logger'])) {
+                $this->pxConfig['logger'] = new PerimeterxLogger();
+            }
+
             $httpClient = new PerimeterxHttpClient($this->pxConfig);
             $this->pxConfig['http_client'] = $httpClient;
             $this->pxActivitiesClient = new PerimeterxActivitiesClient($this->pxConfig);
