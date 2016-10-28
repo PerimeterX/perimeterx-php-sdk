@@ -25,6 +25,8 @@
 
 namespace Perimeterx;
 
+use Psr\Log\LoggerInterface;
+
 final class Perimeterx
 {
     /**
@@ -68,6 +70,9 @@ final class Perimeterx
         }
         if (!isset($pxConfig['auth_token'])) {
             throw new PerimeterxException(PerimeterxException::$AUTH_TOKEN_MISSING);
+        }
+        if (isset($this->pxConfig['logger']) && !($this->pxConfig['logger'] instanceof LoggerInterface)) {
+            throw new PerimeterxException(PerimeterxException::$INVALID_LOGGER);
         }
         try {
             $this->pxConfig = array_merge([
