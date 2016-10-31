@@ -121,7 +121,7 @@ class PerimeterxCookieValidator
 
             $dataTimeSec = $c_time / 1000;
             if ($dataTimeSec < time()) {
-                $this->pxConfig['logger']->warning('cookie expired');
+                $this->pxConfig['logger']->info('cookie expired');
                 $this->pxCtx->setS2SCallReason('cookie_expired');
                 return false;
             }
