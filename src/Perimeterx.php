@@ -142,7 +142,7 @@ final class Perimeterx
     {
         $score = $pxCtx->getScore();
         if (isset($score) and $score >= $this->pxConfig['blocking_score']) {
-            $this->sendActivity('block', $pxCtx, ['block_uuid' => $pxCtx->getUuid(), 'block_score' => $pxCtx->getScore(), 'block_reason' => $pxCtx->getBlockReason(), 'module_version' => $this->pxConfig['sdk_name']]);
+            $this->pxActivitiesClient->sendToPerimeterx('block', $pxCtx, ['block_uuid' => $pxCtx->getUuid(), 'block_score' => $pxCtx->getScore(), 'block_reason' => $pxCtx->getBlockReason(), 'module_version' => $this->pxConfig['sdk_name']]);
             if (isset($this->pxConfig['custom_block_handler'])) {
                 $this->pxConfig['custom_block_handler']($pxCtx);
             } elseif (function_exists('pxCustomBlockHandler')) {
@@ -160,22 +160,8 @@ final class Perimeterx
                 die();
             }
         } else {
-            $this->sendActivity('page_requested', $pxCtx, ['module_version' => $this->pxConfig['sdk_name'], 'http_version' => $pxCtx->getHttpVersion(), 'http_method' => $pxCtx->getHttpMethod()]);
+            $this->pxActivitiesClient->sendToPerimeterx('page_requested', $pxCtx, ['module_version' => $this->pxConfig['sdk_name'], 'http_version' => $pxCtx->getHttpVersion(), 'http_method' => $pxCtx->getHttpMethod()]);
             return 1;
-        }
-    }
-
-    /**
-     * @param string            $activityType
-     * @param PerimeterxContext $pxCtx
-     * @param array             $details
-     */
-    private function sendActivity($activityType, $pxCtx, $details = [])
-    {
-        if (isset($this->pxConfig['custom_activity_handler'])) {
-            $this->pxConfig['custom_activity_handler']($activityType, $pxCtx, $details);
-        } else {
-            $this->pxActivitiesClient->sendToPerimeterx($activityType, $pxCtx, $details);
         }
     }
 }

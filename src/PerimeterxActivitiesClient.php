@@ -46,6 +46,10 @@ class PerimeterxActivitiesClient
      */
     public function sendToPerimeterx($activityType, $pxCtx, $details = [])
     {
+        if (isset($this->pxConfig['additional_activity_handler'])) {
+            $this->pxConfig['additional_activity_handler']($activityType, $pxCtx, $details);
+        }
+
         if ($activityType == 'page_requested' and !$this->pxConfig['send_page_activities']) {
             return;
         }

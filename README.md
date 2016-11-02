@@ -19,7 +19,7 @@ Table of Contents
   *   [Filter Sensitive Headers](#sensitive-headers)
   *   [API Timeouts](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
-  *   [Custom Page Activity Handler](#custom-page-activity-handler)
+  *   [Additional Page Activity Handler](#additional-page-activity-handler)
   *   [Logging](#logging)
   *   [Debug Mode](#debug-mode)
 -   [Contributing](#contributing)
@@ -301,11 +301,11 @@ $perimeterxConfig = [
 ]
 ```
 
-#### <a name="custom-page-activity-handler"></a> Custom Page Activity Handler
+#### <a name="additional-page-activity-handler"></a> Additional Page Activity Handler
 
-Setting a custom activity handler is done by setting 'custom_activity_handler' with a user function named on the '$perimeterxConfig'.
+Adding an additional activity handler is done by setting 'additional_activity_handler' with a user function named on the '$perimeterxConfig'. The 'additional_activity_handler' will be executed before sending the data to the PerimeterX portal.
 
-**default:** send activity to PerimeterX as controlled by '$perimeterxConfig'.
+**default:** only send activity to PerimeterX as controlled by '$perimeterxConfig'.
 
 ```php
 /**
@@ -313,7 +313,7 @@ Setting a custom activity handler is done by setting 'custom_activity_handler' w
  * @param PerimeterxContext $pxCtx
  * @param array             $details
  */
-$perimeterxConfig['custom_activity_handler'] = function ($activityType, $pxCtx, $details)
+$perimeterxConfig['additional_activity_handler'] = function ($activityType, $pxCtx, $details)
 {
     // user defined logic comes here
 };
@@ -332,7 +332,7 @@ $px->pxVerify();
  * @param PerimeterxContext $pxCtx
  * @param array             $details
  */
-$perimeterxConfig['custom_activity_handler'] = function ($activityType, $pxCtx, $details) use ($logger)
+$perimeterxConfig['additional_activity_handler'] = function ($activityType, $pxCtx, $details) use ($logger)
 {
     if ($activityType === 'block') {
         $logger->warning('PerimeterX {activityType} details', ['activityType' => $activityType, 'details' => $details]);
@@ -353,28 +353,9 @@ $px->pxVerify();
  * @param PerimeterxContext $pxCtx
  * @param array             $details
  */
-$perimeterxConfig['custom_activity_handler'] = function ($activityType, $pxCtx, $details) use ($statsd)
+$perimeterxConfig['additional_activity_handler'] = function ($activityType, $pxCtx, $details) use ($statsd)
 {
     $statsd->increment('perimeterx_activity.' . $activityType);
-};
-
-$px = Perimeterx::Instance($perimeterxConfig);
-$px->pxVerify();
-```
-
-**Send Activity to statsd & PerimeterX**
-
-```php
-/**
- * @param string            $activityType
- * @param PerimeterxContext $pxCtx
- * @param array             $details
- */
-$perimeterxConfig['custom_activity_handler'] = function ($activityType, $pxCtx, $details) use ($statsd, $pxActivitiesClient)
-{
-    $statsd->increment('perimeterx_activity.' . $activityType);
-
-    $pxActivitiesClient->sendToPerimeterx($activityType, $pxCtx, $details);
 };
 
 $px = Perimeterx::Instance($perimeterxConfig);

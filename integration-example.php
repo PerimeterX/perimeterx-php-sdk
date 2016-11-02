@@ -26,7 +26,7 @@ $perimeterxConfig = [
      */
 
     /*
-     * 'custom_activity_handler' => function ($activityType, $pxCtx, $details)
+     * 'additional_activity_handler' => function ($activityType, $pxCtx, $details)
      * {
      *      // user defined logic comes here
      * },
