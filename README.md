@@ -19,6 +19,7 @@ Table of Contents
   *   [Filter Sensitive Headers](#sensitive-headers)
   *   [API Timeouts](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
+  *   [Logging](#logging)
   *   [Debug Mode](#debug-mode)
 -   [Contributing](#contributing)
   *   [Tests](#tests)
@@ -297,6 +298,20 @@ amount requests blocked and API usage statistics.
 $perimeterxConfig = [
 	..
     'send_page_activities' => true
+    ..
+]
+```
+
+#### <a name="logging"></a> Logging
+
+Log messages via an implementation of `\Psr\Log\LoggerInterface` (see [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) for full interface specification). By default, an instance of `\Perimeterx\PerimeterxLogger` is used which will log all message via PHP's `error_log` function.
+
+**default:** `\Perimeterx\PerimeterxLogger` instance
+
+```php
+$perimeterxConfig = [
+    ..
+    'logger' => new \My\Psr\Log\ConcreteLogger()
     ..
 ]
 ```
