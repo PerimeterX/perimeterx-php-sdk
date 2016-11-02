@@ -103,7 +103,7 @@ class PerimeterxCookieValidator
             $c_hmac = $cookie->h;
 
             if (!isset($c_time, $c_score, $c_score->b, $c_uuid, $c_vid, $c_hmac)) {
-                error_log('invalid cookie');
+                $this->pxConfig['logger']->warning('invalid cookie');
                 $this->pxCtx->setS2SCallReason('cookie_decryption_failed');
                 return false;
             }
@@ -113,7 +113,7 @@ class PerimeterxCookieValidator
             $this->pxCtx->setUuid($c_uuid);
             $this->pxCtx->setVid($c_vid);
             if ($c_score->b >= $this->pxConfig['blocking_score']) {
-                error_log('cookie high score');
+                $this->pxConfig['logger']->info('cookie high score');
                 $this->pxCtx->setBlockReason('cookie_high_score');
                 $this->pxCtx->setScore($c_score->b);
                 return true;
@@ -121,7 +121,7 @@ class PerimeterxCookieValidator
 
             $dataTimeSec = $c_time / 1000;
             if ($dataTimeSec < time()) {
-                error_log('cookie expired');
+                $this->pxConfig['logger']->info('cookie expired');
                 $this->pxCtx->setS2SCallReason('cookie_expired');
                 return false;
             }
@@ -133,16 +133,16 @@ class PerimeterxCookieValidator
             $hmac_str_withoutip = $c_time . $c_score->a . $c_score->b . $c_uuid . $c_vid . $this->pxCtx->getUserAgent();
 
             if ($this->hmac_matches($hmac_str_withoutip, $c_hmac, $this->cookieSecret) or $this->hmac_matches($hmac_str_withip, $c_hmac, $this->cookieSecret)) {
-                error_log('cookie ok');
+                $this->pxConfig['logger']->info('cookie ok');
                 $this->pxCtx->setScore($c_score->b);
                 return true;
             } else {
-                error_log('cookie invalid hmac');
+                $this->pxConfig['logger']->warning('cookie invalid hmac');
                 $this->pxCtx->setS2SCallReason('cookie_validation_failed');
                 return false;
             }
         } catch (\Exception $e) {
-            error_log('exception while verifying cookie');
+            $this->pxConfig['logger']->error('exception while verifying cookie');
             $this->pxCtx->setS2SCallReason('cookie_decryption_failed');
             return false;
         }

@@ -14,7 +14,8 @@
   "type": "library",
   "require": {
     "guzzlehttp/guzzle": "~6.0",
-    "php": ">=5.5"
+    "php": ">=5.5",
+    "psr/log": "^1.0"
   },
   "config": {
     "optimize-autoloader": true

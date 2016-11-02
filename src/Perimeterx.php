@@ -25,6 +25,8 @@
 
 namespace Perimeterx;
 
+use Psr\Log\LoggerInterface;
+
 final class Perimeterx
 {
     /**
@@ -69,6 +71,9 @@ final class Perimeterx
         if (!isset($pxConfig['auth_token'])) {
             throw new PerimeterxException(PerimeterxException::$AUTH_TOKEN_MISSING);
         }
+        if (isset($this->pxConfig['logger']) && !($this->pxConfig['logger'] instanceof LoggerInterface)) {
+            throw new PerimeterxException(PerimeterxException::$INVALID_LOGGER);
+        }
         try {
             $this->pxConfig = array_merge([
                 'app_id' => null,
@@ -90,6 +95,10 @@ final class Perimeterx
                 'perimeterx_server_host' => 'https://sapi.perimeterx.net',
                 'local_proxy' => false
             ], $pxConfig);
+
+            if (empty($this->pxConfig['logger'])) {
+                $this->pxConfig['logger'] = new PerimeterxLogger();
+            }
 
             $httpClient = new PerimeterxHttpClient($this->pxConfig);
             $this->pxConfig['http_client'] = $httpClient;
@@ -120,7 +129,7 @@ final class Perimeterx
             };
             return $this->handleVerification($pxCtx);
         } catch (\Exception $e) {
-            error_log('Uncaught exception while verifying perimiterx score' . $e->getCode() . ' ' . $e->getMessage());
+            $this->pxConfig['logger']->error('Uncaught exception while verifying perimeterx score' . $e->getCode() . ' ' . $e->getMessage());
             return 1;
         }
     }
