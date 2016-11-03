@@ -19,6 +19,7 @@ Table of Contents
   *   [Filter Sensitive Headers](#sensitive-headers)
   *   [API Timeouts](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
+  *   [Additional Page Activity Handler](#additional-page-activity-handler)
   *   [Logging](#logging)
   *   [Debug Mode](#debug-mode)
 -   [Contributing](#contributing)
@@ -283,8 +284,6 @@ $perimeterxConfig = [
 ]
 ```
 
-
-
 #### <a name="send-page-activities"></a> Send Page Activities
 
 Boolean flag to enable or disable sending activities and metrics to
@@ -300,6 +299,67 @@ $perimeterxConfig = [
     'send_page_activities' => true
     ..
 ]
+```
+
+#### <a name="additional-page-activity-handler"></a> Additional Page Activity Handler
+
+Adding an additional activity handler is done by setting 'additional_activity_handler' with a user function named on the '$perimeterxConfig'. The 'additional_activity_handler' will be executed before sending the data to the PerimeterX portal.
+
+**default:** only send activity to PerimeterX as controlled by '$perimeterxConfig'.
+
+```php
+/**
+ * @param string            $activityType
+ * @param PerimeterxContext $pxCtx
+ * @param array             $details
+ */
+$perimeterxConfig['additional_activity_handler'] = function ($activityType, $pxCtx, $details)
+{
+    // user defined logic comes here
+};
+
+$px = Perimeterx::Instance($perimeterxConfig);
+$px->pxVerify();
+```
+
+###### Examples
+
+**Log Activity**
+
+```php
+/**
+ * @param string            $activityType
+ * @param PerimeterxContext $pxCtx
+ * @param array             $details
+ */
+$perimeterxConfig['additional_activity_handler'] = function ($activityType, $pxCtx, $details) use ($logger)
+{
+    if ($activityType === 'block') {
+        $logger->warning('PerimeterX {activityType} details', ['activityType' => $activityType, 'details' => $details]);
+    } else {
+        $logger->info('PerimeterX {activityType} details', ['activityType' => $activityType, 'details' => $details]);
+    }
+};
+
+$px = Perimeterx::Instance($perimeterxConfig);
+$px->pxVerify();
+```
+
+**Send Activity to statsd**
+
+```php
+/**
+ * @param string            $activityType
+ * @param PerimeterxContext $pxCtx
+ * @param array             $details
+ */
+$perimeterxConfig['additional_activity_handler'] = function ($activityType, $pxCtx, $details) use ($statsd)
+{
+    $statsd->increment('perimeterx_activity.' . $activityType);
+};
+
+$px = Perimeterx::Instance($perimeterxConfig);
+$px->pxVerify();
 ```
 
 #### <a name="logging"></a> Logging
