@@ -15,6 +15,7 @@ Block handler should extract some data from pxContext and send it to the block p
 
 1. URL - the original URL that the user tried to reach using `$pxContext->getURI()`.
 2. VID - using `$pxContext->getVid()`.
+3. UUID - using `$pxContest->getUuid()`.
 
 The block handler should redirect the user to the block page and send the collected data with the request for instance. One way of doing so is to add query params to the block page url.
 
@@ -24,7 +25,8 @@ The block handler should redirect the user to the block page and send the collec
 $pxConfig['custom_block_handler'] = function($pxCtx) {
     $vid = $pxCtx->getVid();
     $url = $pxCtx->getURI();
-    $new_url = '/block.html?vid='.$vid.'&url='.$url;
+    $uuid = $pxCtx->getUuid();
+    $new_url = '/block.html?vid='.$vid.'&url='.$url.'uuid='.$uuid;
     header('Location: '.$new_url);
     header('Status: 403');
     die();

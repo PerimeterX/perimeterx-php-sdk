@@ -19,7 +19,8 @@ $pxConfig = [
 $pxConfig['custom_block_handler'] = function($pxCtx) {
     $vid = $pxCtx->getVid();
     $full_url = $pxCtx->getURI();
-    $new_url = '/block.html?vid='.$vid.'&url='.$full_url;
+    $uuid = $pxCtx->getUuid();
+    $new_url = '/block.html?vid='.$vid.'&url='.$full_url.'&uuid='.uuid;
     header('Location: '.$new_url);
     header('Status: 403');
     die();

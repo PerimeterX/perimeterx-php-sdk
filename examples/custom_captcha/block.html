@@ -21,6 +21,9 @@
             if (!results[2]) return '';
             return decodeURIComponent(results[2].replace(/\+/g, " "));
         }
+
+        var blockReference = document.getElementById('blockreference');
+        blockReference.innerHTML = 'Block reference: ' + getQueryString('uuid');
     </script>
 
 </head>
@@ -28,6 +31,9 @@
 <h1>Please solve the Captcha to prove you are not a bot</h1>
 <div class="g-recaptcha" data-sitekey="6Lcj-R8TAAAAABs3FrRPuQhLMbp5QrHsHufzLf7b" data-callback="handleCaptcha"
      data-theme="dark"></div>
+
+<div id="blockreference"></div>
+
 <script type="text/javascript">
     (function () {
         window._pxAppId = 'PXb8brAzQ1';
