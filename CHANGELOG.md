@@ -15,4 +15,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed dependencies
 - Updated Documentation
 
+
+##[1.3.15] - 2016-10-20
+### Added
+- `Authorization` header to activity api calls
+
+### Modified
+- Updated composer version to 1.3.15
+
 [2.0.0]: https://github.com/PerimeterX/perimeterx-php-sdk/releases/tag/v2.0.0
+[1.3.15]: https://github.com/PerimeterX/perimeterx-php-sdk/releases/tag/v1.3.15
