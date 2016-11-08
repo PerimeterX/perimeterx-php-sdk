@@ -1,9 +1,9 @@
-# Implementing captcah block page
+# Implementing captcha block page
 
 In order to create customize captcha block page that will work with PerimeterX Captcha API you should follow the next guidlines: 
 
 * [Custom block handler](#blockhandler): Implementing custom block handler using `perimeterx-php-sdk` that will extract all relevant data.
-* [reCaptcha](#recaptcha): Adding reCaptcha to your block page.
+* [reCaptcha](#recaptcha): Adding `reCaptcha` to your block page.
 * [JS captcha handler](#captchahandler): Implementing reCaptcha function that will handle captcha API response.
 * [PerimeterX Snippet](#pxsnippet): Adding PerimeterX snippet to the block page.
 
@@ -13,12 +13,12 @@ In order to create customize captcha block page that will work with PerimeterX C
 
 Block handler should extract some data from pxContext and send it to the block page:
 
-1. URL - the original URL that the user tried to reach using `$pxContext-> getURI()`.
+1. URL - the original URL that the user tried to reach using `$pxContext->getURI()`.
 2. VID - using `$pxContext->getVid()`.
 
 The block handler should redirect the user to the block page and send the collected data with the request for instance. One way of doing so is to add query params to the block page url.
 
-##### Example:
+#####Implementation:
 
 ```
 $pxConfig['custom_block_handler'] = function($pxCtx) {
