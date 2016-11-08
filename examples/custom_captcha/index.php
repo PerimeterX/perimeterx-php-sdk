@@ -1,7 +1,6 @@
-<!DOCKTYPE html>
 <html>
-<head>
-
+<head><head>
+<body>
     <h1>Sample site</h1>
 
 <?php
