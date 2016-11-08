@@ -383,7 +383,7 @@ $perimeterxConfig = [
 
 Enables debug logging mode.
 
-**default:** false
+**Default:** false
 
 ```php
 $perimeterxConfig = [
@@ -394,3 +394,31 @@ $perimeterxConfig = [
 ```
 <a name="contributing"></a> Contributing
 ----------------------------------------
+
+The following steps are welcome when contributing to our project.
+###Fork/Clone
+First and foremost, [Create a fork](https://guides.github.com/activities/forking/) of the repository, and clone it locally.
+Create a branch on your fork, preferably using a self descriptive branch name.
+
+###Code/Run
+Code your way out of your mess, and help improve our project by implementing missing features, adding capabilites or fixing bugs.
+
+To run the code, simply follow the steps in the [installation guide](#installation). Grab the keys from the PerimeterX Portal, and try refreshing your page several times continously. If no default behaviours have been overriden, you should see the PerimeterX block page. Solve the CAPTCHA to clean yourself and start fresh again.
+
+Feel free to check out the [Example App](https://phpsdk-sample-app.perimeterx.com), to have a feel of the project.
+
+###Test
+> Tests for this project are written using PHPUnit.
+
+**Dont forget to test**. The project relies heavily on tests, thus ensuring each user has the same experience, and no new features break the code.
+Before you create any pull request, make sure your project has passed all tests, and if any new features require it, write your own.
+
+To run any of the tests in the available suite, first open the ```bootstrap.php.dist``` file, and change the values according to the in-file insturctions.
+Then, run the following command to execute a specific test (e.g. ```phpunit PerimeterxCookieTest```)
+
+###Pull Request
+After you have completed the process, create a pull request to the Upstream repository. Please provide a complete and thorough description explaining the changes. Remember this code has to be read by our maintainers, so keep it simple, smart and accurate.
+
+###Thanks
+After all, you are helping us by contributing to this project, and we want to thank you for it.
+We highly appreciate your time invested in contributing to our project, and are glad to have people like you - kind helpers.
