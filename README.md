@@ -127,8 +127,8 @@ $perimeterxConfig['custom_block_handler'] = function ($pxCtx)
     $full_url = $pxCtx->getFullUrl();
 
     $html = '<div>Access to ' . $full_url . ' has been blocked.</div> ' +
-                  '<div>Block reference - ' . $pxBlockUuid . ' </div> ' +
-                  '<div>Block score - ' . $pxBlockScore . '</div>';
+                  '<div>Block reference - ' . $block_uuid . ' </div> ' +
+                  '<div>Block score - ' . $block_score . '</div>';
 
 	//echo $html;
 	header("Status: 403");
