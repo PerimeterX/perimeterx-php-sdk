@@ -405,7 +405,7 @@ Code your way out of your mess, and help improve our project by implementing mis
 
 To run the code, simply follow the steps in the [installation guide](#installation). Grab the keys from the PerimeterX Portal, and try refreshing your page several times continously. If no default behaviours have been overriden, you should see the PerimeterX block page. Solve the CAPTCHA to clean yourself and start fresh again.
 
-Feel free to check out the [Example App](https://phpsdk-sample-app.perimeterx.com), to have a feel of the project.
+Feel free to check out the [Example App](https://github.com/PerimeterX/perimeterx-php-sdk/blob/master/examples/integration-example.php), to have a feel of the project.
 
 ###Test
 > Tests for this project are written using PHPUnit.
