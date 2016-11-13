@@ -407,14 +407,14 @@ To run the code, simply follow the steps in the [installation guide](#installati
 
 Feel free to check out the [Example App](https://github.com/PerimeterX/perimeterx-php-sdk/blob/master/examples/integration-example.php), to have a feel of the project.
 
-###Test
+###<a name="tests"></a>Test
 > Tests for this project are written using PHPUnit.
 
 **Dont forget to test**. The project relies heavily on tests, thus ensuring each user has the same experience, and no new features break the code.
 Before you create any pull request, make sure your project has passed all tests, and if any new features require it, write your own.
 
-To run any of the tests in the available suite, first open the ```bootstrap.php.dist``` file, and change the values according to the in-file insturctions.
-Then, run the following command to execute a specific test (e.g. ```phpunit PerimeterxCookieTest```)
+To run any of the tests in the available suite, first open the ```bootstrap.php.dist``` file, and change the values according to the in-file insturctions. Then, rename the `bootstrap.php.dist` to `bootstrap.php`.
+Finally, run the `phpunit` command, or `phpunit <testName>` to execute a specific test (e.g. ```phpunit PerimeterxCookieTest```)
 
 ###Pull Request
 After you have completed the process, create a pull request to the Upstream repository. Please provide a complete and thorough description explaining the changes. Remember this code has to be read by our maintainers, so keep it simple, smart and accurate.
