@@ -57,6 +57,7 @@ class PerimeterxCookieValidatorTest extends TestCase
 
     public function testMissingCookieContentsThrowsException() {
 
+        $cookie_time = (time() + 1000) * 1000;
         $cookie_uuid = self::COOKIE_UUID;
         $cookie_vid = self::COOKIE_VID;
         $cookie_hmac = 'something';
@@ -64,20 +65,14 @@ class PerimeterxCookieValidatorTest extends TestCase
         $cookie_score_b = 0;
 
         $pxCookie = $this->encodeCookie(
-            [
-                // missing `t` value on purpose to cause an exception on cookie->t
-                'v' => $cookie_uuid,
-                'u' => $cookie_vid,
-                'h' => $cookie_hmac,
-                's' => [
-                    'a' => $cookie_score_a,
-                    'b' => $cookie_score_b,
-                ],
-            ]
+            $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b)
         );
         $userAgent = 'Mozilla';
         $ip = '10.10.10.10';
         $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip);
+        $pxCtx->expects($this->any())
+            ->method('getIp')
+            ->willThrowException(new \Exception('inject an exception, not likely to come from getIp however'));
 
         $pxConfig = [
             'encryption_enabled' => false,
@@ -89,7 +84,15 @@ class PerimeterxCookieValidatorTest extends TestCase
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
 
         $this->assertFalse($v->verify());
-        $this->assertPxContext($pxCtx, null, null, null, null, 'cookie_decryption_failed', null);
+        $this->assertPxContext(
+            $pxCtx,
+            $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b),
+            $cookie_uuid,
+            $cookie_vid,
+            $cookie_score_b,
+            'cookie_decryption_failed',
+            null
+        );
     }
 
     public function testInvalidCookieContents() {
