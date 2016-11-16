@@ -46,7 +46,7 @@ class PerimeterxCookieValidatorTest extends TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger(),
+            'logger' => $this->getMockLogger('warning', 'invalid cookie'),
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
