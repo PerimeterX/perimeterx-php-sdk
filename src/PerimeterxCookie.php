@@ -117,6 +117,16 @@ class PerimeterxCookie
     }
 
     /**
+     * Checks that the cookie was deserialized succcessfully, has not expired, and is secure
+     *
+     * @return bool
+     */
+    public function isValid()
+    {
+        return $this->deserialize() && !$this->isExpired() && $this->isSecure();
+    }
+
+    /**
      * Deserializes an encrypted and/or encoded cookie string.
      *
      * This must be called before using an instance.
@@ -125,6 +135,11 @@ class PerimeterxCookie
      */
     public function deserialize()
     {
+        // only deserialize once
+        if ($this->decodedCookie !== null) {
+            return true;
+        }
+
         if ($this->pxConfig['encryption_enabled']) {
             $cookie = $this->decrypt();
         } else {

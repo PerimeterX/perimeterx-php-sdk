@@ -164,4 +164,27 @@ final class Perimeterx
             return 1;
         }
     }
+
+    public function pxReset()
+    {
+        try {
+            if (!$this->pxConfig['module_enabled']) {
+                return 1;
+            }
+
+            $pxCtx = new PerimeterxContext($this->pxConfig);
+
+            $cookie = New PerimeterxCookie($pxCtx, $this->pxConfig);
+            if ($cookie->isValid()) {
+                $pxCtx->setVid($cookie->getVid());
+            }
+
+            $client = new PerimeterxResetClient($pxCtx, $this->pxConfig);
+            $client->sendResetRequest();
+        } catch (\Exception $e) {
+            $this->pxConfig['logger']->error('Uncaught exception while resetting perimeterx score' . $e->getCode() . ' ' . $e->getMessage());
+
+            return 1;
+        }
+    }
 }
