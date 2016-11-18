@@ -34,6 +34,14 @@ class PerimeterxHttpClient
     public function send($url, $method, $json, $headers, $timeout = 0, $connect_timeout = 0)
     {
         try {
+            // ensure incoming array is UTF-8 encoded to avoid JSON_ERROR_UTF8 errors
+            array_walk_recursive(
+                $json,
+                function (&$value) {
+                    $value = utf8_encode($value);
+                }
+            );
+
             $rawResponse = $this->client->request($method, $url,
                 [
                 'json' => $json,
