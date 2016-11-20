@@ -14,53 +14,37 @@ class PerimeterxHttpClient
     protected $client;
 
     /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @param \GuzzleHttp\Client|null The Guzzle client.
      */
-    public function __construct(Client $client = null)
+    public function __construct($config)
     {
-        $this->client = $client ?: new Client(['base_uri' => 'https://sapi.perimeterx.net']);
+        $this->client = new Client(['base_uri' => $config['perimeterx_server_host']]);
+        $this->logger = $config['logger'];
     }
 
     /**
      * @inheritdoc
      * @return string
      */
-    function sendAsync($json, $token, $local_proxy)
-    {
-        if ($local_proxy) {
-            $host = "localhost";
-            $port = 8095;
-            $fp = fsockopen("tcp://" . $host, $port, $errno, $errstr, 1);
-        } else {
-            $host = "sapi.perimeterx.net";
-            $port = 443;
-            $fp = fsockopen("ssl://" . $host, $port, $errno, $errstr, 1);
-        }
-
-        $out = "POST /api/v1/risk/ HTTP/1.1\r\n";
-        $out .= "Content-Type: application/json\r\n";
-        $out .= "Host: sapi.perimeterx.net\r\n";
-        $out .= "Content-Length: " . strlen($json) . "\r\n";
-        $out .= "Authorization: Bearer " . $token . "\r\n";
-        $out .= "Connection: Close\r\n\r\n";
-        $out .= $json;
-
-        fwrite($fp, $out);
-        fclose($fp);
-        return true;
-    }
-
-    /**
-     * @inheritdoc
-     * @return string
-     */
-    public function send($url, $method, $json, $headers, $timeout = 0)
+    public function send($url, $method, $json, $headers, $timeout = 0, $connect_timeout = 0)
     {
         try {
-            $rawResponse = $this->client->request($method, $url, ['json' => $json, 'headers' => $headers, 'timeout' => $timeout]);
+            $rawResponse = $this->client->request($method, $url,
+                [
+                'json' => $json,
+                'headers' => $headers,
+                'timeout' => $timeout,
+                'connect_timeout' => $connect_timeout
+                ]
+            );
         } catch (RequestException $e) {
-            error_log('http error ' . $e->getCode() . ' ' . $e->getMessage());
-            return null;
+            $this->logger->error('http error ' . $e->getCode() . ' ' . $e->getMessage());
+            return json_encode(['error_msg' => $e->getMessage()]);
         }
 
         $rawBody = (string)$rawResponse->getBody();

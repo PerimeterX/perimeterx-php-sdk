@@ -2,47 +2,54 @@
 
 namespace Perimeterx;
 
-function pp($arr)
-{
-    $retStr = '<ul>';
-    if (is_array($arr)) {
-        foreach ($arr as $key => $val) {
-            if (is_array($val)) {
-                $retStr .= '<li>' . $key . ' => ' . pp($val) . '</li>';
-            } else {
-                $retStr .= '<li>' . $key . ' => ' . $val . '</li>';
-            }
-        }
-    }
-    $retStr .= '</ul>';
-    return $retStr;
-}
-
 class PerimeterxContext
 {
+    /**
+     * @param $pxConfig array - perimeterx configurations
+     */
     public function __construct($pxConfig)
     {
         if (isset($_SERVER['HTTP_COOKIE'])) {
             foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
-                list($k, $v) = explode('=', $rawcookie, 2);
-                if ($k == '_px') {
-                    $this->px_cookie = $v;
-                }
-                if ($k == '_pxCaptcha') {
-                    $this->px_captcha = $v;
+                if (!empty($rawcookie) && strpos($rawcookie, '=') !== false) {
+                    list($k, $v) = explode('=', $rawcookie, 2);
+                    if ($k == '_px') {
+                        $this->px_cookie = $v;
+                    }
+                    if ($k == '_pxCaptcha') {
+                        $this->px_captcha = $v;
+                    }
                 }
             }
         }
 
         $this->start_time = microtime(true);
-        $this->headers = getallheaders();
-        $this->hostname = $_SERVER['SERVER_NAME'];
-        $this->userAgent = $_SERVER['HTTP_USER_AGENT'];
-        $this->uri = $_SERVER['REQUEST_URI'];
+        if (function_exists('getallheaders')) {
+            $this->headers = getallheaders();
+        } else {
+            $this->headers = [];
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $this->headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
+            }
+        }
+
+        $this->hostname = $_SERVER['HTTP_HOST'];
+        // User Agent isn't always sent by bots so handle it gracefully.
+        $this->userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+        if (isset($pxConfig['custom_uri'])) {
+            $this->uri = $pxConfig['custom_uri']($this);
+        } else {
+            $this->uri = $_SERVER['REQUEST_URI'];
+        }
         $this->full_url = $this->selfURL();
         $this->score = 0;
+
         if (isset($pxConfig['custom_user_ip'])) {
             $this->ip = $pxConfig['custom_user_ip']($this);
+        } elseif (function_exists('pxCustomUserIP')) {
+            call_user_func('pxCustomUserIP', $this);
         } else {
             $this->ip = $_SERVER['REMOTE_ADDR'];
         }
@@ -60,6 +67,11 @@ class PerimeterxContext
      * @var string perimeterx risk cookie.
      */
     protected $px_cookie;
+
+    /**
+     * @var string perimeterx risk cookie.
+     */
+    protected $decoded_px_cookie;
 
     /**
      * @var string perimeterx captcha cookie.
@@ -137,6 +149,16 @@ class PerimeterxContext
      * @var string user's score.
      */
     protected $uuid;
+    
+    /**
+     * @var bool true if request was sent to S2S risk api
+     */
+    protected $is_made_s2s_api_call;
+    
+    /**
+     * @var string S2S api call HTTP error message
+     */
+    protected $s2s_http_error_msg;
 
     /**
      * @return string
@@ -151,7 +173,7 @@ class PerimeterxContext
      */
     public function getBlockReason()
     {
-        return $this->vid;
+        return $this->block_reason;
     }
 
     /**
@@ -161,6 +183,7 @@ class PerimeterxContext
     {
         $this->ip = $ip;
     }
+
     /**
      * @param string $vid
      */
@@ -183,6 +206,38 @@ class PerimeterxContext
     public function setUuid($uuid)
     {
         $this->uuid = $uuid;
+    }
+    
+    /**
+     * @param string $is_made_s2s_api_call
+     */
+    public function setIsMadeS2SRiskApiCall($is_made_s2s_api_call)
+    {
+        $this->is_made_s2s_api_call = $is_made_s2s_api_call;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIsMadeS2SRiskApiCall()
+    {
+        return $this->is_made_s2s_api_call;
+    }
+
+    /**
+     * @param string $s2s_http_error_msg
+     */
+    public function setS2SHttpErrorMsg($s2s_http_error_msg)
+    {
+        $this->s2s_http_error_msg = $s2s_http_error_msg;
+    }
+
+    /**
+     * @return string
+     */
+    public function getS2SHttpErrorMsg()
+    {
+        return $this->s2s_http_error_msg;
     }
 
     /**
@@ -298,17 +353,29 @@ class PerimeterxContext
         $this->px_captcha = $px_captcha;
     }
 
+    /**
+     * @return string
+     */
+    public function getDecodedCookie()
+    {
+        return $this->decoded_px_cookie;
+    }
+
+    /**
+     * @param string $cookie
+     */
+    public function setDecodedCookie($cookie)
+    {
+        $this->decoded_px_cookie = $cookie;
+    }
+
     private function selfURL()
     {
-        function strleft($s1, $s2)
-        {
-            return substr($s1, 0, strpos($s1, $s2));
-        }
-
         $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
-        $protocol = strleft(strtolower($_SERVER["SERVER_PROTOCOL"]), "/") . $s;
+        $l = strtolower($_SERVER["SERVER_PROTOCOL"]);
+        $protocol = substr($l, 0, strpos($l, "/")) . $s;
         $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
-        return $protocol . "://" . $_SERVER['SERVER_NAME'] . $port . $_SERVER['REQUEST_URI'];
+        return $protocol . "://" . $_SERVER['HTTP_HOST'] . $port . $this->uri;
     }
 
     /**

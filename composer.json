@@ -1,7 +1,7 @@
 {
   "name": "perimeterx/php-sdk",
   "description": "PerimeterX SDK for PHP",
-  "version" : "1.2.3",
+  "version" : "2.0.0",
   "keywords": [
     "perimeterx",
     "websecurity",
@@ -14,7 +14,8 @@
   "type": "library",
   "require": {
     "guzzlehttp/guzzle": "~6.0",
-    "php": ">=5.5"
+    "php": ">=5.5",
+    "psr/log": "^1.0.2"
   },
   "config": {
     "optimize-autoloader": true
@@ -25,10 +26,11 @@
     }
   },
   "require-dev": {
+    "phpunit/phpunit": "4.8.*"
   },
   "autoload-dev": {
     "psr-4": {
-      "Facebook\\Tests\\": "tests/"
+      "Perimeterx\\Tests\\": "tests/"
     }
   }
 }
