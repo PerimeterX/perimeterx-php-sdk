@@ -1,23 +1,23 @@
 # Implementing captcha block page
 
-In order to create customize captcha block page that will work with PerimeterX Captcha API you should follow the next guidlines: 
+In order to create a customized CAPTCHA block page, that will work with PerimeterX Captcha API, follow these guidlines: 
 
-* [Custom block handler](#blockhandler): Implementing custom block handler using `perimeterx-php-sdk` that will extract all relevant data.
-* [reCaptcha](#recaptcha): Adding `reCaptcha` to your block page.
-* [JS captcha handler](#captchahandler): Implementing reCaptcha function that will handle captcha API response.
-* [PerimeterX Snippet](#pxsnippet): Adding PerimeterX snippet to the block page.
+* [Custom block handler](#blockhandler): Implementing a custom block handler using `perimeterx-php-sdk` that will extract all relevant data.
+* [reCAPTCHA](#recaptcha): Adding a `reCaptcha` to your block page.
+* [JS CAPTCHA handler](#captchahandler): Implementing a reCAPTCHA function that will handle CAPTCHA API response.
+* [PerimeterX Snippet](#pxsnippet): Adding the PerimeterX snippet to the block page.
 
 
 <a name="blockhandler"></a>
 ### Custom block handler
 
-Block handler should extract some data from pxContext and send it to the block page:
+A Block handler should extract data from the pxContext object and send that data to the block page:
 
 1. URL - the original URL that the user tried to reach using `$pxContext->getURI()`.
 2. VID - using `$pxContext->getVid()`.
 3. UUID - using `$pxContest->getUuid()`.
 
-The block handler should redirect the user to the block page and send the collected data with the request for instance. One way of doing so is to add query params to the block page url.
+The block handler function should redirect the user to the block page and send the collected data with the a request for an instance. One way of doing so is to add query parameters to the block page URI.
 
 #####Implementation:
 
@@ -34,25 +34,25 @@ $pxConfig['custom_block_handler'] = function($pxCtx) {
 ```
 
 <a name="recaptcha"></a>
-### reCaptcha
+### reCAPTCHA
 * Add the following script to your <head> section:
 
 `<script src="https://www.google.com/recaptcha/api.js"></script>`
 
-* Add the following div inside the page `<body>` section:
+* Add the following div inside the page's `<body>` section:
 
 ```
 <div class="g-recaptcha" data-sitekey="6Lcj-R8TAAAAABs3FrRPuQhLMbp5QrHsHufzLf7b" data-callback="handleCaptcha" data-theme="dark"></div>
 ```
 
-Note the the `callback` attribute should match the name of the captcha handler described in the next section).
+Note the the `callback` attribute should match the name of the CAPTCHA handler described in the next section).
 
 <a name="captchahandler"></a>
-### JS Captcha Handler
+### JS CAPTCHA Handler
 
-Once the captcha is solved this handler will be triggered.
+Once the CAPTCHA is solved, this handler will be triggered.
 
-Copy this functions to your block page `<head>` section:
+Copy this functions to your block page's `<head>` section:
 
 ```javascript
 function handleCaptcha(response) {
