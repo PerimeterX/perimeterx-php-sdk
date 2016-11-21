@@ -108,6 +108,13 @@ class PerimeterxCookieValidator
                 return false;
             }
 
+            $dataTimeSec = $c_time / 1000;
+            if ($dataTimeSec < time()) {
+                $this->pxConfig['logger']->info('cookie expired');
+                $this->pxCtx->setS2SCallReason('cookie_expired');
+                return false;
+            }
+
             $this->pxCtx->setDecodedCookie($cookie);
             $this->pxCtx->setScore($c_score->b);
             $this->pxCtx->setUuid($c_uuid);
@@ -118,13 +125,6 @@ class PerimeterxCookieValidator
                 $this->pxCtx->setScore($c_score->b);
                 return true;
             };
-
-            $dataTimeSec = $c_time / 1000;
-            if ($dataTimeSec < time()) {
-                $this->pxConfig['logger']->info('cookie expired');
-                $this->pxCtx->setS2SCallReason('cookie_expired');
-                return false;
-            }
 
             /* hmac string with ip - for backward support */
             $hmac_str_withip = $c_time . $c_score->a . $c_score->b . $c_uuid . $c_vid . $this->pxCtx->getIp() . $this->pxCtx->getUserAgent();
