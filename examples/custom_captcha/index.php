@@ -38,19 +38,19 @@ $px->pxVerify();
             var p = document.getElementsByTagName('script')[0],
                     s = document.createElement('script');
             s.async = 1;
-            s.src = '//client.perimeterx.net/PXb8brAzQ1/main.min.js';
+            s.src = '//client.perimeterx.net/<pxAppId>/main.min.js';
             p.parentNode.insertBefore(s, p);
         }());
 
     </script>
     <div style="position:fixed; top:0; left:0;" width="1" height="1">
-        <img src="//collector-PXb8brAzQ1.perimeterx.net/api/v1/collector/pxPixel.gif?appId=PXb8brAzQ1">
+        <img src="//collector-<pxAppId>.perimeterx.net/api/v1/collector/pxPixel.gif?appId=<pxAppId>">
         <!-- With custom parameters: -->
-        <!--<img src="//collector-PXb8brAzQ1.perimeterx.net/api/v1/collector/pxPixel.gif?appId=PXb8brAzQ1&p1=VALUE&p2=VALUE2&p3=VALUE3">-->
+        <!--<img src="//collector-<pxAppId>.perimeterx.net/api/v1/collector/pxPixel.gif?appId=<pxAppId>&p1=VALUE&p2=VALUE2&p3=VALUE3">-->
     </div>
     <noscript>
         <div style="position:fixed; top:0; left:0;" width="1" height="1">
-            <img src="//collector-PXb8brAzQ1.perimeterx.net/api/v1/collector/noScript.gif?appId=PXb8brAzQ1">
+            <img src="//collector-<pxAppId>.perimeterx.net/api/v1/collector/noScript.gif?appId=<pxAppId>">
         </div>
     </noscript>
     </body>
