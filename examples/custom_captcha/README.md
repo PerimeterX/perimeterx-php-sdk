@@ -17,7 +17,7 @@ A Block handler should extract data from the pxContext object and send that data
 2. VID - using `$pxContext->getVid()`.
 3. UUID - using `$pxContest->getUuid()`.
 
-The block handler function should redirect the user to the block page and send the collected data with the a request for an instance. One way of doing so is to add query parameters to the block page URI.
+The block handler function should redirect the user to the block page and send the collected data with a request for an instance. One way of doing so is to add query parameters to the block page URI.
 
 #####Implementation:
 
@@ -52,7 +52,7 @@ Note the the `callback` attribute should match the name of the CAPTCHA handler d
 
 Once the CAPTCHA is solved, this handler will be triggered.
 
-Copy this functions to your block page's `<head>` section:
+Copy these functions to your block page's `<head>` section:
 
 ```javascript
 function handleCaptcha(response) {
