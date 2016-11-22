@@ -165,6 +165,9 @@ final class Perimeterx
         }
     }
 
+    /**
+     * Public function that contact PerimeterX servers and reset user's score from cache. can be used as part of internal flows
+     */
     public function pxReset()
     {
         try {
@@ -173,8 +176,7 @@ final class Perimeterx
             }
 
             $pxCtx = new PerimeterxContext($this->pxConfig);
-
-            $cookie = New PerimeterxCookie($pxCtx, $this->pxConfig);
+            $cookie = new PerimeterxCookie($pxCtx, $this->pxConfig);
             if ($cookie->isValid()) {
                 $pxCtx->setVid($cookie->getVid());
             }
