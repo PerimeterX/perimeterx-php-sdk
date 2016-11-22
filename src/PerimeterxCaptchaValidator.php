@@ -1,7 +1,8 @@
 <?php
+
 namespace Perimeterx;
 
-class PerimeterxCaptchaValidator
+class PerimeterxCaptchaValidator extends PerimeterxRiskClient
 {
     /**
      * @var string
@@ -9,37 +10,13 @@ class PerimeterxCaptchaValidator
     private $pxCaptcha;
 
     /**
-     * @var PerimeterxContext
-     */
-    private $pxCtx;
-
-    /**
-     * @var object - perimeterx configuration object
-     */
-    private $pxConfig;
-
-    /**
-     * @var string
-     */
-    private $pxAuthToken;
-
-
-    /**
-     * @var PerimeterxHttpClient
-     */
-    private $httpClient;
-
-    /**
      * @param $pxCtx PerimeterxContext - perimeterx context
      * @param $pxConfig array - perimeterx configurations
      */
     public function __construct($pxCtx, $pxConfig)
     {
+        parent::__construct($pxCtx, $pxConfig);
         $this->pxCaptcha = $pxCtx->getPxCaptcha();
-        $this->pxConfig = $pxConfig;
-        $this->pxCtx = $pxCtx;
-        $this->pxAuthToken = $pxConfig['auth_token'];
-        $this->httpClient = $pxConfig['http_client'];
     }
 
     private function sendCaptchaRequest($vid, $captcha)
@@ -84,18 +61,5 @@ class PerimeterxCaptchaValidator
         } catch (\Exception $e) {
             return false;
         }
-    }
-
-    /**
-     * @return array
-     */
-    private function formatHeaders()
-    {
-        $retval = [];
-        foreach ($this->pxCtx->getHeaders() as $key => $value) {
-            array_push($retval, ['name' => $key, 'value' => $value]);
-        }
-        return $retval;
-
     }
 }

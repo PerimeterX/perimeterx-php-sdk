@@ -1,40 +1,10 @@
 <?php
+
 namespace Perimeterx;
 
-class PerimeterxS2SValidator
+class PerimeterxS2SValidator extends PerimeterxRiskClient
 {
     const RISK_API_ENDPOINT = '/api/v1/risk';
-    /**
-     * @var string
-     */
-    private $pxAuthToken;
-
-    /**
-     * @var PerimeterxContext
-     */
-    private $pxCtx;
-
-    /**
-     * @var object - perimeterx configuration object
-     */
-    private $pxConfig;
-
-    /**
-     * @var PerimeterxHttpClient
-     */
-    private $httpClient;
-
-    /**
-     * @param $pxCtx PerimeterxContext - perimeterx context
-     * @param $pxConfig array - perimeterx configurations
-     */
-    public function __construct($pxCtx, $pxConfig)
-    {
-        $this->pxConfig = $pxConfig;
-        $this->pxAuthToken = $pxConfig['auth_token'];
-        $this->httpClient = $pxConfig['http_client'];
-        $this->pxCtx = $pxCtx;
-    }
 
     private function sendRiskRequest()
     {
@@ -86,21 +56,6 @@ class PerimeterxS2SValidator
             $response = $this->httpClient->send(self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout']);
         }
         return $response;
-    }
-
-    /**
-     * @return array
-     */
-    private function formatHeaders()
-    {
-        $retval = [];
-        foreach ($this->pxCtx->getHeaders() as $key => $value) {
-            if (!in_array(strtolower($key), $this->pxConfig['sensitive_headers'])) {
-                array_push($retval, ['name' => $key, 'value' => $value]);
-            }
-        }
-        return $retval;
-
     }
 
     public function verify()
