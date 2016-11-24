@@ -1,5 +1,5 @@
 language: php
-sduo: false
+sudo: false
 php:
   - 5.5
   - 5.6
@@ -9,7 +9,7 @@ php:
 before_install:
   - curl -s -o $HOME/.phpenv/versions/5.5/bin/phpunit https://phar.phpunit.de/phpunit-4.8.9.phar
   - chmod +x $HOME/.phpenv/versions/5.5/bin/phpunit
-  - phpunit --version
+  - echo $(phpunit --version)
 
 before_script:
   - mv tests/bootstrap.php.dist tests/bootstrap.php
