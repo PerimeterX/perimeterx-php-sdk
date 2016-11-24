@@ -6,6 +6,9 @@ php:
   - 7.0
   - nightly
 
+install:
+  - composer global require "phpunit/phpunit=4.8.*"
+
 before_script:
   - mv tests/bootstrap.php.dist tests/bootstrap.php
   - mv phpunit.xml.dist phpunit.xml

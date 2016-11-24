@@ -4,9 +4,8 @@ namespace Perimeterx\Tests;
 
 use Perimeterx\PerimeterxCookieValidator;
 use Perimeterx\Tests\Fixtures\PerimeterxContextGoodCookie;
-use PHPUnit\Framework\TestCase;
 
-class PerimeterxCookieTest extends TestCase
+class PerimeterxCookieTest extends PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
