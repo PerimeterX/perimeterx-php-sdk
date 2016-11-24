@@ -6,8 +6,9 @@ php:
   - 7.0
   - nightly
 
-install:
-  - composer global require "phpunit/phpunit=4.8.*"
+before_install:
+  - curl -s -o $HOME/.phpenv/versions/5.5/bin/phpunit https://phar.phpunit.de/phpunit-old.phar
+  - chmod +x $HOME/.phpenv/versions/5.5/bin/phpunit
 
 before_script:
   - mv tests/bootstrap.php.dist tests/bootstrap.php
