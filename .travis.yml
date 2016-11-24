@@ -1,14 +1,13 @@
 language: php
 sduo: false
 php:
-  - '5.4'
-  - '5.5'
-  - '5.6'
-  - '7.0'
+  - 5.5
+  - 5.6
+  - 7.0
   - hhvm
   - nightly
 
-before_install:
+before_script:
   - composer install
 
-install: phpunit
+script: phpunit tests/PerimeterxCookieValidatorTest
