@@ -10,8 +10,7 @@ install:
   - chmod +x $HOME/.phpenv/versions/5.5/bin/phpunit
 
 before_script:
-  - mv tests/bootstrap.php.dist tests/bootstrap.php
-  - mv phpunit.xml.dist phpunit.xml
+  - cp tests/bootstrap.php.dist tests/bootstrap.php
   - composer install
 
 script: phpunit tests/PerimeterxCookieValidatorTest
