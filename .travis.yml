@@ -6,11 +6,6 @@ php:
   - 7.0
   - nightly
 
-before_install:
-  - curl -s -o $HOME/.phpenv/versions/5.5/bin/phpunit https://phar.phpunit.de/phpunit-4.8.9.phar
-  - chmod +x $HOME/.phpenv/versions/5.5/bin/phpunit
-  - echo $(phpunit --version)
-
 before_script:
   - mv tests/bootstrap.php.dist tests/bootstrap.php
   - mv phpunit.xml.dist phpunit.xml
