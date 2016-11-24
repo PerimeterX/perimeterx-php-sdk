@@ -13,4 +13,4 @@ before_script:
   - cp tests/bootstrap.php.dist tests/bootstrap.php
   - composer install
 
-script: phpunit tests/PerimeterxCookieValidatorTest
+script: $HOME/.phpenv/versions/5.5/bin/phpunit tests/PerimeterxCookieValidatorTest
