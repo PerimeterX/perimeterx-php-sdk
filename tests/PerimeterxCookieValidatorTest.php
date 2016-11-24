@@ -4,10 +4,10 @@ namespace Perimeterx\Tests;
 
 use Perimeterx\PerimeterxContext;
 use Perimeterx\PerimeterxCookieValidator;
-use \PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 
-class PerimeterxCookieValidatorTest extends \PHPUnit\Framework\TestCase
+class PerimeterxCookieValidatorTest extends TestCase
 {
 
     // randomly generated fake values
