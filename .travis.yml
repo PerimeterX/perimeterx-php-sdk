@@ -12,4 +12,4 @@ before_script:
   - mv phpunit.xml.dist phpunit.xml
   - composer install
 
-script: phpunit tests/PerimeterxCookieValidatorTest
+script: phpunit --bootstrap vendor/autoload.php tests/PerimeterxCookieValidatorTest
