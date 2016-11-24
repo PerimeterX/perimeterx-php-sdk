@@ -2,7 +2,7 @@
   "name": "perimeterx/php-sdk",
   "description": "PerimeterX SDK for PHP",
   "version" : "2.1.0",
-  "keywords": [
+ "keywords": [
     "perimeterx",
     "websecurity",
     "security",
@@ -26,7 +26,8 @@
     }
   },
   "require-dev": {
-    "phpunit/phpunit": "4.8.*"
+    "phpunit/phpunit": "4.8.*",
+    "mockery/mockery": "0.9.*"
   },
   "autoload-dev": {
     "psr-4": {
