@@ -8,6 +8,7 @@ php:
   - nightly
 
 before_script:
+  - mv tests/bootstrap.php.dist tests/bootstrap.php
   - composer install
 
 script: phpunit tests/PerimeterxCookieValidatorTest
