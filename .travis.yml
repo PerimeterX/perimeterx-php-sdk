@@ -5,12 +5,9 @@ php:
   - 5.6
   - 7.0
   - nightly
-install:
-  - curl -s -o $HOME/.phpenv/versions/5.5/bin/phpunit https://phar.phpunit.de/phpunit-4.8.29.phar
-  - chmod +x $HOME/.phpenv/versions/5.5/bin/phpunit
 
 before_script:
   - cp tests/bootstrap.php.dist tests/bootstrap.php
   - composer install
 
-script: $HOME/.phpenv/versions/5.5/bin/phpunit tests/PerimeterxCookieValidatorTest
+script: phpunit tests/PerimeterxCookieValidatorTest
