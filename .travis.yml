@@ -9,6 +9,7 @@ php:
 
 before_script:
   - mv tests/bootstrap.php.dist tests/bootstrap.php
+  - mv phpunit.xml.dist phpunit.xml
   - composer install
 
 script: phpunit tests/PerimeterxCookieValidatorTest
