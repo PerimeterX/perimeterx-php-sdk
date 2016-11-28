@@ -46,6 +46,10 @@ class PerimeterxActivitiesClient
      */
     public function sendToPerimeterx($activityType, $pxCtx, $details = [])
     {
+        if (isset($this->pxConfig['additional_activity_handler'])) {
+            $this->pxConfig['additional_activity_handler']($activityType, $pxCtx, $details);
+        }
+
         if ($activityType == 'page_requested' and !$this->pxConfig['send_page_activities']) {
             return;
         }
@@ -72,7 +76,11 @@ class PerimeterxActivitiesClient
         }
 
         $activities = [ $pxData ];
-        $headers = [ 'Content-Type' => 'application/json' ];
+
+        $headers = [
+            'Authorization' => 'Bearer ' . $this->pxConfig['auth_token'],
+            'Content-Type' => 'application/json'
+        ];
         $this->httpClient->send('/api/v1/collector/s2s', 'POST', $activities, $headers, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout']);
     }
 }

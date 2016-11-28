@@ -1,40 +1,10 @@
 <?php
+
 namespace Perimeterx;
 
-class PerimeterxS2SValidator
+class PerimeterxS2SValidator extends PerimeterxRiskClient
 {
     const RISK_API_ENDPOINT = '/api/v1/risk';
-    /**
-     * @var string
-     */
-    private $pxAuthToken;
-
-    /**
-     * @var PerimeterxContext
-     */
-    private $pxCtx;
-
-    /**
-     * @var object - perimeterx configuration object
-     */
-    private $pxConfig;
-
-    /**
-     * @var PerimeterxHttpClient
-     */
-    private $httpClient;
-
-    /**
-     * @param $pxCtx PerimeterxContext - perimeterx context
-     * @param $pxConfig array - perimeterx configurations
-     */
-    public function __construct($pxCtx, $pxConfig)
-    {
-        $this->pxConfig = $pxConfig;
-        $this->pxAuthToken = $pxConfig['auth_token'];
-        $this->httpClient = $pxConfig['http_client'];
-        $this->pxCtx = $pxCtx;
-    }
 
     private function sendRiskRequest()
     {
@@ -88,24 +58,10 @@ class PerimeterxS2SValidator
         return $response;
     }
 
-    /**
-     * @return array
-     */
-    private function formatHeaders()
-    {
-        $retval = [];
-        foreach ($this->pxCtx->getHeaders() as $key => $value) {
-            if (!in_array(strtolower($key), $this->pxConfig['sensitive_headers'])) {
-                array_push($retval, ['name' => $key, 'value' => $value]);
-            }
-        }
-        return $retval;
-
-    }
-
     public function verify()
     {
         $response = json_decode($this->sendRiskRequest());
+        $this->pxCtx->setIsMadeS2SRiskApiCall(true);
         if (isset($response, $response->scores, $response->scores->non_human)) {
             $score = $response->scores->non_human;
             $this->pxCtx->setScore($score);
@@ -113,6 +69,9 @@ class PerimeterxS2SValidator
             if ($score >= $this->pxConfig['blocking_score']) {
                 $this->pxCtx->setBlockReason('s2s_high_score');
             }
+        }
+        if (isset($response, $response->error_msg)) {
+            $this->pxCtx->setS2SHttpErrorMsg($response->error_msg);
         }
     }
 }

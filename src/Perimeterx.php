@@ -25,6 +25,8 @@
 
 namespace Perimeterx;
 
+use Psr\Log\LoggerInterface;
+
 final class Perimeterx
 {
     /**
@@ -69,6 +71,9 @@ final class Perimeterx
         if (!isset($pxConfig['auth_token'])) {
             throw new PerimeterxException(PerimeterxException::$AUTH_TOKEN_MISSING);
         }
+        if (isset($this->pxConfig['logger']) && !($this->pxConfig['logger'] instanceof LoggerInterface)) {
+            throw new PerimeterxException(PerimeterxException::$INVALID_LOGGER);
+        }
         try {
             $this->pxConfig = array_merge([
                 'app_id' => null,
@@ -82,7 +87,7 @@ final class Perimeterx
                 'max_buffer_len' => 1,
                 'send_page_activities' => false,
                 'send_block_activities' => true,
-                'sdk_name' => 'PHP SDK v1.3.11',
+                'sdk_name' => 'PHP SDK v2.1.0',
                 'debug_mode' => false,
                 'module_mode' => Perimeterx::$ACTIVE_MODE,
                 'api_timeout' => 1,
@@ -90,6 +95,10 @@ final class Perimeterx
                 'perimeterx_server_host' => 'https://sapi.perimeterx.net',
                 'local_proxy' => false
             ], $pxConfig);
+
+            if (empty($this->pxConfig['logger'])) {
+                $this->pxConfig['logger'] = new PerimeterxLogger();
+            }
 
             $httpClient = new PerimeterxHttpClient($this->pxConfig);
             $this->pxConfig['http_client'] = $httpClient;
@@ -120,7 +129,7 @@ final class Perimeterx
             };
             return $this->handleVerification($pxCtx);
         } catch (\Exception $e) {
-            error_log('Uncaught exception while verifying perimiterx score' . $e->getCode() . ' ' . $e->getMessage());
+            $this->pxConfig['logger']->error('Uncaught exception while verifying perimeterx score ' . $e->getCode() . ' ' . $e->getMessage());
             return 1;
         }
     }
@@ -152,6 +161,31 @@ final class Perimeterx
             }
         } else {
             $this->pxActivitiesClient->sendToPerimeterx('page_requested', $pxCtx, ['module_version' => $this->pxConfig['sdk_name'], 'http_version' => $pxCtx->getHttpVersion(), 'http_method' => $pxCtx->getHttpMethod()]);
+            return 1;
+        }
+    }
+
+    /**
+     * Public function that contact PerimeterX servers and reset user's score from cache. can be used as part of internal flows
+     */
+    public function pxReset()
+    {
+        try {
+            if (!$this->pxConfig['module_enabled']) {
+                return 1;
+            }
+
+            $pxCtx = new PerimeterxContext($this->pxConfig);
+            $cookie = new PerimeterxCookie($pxCtx, $this->pxConfig);
+            if ($cookie->isValid()) {
+                $pxCtx->setVid($cookie->getVid());
+            }
+
+            $client = new PerimeterxResetClient($pxCtx, $this->pxConfig);
+            $client->sendResetRequest();
+        } catch (\Exception $e) {
+            $this->pxConfig['logger']->error('Uncaught exception while resetting perimeterx score' . $e->getCode() . ' ' . $e->getMessage());
+
             return 1;
         }
     }

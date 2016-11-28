@@ -15,9 +15,12 @@ Table of Contents
   *   [Custom Block Action](#custom-block)
   *   [Enable/Disable Captcha](#captcha-support)
   *   [Extracting Real IP Address](#real-ip)
+  *   [Custom URI](#custom-uri)
   *   [Filter Sensitive Headers](#sensitive-headers)
   *   [API Timeouts](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
+  *   [Additional Page Activity Handler](#additional-page-activity-handler)
+  *   [Logging](#logging)
   *   [Debug Mode](#debug-mode)
 -   [Contributing](#contributing)
   *   [Tests](#tests)
@@ -27,7 +30,7 @@ Table of Contents
 <a name="dependencies"></a> Dependencies
 ----------------------------------------
 
--   [PHP >= v5.6](http://php.net/downloads.php)
+-   [PHP >= v5.5](http://php.net/downloads.php)
 -   [mcrypt](http://php.net/manual/en/book.mcrypt.php)
 
 
@@ -41,7 +44,7 @@ Installation can be done using composer
 $ composer require perimeterx/php-sdk
 ```
 
-Or by downoading the sources for this repository and run `composer install`
+Or by downloading the sources for this repository, and running `composer install`
 
 ### <a name="basic-usage"></a> Basic Usage Example
 ```php
@@ -66,7 +69,7 @@ $px->pxVerify();
 
 #### Configuring Required Parameters
 
-Configuration options are set in `$perimeterxConfig`
+Configuration options are set in the `$perimeterxConfig` variable. 
 
 #### Required parameters:
 
@@ -74,9 +77,11 @@ Configuration options are set in `$perimeterxConfig`
 - cookie_key
 - auth_token
 
+All parameters are obtainable via the PerimeterX Portal. (Applications page)
+
 #### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
 
-**default:** 70
+**Default blocking value:** 70
 
 ```php
 $perimeterxConfig = [
@@ -87,11 +92,12 @@ $perimeterxConfig = [
 ```
 
 #### <a name="custom-block"></a> Custom Blocking Actions
-Setting a custom block handler customizes is done by setting 'custom_block_handler' with a user function named on the '$perimeterxConfig'.
+In order to customize the action performed on a valid block value, use the 'custom_block_handler' option, and provide a user-defined function.
 
-Custom handler should contain the action that is taken when a user visits with a high score. Common customizations are to present a reCAPTHA or custom branded block page.
+The custom handler would contain the action to be taken when a visitor receives a score higher than the 'blocking_score' value.
+Common customization options are presenting of a reCAPTCHA, or supplying a custom branded block page.
 
-**default:** return HTTP status code 403 and serve the Perimeterx block page.
+**Default block behaviour:** return an HTTP status code of 403 and serve the PerimeterX block page.
 
 ```php
 /**
@@ -102,7 +108,7 @@ $perimeterxConfig['custom_block_handler'] = function ($pxCtx)
     $block_score = $pxCtx->getScore();
     $block_uuid = $pxCtx->getUuid();
 
-    // user defined logic comes here
+    // user defined logic goes here
 };
 
 $px = Perimeterx::Instance($perimeterxConfig);
@@ -111,7 +117,7 @@ $px->pxVerify();
 
 ###### Examples
 
-**Serve a Custom HTML Page**
+**Serving a Custom HTML Page**
 
 ```php
 /**
@@ -124,19 +130,19 @@ $perimeterxConfig['custom_block_handler'] = function ($pxCtx)
     $full_url = $pxCtx->getFullUrl();
 
     $html = '<div>Access to ' . $full_url . ' has been blocked.</div> ' +
-                  '<div>Block reference - ' . $pxBlockUuid . ' </div> ' +
-                  '<div>Block score - ' . $pxBlockScore . '</div>';
+                  '<div>Block reference - ' . $block_uuid . ' </div> ' +
+                  '<div>Block score - ' . $block_score . '</div>';
 
-	//echo $html;
-	header("Status: 403");
-	die();
+    //echo $html;
+    header("Status: 403");
+    die();
 };
 
 $px = Perimeterx::Instance($perimeterxConfig);
 $px->pxVerify();
 ```
 
-**Do Not Block, Monitor Only**
+**No Blocking, Monitor Only**
 
 ```php
 /**
@@ -146,8 +152,8 @@ $perimeterxConfig['custom_block_handler'] = function ($pxCtx)
     $block_score = $pxCtx->getScore();
     $block_uuid = $pxCtx->getUuid();
     $full_url = $pxCtx->getFullUrl();
-
-	// user logic defined here
+    
+    // user defined logic goes here
 };
 
 $px = Perimeterx::Instance($perimeterxConfig);
@@ -156,12 +162,12 @@ $px->pxVerify();
 
 #### <a name="module-score"></a> Module Mode
 
-**default:** `Perimeterx::$ACTIVE_MODE`
+**Default mode:** `Perimeterx::$ACTIVE_MODE`
 
 **Possible Values:**
 
-- `Perimeterx::$ACTIVE_MODE` - Module block user crossing the block threshold, server-to-server requests are being sent synchrouniously
-- `Perimeterx::$MONITOR_MODE` - Module does not block users crossing the block threshold, but does eval the pxCustomBlockHandler function in case it's defined on score threshold cross.
+- `Perimeterx::$ACTIVE_MODE` - Module blocks users crossing the predefined block threshold. Server-to-server requests are sent synchronously.
+- `Perimeterx::$MONITOR_MODE` - Module does not block users crossing the predefined block threshold. The pxCustomBlockHandler function will be eval'd in case one is supplied, upon crossing the defined block threshold.
 
 ```php
 $perimeterxConfig = [
@@ -171,11 +177,11 @@ $perimeterxConfig = [
 ]
 ```
 
-#### <a name="captcha-support"></a>Enable/disable captcha in the block page
+#### <a name="captcha-support"></a>Enable/Disable CAPTCHA on the block page
 
-By enabling captcha support, a captcha will be served as part of the block page giving real users the ability to answer, get score clean up and passed to the requested page.
+By enabling CAPTCHA support, a CAPTCHA will be served as part of the block page, giving real users the ability to identify as a human. By solving the CAPTCHA, the user's score is then cleaned up and the user is allowed to continue.
 
-**default: true**
+**Default value: true**
 
 ```php
 $perimeterxConfig = [
@@ -187,11 +193,11 @@ $perimeterxConfig = [
 
 #### <a name="real-ip"></a>Extracting the Real User IP Address
 
-> Note: IP extraction according to your network setup is important. It is common to have a load balancer/proxy on top of your applications, in this case the PerimeterX module will send an internal IP as the user's. In order to perform processing and detection for server-to-server calls, PerimeterX module need the real user ip.
+> Note: IP extraction, according to your network setup, is very important. It is common to have a load balancer/proxy on top of your applications, in which case the PerimeterX module will send the system's internal IP as the user's. In order to properly perform processing and detection on server-to-server calls, PerimeterX module needs the real user's IP.
 
-The user ip can be returned to the PerimeterX module using a custom user function defined on $perimeterxConfig.
+The user's IP can be passed to the PerimeterX module using a custom user defined function on the $perimeterxConfig variable.
 
-**default with no predefined header:** `$_SERVER['REMOTE_ADDR']`
+**Default with no predefined header:** `$_SERVER['REMOTE_ADDR']`
 
 ```php
 /**
@@ -201,14 +207,14 @@ $perimeterxConfig['custom_user_ip'] = function ($pxCtx)
 {
     $headers = getallheaders();
 
-    /* using socket ip */
+    /* using a socket ip */
     $ip = $_SERVER['REMOTE_ADDR'];
 
-    /* using ip from x-forwarded-for header */
+    /* using an ip from a x-forwarded-for header */
     $xff = explode(",", $headers['X-Forwarded-For']);
     $ip = $xff[count($xff)-1];
 
-    /* using ip from custom header */
+    /* using an ip from a custom header */
     $ip = $headers['X-REAL-CLIENT-IP'];
 
     return $ip;
@@ -218,11 +224,30 @@ $px = Perimeterx::Instance($perimeterxConfig);
 $px->pxVerify();
 ```
 
+#### <a name="custom-uri"></a>Custom URI
+
+The URI can be returned to the PerimeterX module using a custom user function defined on the $perimeterxConfig variable.
+
+**Default:** `$_SERVER['REQUEST_URI']`
+
+```php
+/**
+ * @param \Perimeterx\PerimeterxContext $pxCtx
+ */
+$perimeterxConfig['custom_uri'] = function ($pxCtx)
+{
+    return $_SERVER['HTTP_X_CUSTOM_URI'];
+};
+
+$px = Perimeterx::Instance($perimeterxConfig);
+$px->pxVerify();
+```
+
 #### <a name="sensitive-headers"></a> Filter sensitive headers
 
-A user can define a list of sensitive header he want to prevent from being send to perimeterx servers (lowered case header name), filtering cookie header for privacy is set by default and will be overridden if a user set the configuration
+A list of sensitive headers can be configured to prevent specific headers from being sent to PerimeterX servers (lower case header names). Filtering cookie headers for privacy is set by default, and can be overridden on the $perimeterxConfig variable.
 
-**default: cookie, cookies**
+**Default: cookie, cookies**
 
 ```php
 $perimeterxConfig = [
@@ -234,12 +259,12 @@ $perimeterxConfig = [
 
 #### <a name="api-timeout"></a>API Timeouts
 
-Control the timeouts for PerimeterX requests. The API is called when the risk cookie does not exist, or is expired or invalid.
+> Note: Controls the timeouts for PerimeterX requests. The API is called when a Risk Cookie does not exist, or is expired or invalid.
 
-API Timeout in seconds (float) to wait for the PerimeterX server API response.
+API Timeout in Seconds (float) to wait for the PerimeterX server API response.
 
 
-**default:** 1
+**Default:** 1 
 
 ```php
 $perimeterxConfig = [
@@ -252,7 +277,7 @@ $perimeterxConfig = [
 API Connection Timeout in seconds (float) to wait for the connection to the PerimeterX server API.
 
 
-**default:** 1
+**Default:** 1
 
 ```php
 $perimeterxConfig = [
@@ -262,16 +287,14 @@ $perimeterxConfig = [
 ]
 ```
 
-
-
 #### <a name="send-page-activities"></a> Send Page Activities
 
-Boolean flag to enable or disable sending activities and metrics to
+Boolean flag to enable or disable sending of activities and metrics to
 PerimeterX on each page request. Enabling this feature will provide data
-that populates the PerimeterX portal with valuable information such as
-amount requests blocked and API usage statistics.
+that populates the PerimeterX portal with valuable information such as the
+amount of requests blocked and additional API usage statistics.
 
-**default:** false
+**Default:** false
 
 ```php
 $perimeterxConfig = [
@@ -281,11 +304,86 @@ $perimeterxConfig = [
 ]
 ```
 
+#### <a name="additional-page-activity-handler"></a> Additional Page Activity Handler
+
+Adding an additional activity handler is done by setting 'additional_activity_handler' with a user defined function on the '$perimeterxConfig' variable. The 'additional_activity_handler' function will be executed before sending the data to the PerimeterX portal.
+
+**Default:** only send activity to PerimeterX as controlled by '$perimeterxConfig'.
+
+```php
+/**
+ * @param string            $activityType
+ * @param PerimeterxContext $pxCtx
+ * @param array             $details
+ */
+$perimeterxConfig['additional_activity_handler'] = function ($activityType, $pxCtx, $details)
+{
+    // user defined logic comes here
+};
+
+$px = Perimeterx::Instance($perimeterxConfig);
+$px->pxVerify();
+```
+
+###### Additional Activity Handler Usage Examples
+
+**Log Activity**
+
+```php
+/**
+ * @param string            $activityType
+ * @param PerimeterxContext $pxCtx
+ * @param array             $details
+ */
+$perimeterxConfig['additional_activity_handler'] = function ($activityType, $pxCtx, $details) use ($logger)
+{
+    if ($activityType === 'block') {
+        $logger->warning('PerimeterX {activityType} details', ['activityType' => $activityType, 'details' => $details]);
+    } else {
+        $logger->info('PerimeterX {activityType} details', ['activityType' => $activityType, 'details' => $details]);
+    }
+};
+
+$px = Perimeterx::Instance($perimeterxConfig);
+$px->pxVerify();
+```
+
+**Send Activity to statsd**
+
+```php
+/**
+ * @param string            $activityType
+ * @param PerimeterxContext $pxCtx
+ * @param array             $details
+ */
+$perimeterxConfig['additional_activity_handler'] = function ($activityType, $pxCtx, $details) use ($statsd)
+{
+    $statsd->increment('perimeterx_activity.' . $activityType);
+};
+
+$px = Perimeterx::Instance($perimeterxConfig);
+$px->pxVerify();
+```
+
+#### <a name="logging"></a> Logging
+
+Log messages via an implementation of `\Psr\Log\LoggerInterface` (see [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) for full interface specification). By default, an instance of `\Perimeterx\PerimeterxLogger` is used which will log all message via PHP's `error_log` function.
+
+**Default:** `\Perimeterx\PerimeterxLogger` instance
+
+```php
+$perimeterxConfig = [
+    ..
+    'logger' => new \My\Psr\Log\ConcreteLogger()
+    ..
+]
+```
+
 #### <a name="debug-mode"></a> Debug Mode
 
-Enables debug logging
+Enables debug logging mode.
 
-**default:** false
+**Default:** false
 
 ```php
 $perimeterxConfig = [
@@ -296,3 +394,31 @@ $perimeterxConfig = [
 ```
 <a name="contributing"></a> Contributing
 ----------------------------------------
+
+The following steps are welcome when contributing to our project.
+###Fork/Clone
+First and foremost, [Create a fork](https://guides.github.com/activities/forking/) of the repository, and clone it locally.
+Create a branch on your fork, preferably using a self descriptive branch name.
+
+###Code/Run
+Code your way out of your mess, and help improve our project by implementing missing features, adding capabilites or fixing bugs.
+
+To run the code, simply follow the steps in the [installation guide](#installation). Grab the keys from the PerimeterX Portal, and try refreshing your page several times continously. If no default behaviours have been overriden, you should see the PerimeterX block page. Solve the CAPTCHA to clean yourself and start fresh again.
+
+Feel free to check out the [Example App](https://github.com/PerimeterX/perimeterx-php-sdk/blob/master/examples/integration-example.php), to have a feel of the project.
+
+###<a name="tests"></a>Test
+> Tests for this project are written using PHPUnit.
+
+**Dont forget to test**. The project relies heavily on tests, thus ensuring each user has the same experience, and no new features break the code.
+Before you create any pull request, make sure your project has passed all tests, and if any new features require it, write your own.
+
+To run any of the tests in the available suite, first open the ```bootstrap.php.dist``` file, and change the values according to the in-file insturctions. Then, rename the `bootstrap.php.dist` to `bootstrap.php`.
+Finally, run the `phpunit` command, or `phpunit <testName>` to execute a specific test (e.g. ```phpunit PerimeterxCookieTest```)
+
+###Pull Request
+After you have completed the process, create a pull request to the Upstream repository. Please provide a complete and thorough description explaining the changes. Remember this code has to be read by our maintainers, so keep it simple, smart and accurate.
+
+###Thanks
+After all, you are helping us by contributing to this project, and we want to thank you for it.
+We highly appreciate your time invested in contributing to our project, and are glad to have people like you - kind helpers.

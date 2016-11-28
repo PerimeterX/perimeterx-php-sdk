@@ -26,8 +26,22 @@ $perimeterxConfig = [
      */
 
     /*
+     * 'additional_activity_handler' => function ($activityType, $pxCtx, $details)
+     * {
+     *      // user defined logic comes here
+     * },
+     */
+
+    /*
      * 'custom_risk_handler' => function ($url, $method, $json, $headers) {
      *      // user defined logic comes here
+     * },
+     */
+
+    /*
+     * 'custom_uri' => function ($pxCtx)
+     * {
+     *      return $_SERVER['HTTP_X_CUSTOM_URI'];
      * },
      */
 ];
