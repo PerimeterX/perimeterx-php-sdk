@@ -1,5 +1,5 @@
 ![image](http://media.marketwire.com/attachments/201604/34215_PerimeterX_logo.jpg)
-#
+
 [PerimeterX](http://www.perimeterx.com) PHP SDK
 =============================================================
 
