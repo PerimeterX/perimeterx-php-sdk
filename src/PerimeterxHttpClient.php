@@ -36,7 +36,7 @@ class PerimeterxHttpClient
         try {
 
             $json = self::fixJsonBody($json);
-
+            var_dump($this->client);
             $rawResponse = $this->client->request($method, $url,
                 [
                 'json' => $json,

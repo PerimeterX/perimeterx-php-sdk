@@ -92,13 +92,16 @@ final class Perimeterx
                 'module_mode' => Perimeterx::$ACTIVE_MODE,
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
-                'perimeterx_server_host' => 'https://sapi.perimeterx.net',
                 'local_proxy' => false
             ], $pxConfig);
 
             if (empty($this->pxConfig['logger'])) {
                 $this->pxConfig['logger'] = new PerimeterxLogger();
             }
+
+            if (!$this->pxConfig['perimeterx_server_host']) {
+                $this->pxConfig['perimeterx_server_host'] = 'https://sapi-' . strtolower($this->pxConfig['app_id']) . '.glb1.perimeterx.net';
+            } 
 
             $httpClient = new PerimeterxHttpClient($this->pxConfig);
             $this->pxConfig['http_client'] = $httpClient;
@@ -160,7 +163,11 @@ final class Perimeterx
                 die();
             }
         } else {
-            $this->pxActivitiesClient->sendToPerimeterx('page_requested', $pxCtx, ['module_version' => $this->pxConfig['sdk_name'], 'http_version' => $pxCtx->getHttpVersion(), 'http_method' => $pxCtx->getHttpMethod()]);
+            $details = ['module_version' => $this->pxConfig['sdk_name'], 'http_version' => $pxCtx->getHttpVersion(), 'http_method' => $pxCtx->getHttpMethod()];
+            if ($pxCtx->getDecodedCookie()) {
+                $details['px_cookie'] = $pxCtx->getDecodedCookie();
+            }
+            $this->pxActivitiesClient->sendToPerimeterx('page_requested', $pxCtx, $details);
             return 1;
         }
     }
