@@ -15,7 +15,7 @@ A Block handler should extract data from the pxContext object and send that data
 
 1. URL - the original URL that the user tried to reach using `$pxContext->getURI()`.
 2. VID - using `$pxContext->getVid()`.
-3. UUID - using `$pxContest->getUuid()`.
+3. UUID - using `$pxContext->getUuid()`.
 
 The block handler function should redirect the user to the block page and send the collected data with a request for an instance. One way of doing so is to add query parameters to the block page URI.
 
