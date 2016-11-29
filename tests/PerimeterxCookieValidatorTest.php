@@ -1,25 +1,26 @@
 <?php
 
-namespace Perimeterx\Tests;
 
 use Perimeterx\PerimeterxContext;
 use Perimeterx\PerimeterxCookieValidator;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 
-class PerimeterxCookieValidatorTest extends TestCase
+class PerimeterxCookieValidatorTest extends PHPUnit_Framework_TestCase
 {
 
     // randomly generated fake values
     const COOKIE_KEY = '549Z5UsasvfmVS6kAR3r4ydPnQdnnW4Gcwk35hj5tatZ5B2dqjrQvMMyLAJN5de3';
     const COOKIE_UUID = '9e70ed8b-c205-4a9d-bf3a-e92a945be600';
     const COOKIE_VID = '69521dce-ab65-11e6-80f5-76304dec7eb7';
+    const IP = '10.10.10.10';
+    const USER_AGENT = 'Mozilla';
 
     public function testNoCookie() {
 
         $pxCookie = null;
         $userAgent = 'Mozilla';
-        $ip = '10.10.10.10';
+        $ip = self::IP;
         $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip);
 
         $pxConfig = [
@@ -38,8 +39,8 @@ class PerimeterxCookieValidatorTest extends TestCase
     public function testBadlyEncodedCookie() {
 
         $pxCookie = 'this is not base64 encoded json';
-        $userAgent = 'Mozilla';
-        $ip = '10.10.10.10';
+        $userAgent = self::USER_AGENT;
+        $ip = self::IP;
         $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip);
 
         $pxConfig = [
@@ -67,8 +68,8 @@ class PerimeterxCookieValidatorTest extends TestCase
         $pxCookie = $this->encodeCookie(
             $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b)
         );
-        $userAgent = 'Mozilla';
-        $ip = '10.10.10.10';
+        $userAgent = self::USER_AGENT;
+        $ip = self::IP;
         $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip);
         $pxCtx->expects($this->any())
             ->method('getIp')
@@ -107,8 +108,8 @@ class PerimeterxCookieValidatorTest extends TestCase
         $pxCookie = $this->encodeCookie(
             $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b)
         );
-        $userAgent = 'Mozilla';
-        $ip = '10.10.10.10';
+        $userAgent = self::USER_AGENT;
+        $ip = self::IP;
         $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip);
 
         $pxConfig = [
@@ -136,8 +137,8 @@ class PerimeterxCookieValidatorTest extends TestCase
         $pxCookie = $this->encodeCookie(
             $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b)
         );
-        $userAgent = 'Mozilla';
-        $ip = '10.10.10.10';
+        $userAgent = self::USER_AGENT;
+        $ip = self::IP;
         $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip);
 
         $pxConfig = [
@@ -173,8 +174,8 @@ class PerimeterxCookieValidatorTest extends TestCase
         $pxCookie = $this->encodeCookie(
             $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b)
         );
-        $userAgent = 'Mozilla';
-        $ip = '10.10.10.10';
+        $userAgent = self::USER_AGENT;
+        $ip = self::IP;
         $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip);
 
         $pxConfig = [
@@ -210,8 +211,8 @@ class PerimeterxCookieValidatorTest extends TestCase
         $pxCookie = $this->encodeCookie(
             $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b)
         );
-        $userAgent = 'Mozilla';
-        $ip = '10.10.10.10';
+        $userAgent = self::USER_AGENT;
+        $ip = self::IP;
         $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip);
 
         $pxConfig = [
@@ -249,8 +250,8 @@ class PerimeterxCookieValidatorTest extends TestCase
         $pxCookie = $this->encodeCookie(
                 $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b)
             );
-        $userAgent = 'Mozilla';
-        $ip = '10.10.10.10';
+        $userAgent = self::USER_AGENT;
+        $ip = self::IP;
         $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip);
 
         $pxConfig = [
@@ -288,8 +289,8 @@ class PerimeterxCookieValidatorTest extends TestCase
         $pxCookie = $this->encodeCookie(
             $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b)
         );
-        $userAgent = 'Mozilla';
-        $ip = '10.10.10.10';
+        $userAgent = self::USER_AGENT;
+        $ip = self::IP;
         $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip);
 
         $pxConfig = [
