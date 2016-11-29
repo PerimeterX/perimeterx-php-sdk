@@ -89,6 +89,7 @@ final class Perimeterx
                 'send_block_activities' => true,
                 'sdk_name' => 'PHP SDK v2.2.1',
                 'debug_mode' => false,
+                'perimeterx_server_host' => 'https://sapi.perimeterx.net',
                 'module_mode' => Perimeterx::$ACTIVE_MODE,
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
@@ -98,10 +99,10 @@ final class Perimeterx
             if (empty($this->pxConfig['logger'])) {
                 $this->pxConfig['logger'] = new PerimeterxLogger();
             }
-
-            if (!$this->pxConfig['perimeterx_server_host']) {
-                $this->pxConfig['perimeterx_server_host'] = 'https://sapi-' . strtolower($this->pxConfig['app_id']) . '.glb1.perimeterx.net';
-            } 
+//
+//            if (!$this->pxConfig['perimeterx_server_host']) {
+//                $this->pxConfig['perimeterx_server_host'] = 'https://sapi-' . strtolower($this->pxConfig['app_id']) . '.glb1.perimeterx.net';
+//            }
 
             $httpClient = new PerimeterxHttpClient($this->pxConfig);
             $this->pxConfig['http_client'] = $httpClient;
