@@ -19,7 +19,7 @@ class PerimeterxCaptchaValidator extends PerimeterxRiskClient
         $this->pxCaptcha = $pxCtx->getPxCaptcha();
     }
 
-    private function sendCaptchaRequest($vid, $captcha)
+    private function sendCaptchaRequest($vid, $uuid, $captcha)
     {
         $requestBody = [
             'request' => [
@@ -29,6 +29,7 @@ class PerimeterxCaptchaValidator extends PerimeterxRiskClient
             ],
             'pxCaptcha' => $captcha,
             'vid' => $vid,
+            'uuid' => $uuid,
             'hostname' => $this->pxCtx->getHostname()
         ];
         $headers = [
@@ -47,13 +48,14 @@ class PerimeterxCaptchaValidator extends PerimeterxRiskClient
             }
             /* remove pxCaptcha cookie to prevert reuse */
             setcookie("_pxCaptcha", "", time() - 3600);
-            list($captcha, $vid) = explode(':', $this->pxCaptcha, 2);
-            if (!isset($captcha)) {
+            list($captcha, $vid, $uuid) = explode(':', $this->pxCaptcha, 3);
+            if (!isset($captcha) || !isset($vid) || !isset($uuid)) {
                 return false;
             }
 
             $this->pxCtx->setVid($vid);
-            $response = json_decode($this->sendCaptchaRequest($vid, $captcha));
+            $this->pxCtx->setUuid($uuid);
+            $response = json_decode($this->sendCaptchaRequest($vid, $uuid, $captcha));
             if (isset($response->status) and $response->status == 0) {
                 return true;
             }
