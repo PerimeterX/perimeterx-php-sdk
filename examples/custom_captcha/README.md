@@ -1,6 +1,6 @@
 # Implementing captcha block page
 
-In order to create a customized CAPTCHA block page, that will work with PerimeterX Captcha API, follow these guidlines: 
+In order to create a customized CAPTCHA block page, that will work with PerimeterX CAPTCHA API, follow these guidlines: 
 
 * [Custom block handler](#blockhandler): Implementing a custom block handler using `perimeterx-php-sdk` that will extract all relevant data.
 * [reCAPTCHA](#recaptcha): Adding a `reCaptcha` to your block page.
@@ -15,7 +15,7 @@ A Block handler should extract data from the pxContext object and send that data
 
 1. URL - the original URL that the user tried to reach using `$pxContext->getURI()`.
 2. VID - using `$pxContext->getVid()`.
-3. UUID - using `$pxContest->getUuid()`.
+3. UUID - using `$pxContext->getUuid()`.
 
 The block handler function should redirect the user to the block page and send the collected data with a request for an instance. One way of doing so is to add query parameters to the block page URI.
 
@@ -57,9 +57,10 @@ Copy these functions to your block page's `<head>` section:
 ```javascript
 function handleCaptcha(response) {
     var vid = getQueryString("vid");
+    var uuid = getQueryString("uuid");
     var name = '_pxCaptcha';
     var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();
-    var cookieParts = [name, '=', response + ':' + vid + '; expires=', expiryUtc, '; path=/'];
+    var cookieParts = [name, '=', response + ':' + vid + ':' + uuid + '; expires=', expiryUtc, '; path=/'];
     document.cookie = cookieParts.join('');
     window.location.href = getQueryString("url");
 }
