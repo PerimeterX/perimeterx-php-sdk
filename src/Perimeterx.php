@@ -87,7 +87,7 @@ final class Perimeterx
                 'max_buffer_len' => 1,
                 'send_page_activities' => false,
                 'send_block_activities' => true,
-                'sdk_name' => 'PHP SDK v2.2.1',
+                'sdk_name' => 'PHP SDK v2.2.2',
                 'debug_mode' => false,
                 'perimeterx_server_host' => 'https://sapi.perimeterx.net',
                 'module_mode' => Perimeterx::$ACTIVE_MODE,
