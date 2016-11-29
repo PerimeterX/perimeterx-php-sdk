@@ -8,6 +8,6 @@ php:
 
 before_script:
   - cp tests/bootstrap.php.dist tests/bootstrap.php
-  - composer install
+  - composer install --dev
 
 script: phpunit tests/PerimeterxCookieValidatorTest
