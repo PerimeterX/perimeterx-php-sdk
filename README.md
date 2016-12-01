@@ -40,13 +40,13 @@ Table of Contents
 <a name="installation"></a> Installation
 ----------------------------------------
 
-Installation can be done using composer
+Installation can be done using Composer.
 
 ```sh
 $ composer require perimeterx/php-sdk
 ```
 
-Or by downloading the sources for this repository, and running `composer install`
+It can also be done by downloading the sources for this repository, and running `composer install`.
 
 ### <a name="basic-usage"></a> Basic Usage Example
 ```php
@@ -276,7 +276,7 @@ $perimeterxConfig = [
 ]
 ```
 
-API Connection Timeout in seconds (float) to wait for the connection to the PerimeterX server API.
+The API Connection Timeout in seconds (float) to wait for the connection to the PerimeterX server API.
 
 
 **Default:** 1
@@ -291,7 +291,7 @@ $perimeterxConfig = [
 
 #### <a name="send-page-activities"></a> Send Page Activities
 
-Boolean flag to enable or disable sending of activities and metrics to
+A boolean flag to enable or disable sending of activities and metrics to
 PerimeterX on each page request. Enabling this feature will provide data
 that populates the PerimeterX portal with valuable information such as the
 amount of requests blocked and additional API usage statistics.
@@ -310,7 +310,7 @@ $perimeterxConfig = [
 
 Adding an additional activity handler is done by setting 'additional_activity_handler' with a user defined function on the '$perimeterxConfig' variable. The 'additional_activity_handler' function will be executed before sending the data to the PerimeterX portal.
 
-**Default:** only send activity to PerimeterX as controlled by '$perimeterxConfig'.
+**Default:** Only send activity to PerimeterX as controlled by '$perimeterxConfig'.
 
 ```php
 /**
@@ -403,7 +403,7 @@ First and foremost, [Create a fork](https://guides.github.com/activities/forking
 Create a branch on your fork, preferably using a self descriptive branch name.
 
 ###Code/Run
-Code your way out of your mess, and help improve our project by implementing missing features, adding capabilites or fixing bugs.
+Help improve our project by implementing missing features, adding capabilites or fixing bugs.
 
 To run the code, simply follow the steps in the [installation guide](#installation). Grab the keys from the PerimeterX Portal, and try refreshing your page several times continously. If no default behaviours have been overriden, you should see the PerimeterX block page. Solve the CAPTCHA to clean yourself and start fresh again.
 
