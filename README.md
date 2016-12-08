@@ -71,7 +71,7 @@ $px->pxVerify();
 
 #### Configuring Required Parameters
 
-Configuration options are set in the `$perimeterxConfig` variable. 
+Configuration options are set on the `$perimeterxConfig` variable. 
 
 #### Required parameters:
 
@@ -79,7 +79,7 @@ Configuration options are set in the `$perimeterxConfig` variable.
 - cookie_key
 - auth_token
 
-All parameters are obtainable via the PerimeterX Portal. (Applications page)
+All parameters are obtainable via the PerimeterX Portal. (Applications and Policies pages)
 
 #### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
 
@@ -96,7 +96,7 @@ $perimeterxConfig = [
 #### <a name="custom-block"></a> Custom Blocking Actions
 In order to customize the action performed on a valid block value, use the 'custom_block_handler' option, and provide a user-defined function.
 
-The custom handler would contain the action to be taken when a visitor receives a score higher than the 'blocking_score' value.
+The custom handler should contain the action to be taken, when a visitor receives a score higher than the 'blocking_score' value.
 Common customization options are presenting of a reCAPTCHA, or supplying a custom branded block page.
 
 **Default block behaviour:** return an HTTP status code of 403 and serve the PerimeterX block page.
@@ -181,7 +181,7 @@ $perimeterxConfig = [
 
 #### <a name="captcha-support"></a>Enable/Disable CAPTCHA on the block page
 
-By enabling CAPTCHA support, a CAPTCHA will be served as part of the block page, giving real users the ability to identify as a human. By solving the CAPTCHA, the user's score is then cleaned up and the user is allowed to continue.
+By enabling CAPTCHA support, a CAPTCHA will be served as part of the block page, giving real users the ability to identify as a human. By solving the CAPTCHA, the user's score is then cleaned up and the user is allowed to continue normal use.
 
 **Default value: true**
 
@@ -228,7 +228,7 @@ $px->pxVerify();
 
 #### <a name="custom-uri"></a>Custom URI
 
-The URI can be returned to the PerimeterX module using a custom user function defined on the $perimeterxConfig variable.
+The URI can be returned to the PerimeterX module, using a custom user function, defined on the $perimeterxConfig variable.
 
 **Default:** `$_SERVER['REQUEST_URI']`
 
@@ -263,7 +263,7 @@ $perimeterxConfig = [
 
 > Note: Controls the timeouts for PerimeterX requests. The API is called when a Risk Cookie does not exist, or is expired or invalid.
 
-API Timeout in Seconds (float) to wait for the PerimeterX server API response.
+The API Timeout, in seconds (float), to wait for the PerimeterX server API response.
 
 
 **Default:** 1 
@@ -276,7 +276,7 @@ $perimeterxConfig = [
 ]
 ```
 
-The API Connection Timeout in seconds (float) to wait for the connection to the PerimeterX server API.
+The API Connection Timeout, in seconds (float), to wait for the connection to the PerimeterX server API.
 
 
 **Default:** 1
@@ -293,7 +293,7 @@ $perimeterxConfig = [
 
 A boolean flag to enable or disable sending of activities and metrics to
 PerimeterX on each page request. Enabling this feature will provide data
-that populates the PerimeterX portal with valuable information such as the
+that populates the PerimeterX portal with valuable information, such as the
 amount of requests blocked and additional API usage statistics.
 
 **Default:** false
@@ -419,8 +419,8 @@ To run any of the tests in the available suite, first open the ```bootstrap.php.
 Finally, run the `phpunit` command, or `phpunit <testName>` to execute a specific test (e.g. ```phpunit PerimeterxCookieTest```)
 
 ###Pull Request
-After you have completed the process, create a pull request to the Upstream repository. Please provide a complete and thorough description explaining the changes. Remember this code has to be read by our maintainers, so keep it simple, smart and accurate.
+After you have completed the process, create a pull request to the Upstream repository. Please provide a complete and thorough description, explaining the changes. Remember this code has to be read by our maintainers, so keep it simple, smart and accurate.
 
 ###Thanks
 After all, you are helping us by contributing to this project, and we want to thank you for it.
-We highly appreciate your time invested in contributing to our project, and are glad to have people like you - kind helpers.
+We highly appreciate your time invested in contributing to our project.
