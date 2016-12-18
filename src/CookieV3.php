@@ -31,16 +31,22 @@ class CookieV3 extends PerimeterxCookie
      */
     public function __construct($pxCtx, $pxConfig)
     {
-        //$this->pxCookie = $pxCtx->getPxCookie();
-        //$this->pxConfig = $pxConfig;
-        //$this->pxCtx = $pxCtx;
-        //$this->cookieSecret = $pxConfig['cookie_key'];
+        list($hash, $cookie) = explode(":", $pxCtx->getPxCookie());
+        $this->pxCookie = $cookie;
+        $this->cookieHash = $has;
+        $this->pxConfig = $pxConfig;
+        $this->pxCtx = $pxCtx;
+        $this->cookieSecret = $pxConfig['cookie_key'];
     }
 
     /**
      * @var \stdClass
      */
     private $decodedCookie;
+
+    protected function getCookie() {
+        return $this->pxCookie;
+    }
 
     public function getDecodedCookie()
     {
@@ -125,9 +131,9 @@ class CookieV3 extends PerimeterxCookie
             return false;
         }
 
-        if (!isset($cookie->t, $cookie->s, $cookie->s->b, $cookie->u, $cookie->v, $cookie->h)) {
-            return false;
-        }
+        //if (!isset($cookie->t, $cookie->s, $cookie->s->b, $cookie->u, $cookie->v, $cookie->h)) {
+            //return false;
+        //}
 
         $this->decodedCookie = $cookie;
 

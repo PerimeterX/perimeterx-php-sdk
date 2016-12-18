@@ -42,6 +42,10 @@ class CookieV1 extends PerimeterxCookie
      */
     private $decodedCookie;
 
+    public getPxCookie() {
+        return $this->pxCookie;
+    }
+
     public function getDecodedCookie()
     {
         return $this->decodedCookie;

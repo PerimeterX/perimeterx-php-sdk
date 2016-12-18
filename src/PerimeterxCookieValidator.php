@@ -30,6 +30,8 @@ class PerimeterxCookieValidator
         $this->pxCtx = $pxCtx;
     }
 
+    protected function getCookie() {
+    }j,
     /**
      * @return bool - main verification function, decrypt/decode cookie if exists and verify its content
      */
@@ -58,7 +60,7 @@ class PerimeterxCookieValidator
                 $this->pxCtx->setS2SCallReason('cookie_expired');
                 return false;
             }
-            
+
             if ($cookie->isHighScore()) {
                 $this->pxConfig['logger']->info('cookie high score');
                 $this->pxCtx->setBlockReason('cookie_high_score');

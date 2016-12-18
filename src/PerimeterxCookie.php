@@ -35,6 +35,8 @@ abstract class PerimeterxCookie
         return $this->decodedCookie;
     }
 
+    protected abstract getCookie();
+
     public function getTime()
     {
         return $this->getDecodedCookie()->t;
@@ -133,7 +135,7 @@ abstract class PerimeterxCookie
         $keylen = 32;
         $digest = 'sha256';
 
-        $cookie = $this->pxCookie;
+        $cookie = $this->getCookie();
         list($salt, $iterations, $cookie) = explode(":", $cookie);
         $iterations = intval($iterations);
         $salt = base64_decode($salt);
@@ -166,7 +168,7 @@ abstract class PerimeterxCookie
      */
     private function decode()
     {
-        $data_str = base64_decode($this->pxCookie);
+        $data_str = base64_decode($this->getPxCookie());
         return json_decode($data_str);
     }
 
