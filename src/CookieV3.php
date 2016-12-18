@@ -2,33 +2,45 @@
 
 namespace Perimeterx;
 
-abstract class PerimeterxCookie
+class CookieV3 extends PerimeterxCookie
 {
 
     /**
      * @var string
      */
-    //private $pxCookie;
+    private $pxCookie;
 
     /**
      * @var object - perimeterx configuration object
      */
-    //private $pxConfig;
+    private $pxConfig;
 
     /**
      * @var PerimeterxContext
      */
-    //private $pxCtx;
+    private $pxCtx;
 
     /**
      * @var string
      */
-    //private $cookieSecret;
+    private $cookieSecret;
+
+    /**
+     * @param $pxCtx PerimeterxContext - perimeterx context
+     * @param $pxConfig array - perimeterx configurations
+     */
+    public function __construct($pxCtx, $pxConfig)
+    {
+        //$this->pxCookie = $pxCtx->getPxCookie();
+        //$this->pxConfig = $pxConfig;
+        //$this->pxCtx = $pxCtx;
+        //$this->cookieSecret = $pxConfig['cookie_key'];
+    }
 
     /**
      * @var \stdClass
      */
-    protected $decodedCookie;
+    private $decodedCookie;
 
     public function getDecodedCookie()
     {
@@ -40,7 +52,10 @@ abstract class PerimeterxCookie
         return $this->getDecodedCookie()->t;
     }
 
-    abstract protected function getScore();
+    public function getScore()
+    {
+        return $this->getDecodedCookie()->s;
+    }
 
     public function getUuid()
     {
@@ -52,16 +67,9 @@ abstract class PerimeterxCookie
         return $this->getDecodedCookie()->v;
     }
 
-    abstract protected function getHmac();
-
-    /**
-     * Checks if the cookie's score is above the configured blocking score
-     *
-     * @return bool
-     */
-    public function isHighScore()
+    protected function getHmac()
     {
-        return ($this->getScore() >= $this->pxConfig['blocking_score']);
+        return $this->cookieHash;
     }
 
     /**
@@ -81,16 +89,16 @@ abstract class PerimeterxCookie
      *
      * @return bool
      */
-    abstract public function isSecure();
-
-    /**
-     * Checks that the cookie was deserialized succcessfully, has not expired, and is secure
-     *
-     * @return bool
-     */
-    public function isValid()
+    public function isSecure()
     {
-        return $this->deserialize() && !$this->isExpired() && $this->isSecure();
+
+        $hmac_string = $this->cookieData.$this->pxCtx->getUserAgent();
+
+        if ($this->isHmacValid($hmac_string, $this->getHmac())) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -117,7 +125,6 @@ abstract class PerimeterxCookie
             return false;
         }
 
-        // encapsulate this
         if (!isset($cookie->t, $cookie->s, $cookie->s->b, $cookie->u, $cookie->v, $cookie->h)) {
             return false;
         }
@@ -148,19 +155,6 @@ abstract class PerimeterxCookie
         return $this->unpad($cookie);
     }
 
-    protected function unpad($str)
-    {
-        $len = mb_strlen($str);
-        $pad = ord($str[$len - 1]);
-        if ($pad && $pad < 16) {
-            $pm = preg_match('/' . chr($pad) . '{' . $pad . '}$/', $str);
-            if ($pm) {
-                return mb_substr($str, 0, $len - $pad);
-            }
-        }
-        return $str;
-    }
-
     /**
      * @return string - decoded perimeterx cookie
      */
@@ -168,27 +162,5 @@ abstract class PerimeterxCookie
     {
         $data_str = base64_decode($this->pxCookie);
         return json_decode($data_str);
-    }
-
-    protected function isHmacValid($hmac_str, $cookie_hmac)
-    {
-        $hmac = hash_hmac('sha256', $hmac_str, $this->cookieSecret);
-
-        if (function_exists('hash_equals')) {
-            return hash_equals($hmac, $cookie_hmac);
-        }
-
-        // @see http://php.net/manual/en/function.hash-equals.php#115635
-        if (strlen($hmac) != strlen($cookie_hmac)) {
-            return false;
-        } else {
-            $res = $hmac ^ $cookie_hmac;
-            $ret = false;
-            for ($i = strlen($res) - 1; $i >= 0; $i--) {
-                $ret |= ord($res[$i]);
-            }
-
-            return !$ret;
-        }
     }
 }

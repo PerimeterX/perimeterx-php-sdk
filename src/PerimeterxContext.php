@@ -149,12 +149,12 @@ class PerimeterxContext
      * @var string user's score.
      */
     protected $uuid;
-    
+
     /**
      * @var bool true if request was sent to S2S risk api
      */
     protected $is_made_s2s_api_call;
-    
+
     /**
      * @var string S2S api call HTTP error message
      */
@@ -207,7 +207,7 @@ class PerimeterxContext
     {
         $this->uuid = $uuid;
     }
-    
+
     /**
      * @param string $is_made_s2s_api_call
      */
