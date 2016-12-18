@@ -161,6 +161,11 @@ class PerimeterxContext
     protected $s2s_http_error_msg;
 
     /**
+     * @var string S2S api call HTTP error message
+     */
+    protected $blockAction;
+
+    /**
      * @return string
      */
     public function getVid()
@@ -394,4 +399,15 @@ class PerimeterxContext
         return $this->http_method;
     }
 
+    /**
+     * @return string
+     */
+    public function getBlockAction()
+    {
+        return $this->blockAction;
+    }
+
+    public function setBlockAction(blockAction) {
+        $this->blockAction = blockAction
+    }
 }
