@@ -30,8 +30,6 @@ class PerimeterxCookieValidator
         $this->pxCtx = $pxCtx;
     }
 
-    protected function getCookie() {
-    }j,
     /**
      * @return bool - main verification function, decrypt/decode cookie if exists and verify its content
      */
