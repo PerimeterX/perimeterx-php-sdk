@@ -39,7 +39,9 @@ abstract class PerimeterxCookie {
         return $this->decodedCookie;
     }
 
-    abstract protected function getCookie();
+    protected function getCookie() {
+        return $this->pxCookie;
+    }
 
     public function getTime() {
         return $this->getDecodedCookie()->t;
