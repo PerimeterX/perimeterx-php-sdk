@@ -53,6 +53,7 @@ class PerimeterxCookieValidator
             $this->pxCtx->setScore($cookie->getScore());
             $this->pxCtx->setUuid($cookie->getUuid());
             $this->pxCtx->setVid($cookie->getVid());
+            $this->pxCtx->setBlockAction($cookie->getBlockAction());
 
             if ($cookie->isExpired()) {
                 $this->pxConfig['logger']->info('cookie expired');

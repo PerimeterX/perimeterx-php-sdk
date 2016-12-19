@@ -35,6 +35,11 @@ class CookieV1 extends PerimeterxCookie
         return isset($cookie->t, $cookie->s, $cookie->s->b, $cookie->u, $cookie->v, $cookie->h);
     }
 
+    public function getBlockAction() {
+        // v1 cookie will return captcha action
+        return 'captcha';
+    }
+
     /**
      * Checks that the cookie is secure via HMAC
      *

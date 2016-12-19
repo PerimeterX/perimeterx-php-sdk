@@ -59,6 +59,8 @@ abstract class PerimeterxCookie {
 
     abstract protected function isCookieFormatValid();
 
+    abstract public function getBlockAction();
+
     /** Checks if the cookie's score is above the configured blocking score
      *
      * @return bool

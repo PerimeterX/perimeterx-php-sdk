@@ -30,20 +30,11 @@ class CookieV3 extends PerimeterxCookie
     }
 
     protected function isCookieFormatValid($cookie) {
-        return true;
-        //return isset($cookie->t, $cookie->s, $cookie->s->b, $cookie->u, $cookie->v, $cookie->h);
+        return isset($cookie->t, $cookie->s, $cookie->u, $cookie->v, $cookie->a);
     }
 
-    /**
-     * Checks if the cookie has expired
-     *
-     * @return bool
-     */
-    public function isExpired()
-    {
-        $dataTimeSec = $this->getTime() / 1000;
-
-        return ($dataTimeSec < time());
+    public function getBlockAction() {
+        return $this->getDecodedCookie()->a == 'c' ? 'captcha' : 'block';
     }
 
     /**
