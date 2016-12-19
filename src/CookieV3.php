@@ -19,11 +19,6 @@ class CookieV3 extends PerimeterxCookie
         $this->cookieSecret = $pxConfig['cookie_key'];
     }
 
-    /**
-     * @var \stdClass
-     */
-    private $decodedCookie;
-
     public function getScore()
     {
         return $this->getDecodedCookie()->s;

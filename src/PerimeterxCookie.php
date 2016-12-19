@@ -24,9 +24,12 @@ abstract class PerimeterxCookie {
      */
     protected $cookieSecret;
 
-    public static function createPXCookieObject($pxCtx, $pxConfig) { if
-        (isset($pxCtx->getPxCookie()['v3'])) { return new CookieV3($pxCtx,
-            $pxConfig); } return new CookieV1($pxCtx, $pxConfig); }
+    public static function createPXCookieObject($pxCtx, $pxConfig) {
+        if (isset($pxCtx->getPxCookie()['v3'])) {
+            return new CookieV3($pxCtx, $pxConfig);
+        }
+        return new CookieV1($pxCtx, $pxConfig);
+    }
 
     /** @var \stdClass
      */
@@ -98,11 +101,12 @@ abstract class PerimeterxCookie {
         // only deserialize once
         if ($this->decodedCookie !== null) { return true; }
 
-        if ($this->pxConfig['encryption_enabled']) { $cookie =
-            $this->decrypt(); } else { $cookie = $this->decode(); } $cookie =
-            json_decode($cookie); if ($cookie == null) { return false; }
-
-        // encapsulate this
+        if ($this->pxConfig['encryption_enabled']) {
+            $cookie = $this->decrypt();
+        } else {
+            $cookie = $this->decode();
+        }
+        $cookie = json_decode($cookie); if ($cookie == null) { return false; }
 
         if (!$this->isCookieFormatValid()) {
             return false;

@@ -5,23 +5,17 @@ namespace Perimeterx;
 class CookieV1 extends PerimeterxCookie
 {
 
-
     /**
      * @param $pxCtx PerimeterxContext - perimeterx context
      * @param $pxConfig array - perimeterx configurations
      */
-    public function __construct($cookie, $pxCtx, $pxConfig)
+    public function __construct($pxCtx, $pxConfig)
     {
-        //$this->pxCookie = $pxCtx->getPxCookie();
+        $this->pxCookie = $pxCtx->getPxCookie();
         $this->pxConfig = $pxConfig;
         $this->pxCtx = $pxCtx;
         $this->cookieSecret = $pxConfig['cookie_key'];
     }
-
-    /**
-     * @var \stdClass
-     */
-    private $decodedCookie;
 
     public getPxCookie() {
         return $this->pxCookie;
