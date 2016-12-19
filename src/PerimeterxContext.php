@@ -13,8 +13,11 @@ class PerimeterxContext
             foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
                 if (!empty($rawcookie) && strpos($rawcookie, '=') !== false) {
                     list($k, $v) = explode('=', $rawcookie, 2);
+                    if ($k == '_px3') {
+                        $this->px_cookie['v1'] = $k;
+                    }
                     if ($k == '_px') {
-                        $this->px_cookie = $v;
+                        $this->px_cookie['v3'] = $k;
                     }
                     if ($k == '_pxCaptcha') {
                         $this->px_captcha = $v;
@@ -149,16 +152,21 @@ class PerimeterxContext
      * @var string user's score.
      */
     protected $uuid;
-    
+
     /**
      * @var bool true if request was sent to S2S risk api
      */
     protected $is_made_s2s_api_call;
-    
+
     /**
      * @var string S2S api call HTTP error message
      */
     protected $s2s_http_error_msg;
+
+    /**
+     * @var string S2S api call HTTP error message
+     */
+    protected $blockAction;
 
     /**
      * @return string
@@ -207,7 +215,7 @@ class PerimeterxContext
     {
         $this->uuid = $uuid;
     }
-    
+
     /**
      * @param string $is_made_s2s_api_call
      */
@@ -294,7 +302,7 @@ class PerimeterxContext
      */
     public function getPxCookie()
     {
-        return $this->px_cookie;
+        return isset($this->px_cookie['v3']) ? $this->px_cookie['v3'] : $this->px_cookie['v1'];
     }
 
     /**
@@ -394,4 +402,16 @@ class PerimeterxContext
         return $this->http_method;
     }
 
+    /**
+     * @return string
+     */
+    public function getBlockAction()
+    {
+        return $this->blockAction;
+    }
+
+    public function setBlockAction($blockAction)
+    {
+        $this->blockAction = $blockAction;
+    }
 }
