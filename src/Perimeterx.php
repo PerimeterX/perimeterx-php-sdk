@@ -135,7 +135,7 @@ final class Perimeterx
     }
 
     private function shouldDisplayCaptcha($pxCtx) {
-        return $this->pxConfig['captcha_enabled'] && pxCtx->getBlockAction() == 'captcha';
+        return $this->pxConfig['captcha_enabled'] && $pxCtx->getBlockAction() == 'captcha';
     }
 
     /**

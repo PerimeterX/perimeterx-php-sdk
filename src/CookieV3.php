@@ -56,5 +56,4 @@ class CookieV3 extends PerimeterxCookie
 
         return false;
     }
-
 }
