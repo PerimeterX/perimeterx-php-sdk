@@ -14,7 +14,6 @@ class PerimeterxContext
                 if (!empty($rawcookie) && strpos($rawcookie, '=') !== false) {
                     list($k, $v) = explode('=', $rawcookie, 2);
                     if ($k == '_px3') {
-                        //$this->px_cookie = new CookieV3($k);
                         $this->px_cookie['v1'] = $k;
                     }
                     if ($k == '_px') {
@@ -303,7 +302,7 @@ class PerimeterxContext
      */
     public function getPxCookie()
     {
-        return $this->px_cookie->getPxCookie();
+        return $this->px_cookie;
     }
 
     /**
