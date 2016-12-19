@@ -164,7 +164,7 @@ class PerimeterxContext
     protected $s2s_http_error_msg;
 
     /**
-     * @var string S2S api call HTTP error message
+     * @var block action
      */
     protected $blockAction;
 
