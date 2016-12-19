@@ -164,7 +164,7 @@ abstract class PerimeterxCookie {
         return json_decode($data_str);
     }
 
-    private function isHmacValid($hmac_str, $cookie_hmac)
+    protected function isHmacValid($hmac_str, $cookie_hmac)
     {
         $hmac = hash_hmac('sha256', $hmac_str, $this->cookieSecret);
 
