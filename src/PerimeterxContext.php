@@ -13,8 +13,12 @@ class PerimeterxContext
             foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
                 if (!empty($rawcookie) && strpos($rawcookie, '=') !== false) {
                     list($k, $v) = explode('=', $rawcookie, 2);
+                    if ($k == '_px3') {
+                        //$this->px_cookie = new CookieV3($k);
+                        $this->px_cookie['v1'] = $k;
+                    }
                     if ($k == '_px') {
-                        $this->px_cookie = $v;
+                        $this->px_cookie['v3'] = $k;
                     }
                     if ($k == '_pxCaptcha') {
                         $this->px_captcha = $v;
@@ -299,7 +303,7 @@ class PerimeterxContext
      */
     public function getPxCookie()
     {
-        return $this->px_cookie;
+        return $this->px_cookie->getPxCookie();
     }
 
     /**
