@@ -14,10 +14,10 @@ class PerimeterxContext
                 if (!empty($rawcookie) && strpos($rawcookie, '=') !== false) {
                     list($k, $v) = explode('=', $rawcookie, 2);
                     if ($k == '_px3') {
-                        $this->px_cookie['v1'] = $v;
+                        $this->px_cookie['v3'] = $v;
                     }
                     if ($k == '_px') {
-                        $this->px_cookie['v3'] = $v;
+                        $this->px_cookie['v1'] = $v;
                     }
                     if ($k == '_pxCaptcha') {
                         $this->px_captcha = $v;
