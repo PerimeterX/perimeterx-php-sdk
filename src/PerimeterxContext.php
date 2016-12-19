@@ -302,7 +302,7 @@ class PerimeterxContext
      */
     public function getPxCookie()
     {
-        return $this->px_cookie;
+        return isset($this->px_cookie['v3']) ? $this->px_cookie['v3'] : $this->px_cookie['v1'];
     }
 
     /**
