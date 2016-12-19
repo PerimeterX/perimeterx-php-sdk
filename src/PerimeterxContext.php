@@ -410,7 +410,8 @@ class PerimeterxContext
         return $this->blockAction;
     }
 
-    public function setBlockAction(blockAction) {
+    public function setBlockAction(blockAction)
+    {
         $this->blockAction = blockAction
     }
 }
