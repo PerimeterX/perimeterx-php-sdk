@@ -39,7 +39,7 @@ abstract class PerimeterxCookie {
         return $this->decodedCookie;
     }
 
-    protected abstract getCookie();
+    abstract protected function getCookie();
 
     public function getTime() {
         return $this->getDecodedCookie()->t;
@@ -57,7 +57,7 @@ abstract class PerimeterxCookie {
 
     abstract protected function getHmac();
 
-    abstract protected function isCookieFormatValid();
+    abstract protected function isCookieFormatValid($cookie);
 
     abstract public function getBlockAction();
 
@@ -110,7 +110,7 @@ abstract class PerimeterxCookie {
         }
         $cookie = json_decode($cookie); if ($cookie == null) { return false; }
 
-        if (!$this->isCookieFormatValid()) {
+        if (!$this->isCookieFormatValid($cookie)) {
             return false;
         }
 
