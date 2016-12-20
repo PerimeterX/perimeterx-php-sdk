@@ -19,10 +19,6 @@ class CookieV3 extends PerimeterxCookie
         $this->cookieSecret = $pxConfig['cookie_key'];
     }
 
-    protected function getCookie() {
-        return $this->pxCookie;
-    }
-
     public function getScore()
     {
         return $this->getDecodedCookie()->s;

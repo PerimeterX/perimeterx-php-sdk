@@ -164,7 +164,7 @@ abstract class PerimeterxCookie {
      */
     private function decode()
     {
-        $data_str = base64_decode($this->getPxCookie());
+        $data_str = base64_decode($this->pxCookie);
         return json_decode($data_str);
     }
 
