@@ -24,8 +24,12 @@ abstract class PerimeterxCookie {
      */
     protected $cookieSecret;
 
-    public static function createPXCookieObject($pxCtx, $pxConfig) {
-        if (isset($pxCtx->getPxCookie()['v3'])) {
+
+    /**
+     * Factory method for creating PX Cookie object according to cookie version found on the request
+     */
+    public static function pxCookieFactory($pxCtx, $pxConfig) {
+        if (isset($pxCtx->getPxCookies()['v3'])) {
             return new CookieV3($pxCtx, $pxConfig);
         }
         return new CookieV1($pxCtx, $pxConfig);

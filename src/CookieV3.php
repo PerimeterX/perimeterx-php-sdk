@@ -11,9 +11,9 @@ class CookieV3 extends PerimeterxCookie
      */
     public function __construct($pxCtx, $pxConfig)
     {
-        list($hash, $cookie) = explode(":", $pxCtx->getPxCookie());
+        list($hash, $cookie) = explode(":", $pxCtx->getPxCookie(), 2);
         $this->pxCookie = $cookie;
-        $this->cookieHash = $has;
+        $this->cookieHash = $hash;
         $this->pxConfig = $pxConfig;
         $this->pxCtx = $pxCtx;
         $this->cookieSecret = $pxConfig['cookie_key'];
@@ -48,7 +48,7 @@ class CookieV3 extends PerimeterxCookie
      */
     public function isSecure()
     {
-        $hmac_string = $this->cookieData.$this->pxCtx->getUserAgent();
+        $hmac_string = $this->pxCookie.$this->pxCtx->getUserAgent();
 
         if ($this->isHmacValid($hmac_string, $this->getHmac())) {
             return true;

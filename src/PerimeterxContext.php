@@ -14,10 +14,10 @@ class PerimeterxContext
                 if (!empty($rawcookie) && strpos($rawcookie, '=') !== false) {
                     list($k, $v) = explode('=', $rawcookie, 2);
                     if ($k == '_px3') {
-                        $this->px_cookie['v3'] = $v;
+                        $this->px_cookies['v3'] = $v;
                     }
                     if ($k == '_px') {
-                        $this->px_cookie['v1'] = $v;
+                        $this->px_cookies['v1'] = $v;
                     }
                     if ($k == '_pxCaptcha') {
                         $this->px_captcha = $v;
@@ -69,7 +69,7 @@ class PerimeterxContext
     /**
      * @var string perimeterx risk cookie.
      */
-    protected $px_cookie;
+    protected $px_cookies;
 
     /**
      * @var string perimeterx risk cookie.
@@ -285,7 +285,6 @@ class PerimeterxContext
      */
     public function setS2SCallReason($s2s_call_reason)
     {
-        //echo 'set call reason';
         $this->s2s_call_reason = $s2s_call_reason;
     }
 
@@ -298,11 +297,19 @@ class PerimeterxContext
     }
 
     /**
-     * @return string
+     * @return string - v3 cookie if exists, if not - v1 cookie
      */
     public function getPxCookie()
     {
-        return isset($this->px_cookie['v3']) ? $this->px_cookie['v3'] : $this->px_cookie['v1'];
+        return isset($this->px_cookies['v3']) ? $this->px_cookies['v3'] : $this->px_cookies['v1'];
+    }
+
+    /**
+     * @return array of px cookies found on the request
+     */
+    public function getPxCookies()
+    {
+        return $this->px_cookies;
     }
 
     /**

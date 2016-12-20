@@ -41,7 +41,7 @@ class PerimeterxCookieValidator
                 return false;
             }
 
-            $cookie = PerimeterxCookie::createPXCookieObject($this->pxCtx, $this->pxConfig);
+            $cookie = PerimeterxCookie::pxCookieFactory($this->pxCtx, $this->pxConfig);
             if (!$cookie->deserialize()) {
                 $this->pxConfig['logger']->warning('invalid cookie');
                 $this->pxCtx->setS2SCallReason('cookie_decryption_failed');
