@@ -13,8 +13,11 @@ class PerimeterxContext
             foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
                 if (!empty($rawcookie) && strpos($rawcookie, '=') !== false) {
                     list($k, $v) = explode('=', $rawcookie, 2);
+                    if ($k == '_px3') {
+                        $this->px_cookies['v3'] = $v;
+                    }
                     if ($k == '_px') {
-                        $this->px_cookie = $v;
+                        $this->px_cookies['v1'] = $v;
                     }
                     if ($k == '_pxCaptcha') {
                         $this->px_captcha = $v;
@@ -66,7 +69,7 @@ class PerimeterxContext
     /**
      * @var string perimeterx risk cookie.
      */
-    protected $px_cookie;
+    protected $px_cookies;
 
     /**
      * @var string perimeterx risk cookie.
@@ -149,16 +152,21 @@ class PerimeterxContext
      * @var string user's score.
      */
     protected $uuid;
-    
+
     /**
      * @var bool true if request was sent to S2S risk api
      */
     protected $is_made_s2s_api_call;
-    
+
     /**
      * @var string S2S api call HTTP error message
      */
     protected $s2s_http_error_msg;
+
+    /**
+     * @var block action
+     */
+    protected $blockAction;
 
     /**
      * @return string
@@ -207,7 +215,7 @@ class PerimeterxContext
     {
         $this->uuid = $uuid;
     }
-    
+
     /**
      * @param string $is_made_s2s_api_call
      */
@@ -277,7 +285,6 @@ class PerimeterxContext
      */
     public function setS2SCallReason($s2s_call_reason)
     {
-        //echo 'set call reason';
         $this->s2s_call_reason = $s2s_call_reason;
     }
 
@@ -290,11 +297,19 @@ class PerimeterxContext
     }
 
     /**
-     * @return string
+     * @return string - v3 cookie if exists, if not - v1 cookie
      */
     public function getPxCookie()
     {
-        return $this->px_cookie;
+        return isset($this->px_cookies['v3']) ? $this->px_cookies['v3'] : $this->px_cookies['v1'];
+    }
+
+    /**
+     * @return array of px cookies found on the request
+     */
+    public function getPxCookies()
+    {
+        return $this->px_cookies;
     }
 
     /**
@@ -394,4 +409,16 @@ class PerimeterxContext
         return $this->http_method;
     }
 
+    /**
+     * @return string
+     */
+    public function getBlockAction()
+    {
+        return $this->blockAction;
+    }
+
+    public function setBlockAction($blockAction)
+    {
+        $this->blockAction = $blockAction;
+    }
 }
