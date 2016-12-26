@@ -63,7 +63,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
         $response = json_decode($this->sendRiskRequest());
         $this->pxCtx->setIsMadeS2SRiskApiCall(true);
         if (isset($response, $response->score, $response->action)) {
-            $score = $response->scores->non_human;
+            $score = $response->score;
             $this->pxCtx->setScore($score);
             $this->pxCtx->setUuid($response->uuid);
             $this->pxCtx->setBlockAction($response->action);

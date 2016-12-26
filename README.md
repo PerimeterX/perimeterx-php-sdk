@@ -15,6 +15,7 @@ Table of Contents
 -   [Configuration](#configuration)
   *   [Blocking Score](#blocking-score)
   *   [Custom Block Action](#custom-block)
+     * [Extracting Recomended Action](#block-action)   
   *   [Enable/Disable Captcha](#captcha-support)
   *   [Extracting Real IP Address](#real-ip)
   *   [Custom URI](#custom-uri)
@@ -145,7 +146,6 @@ $px->pxVerify();
 ```
 
 **No Blocking, Monitor Only**
-
 ```php
 /**
  * @param \Perimeterx\PerimeterxContext $pxCtx
@@ -160,6 +160,35 @@ $perimeterxConfig['custom_block_handler'] = function ($pxCtx)
 
 $px = Perimeterx::Instance($perimeterxConfig);
 $px->pxVerify();
+```
+
+
+<a name="block-action"></a>**Extracting Recomended Action**
+```php
+/**
+ * @param \Perimeterx\PerimeterxContext $pxCtx
+ */
+$perimeterxConfig['custom_block_handler'] = function ($pxCtx) {
+    $block_score = $pxCtx->getScore();
+    $block_uuid = $pxCtx->getUuid();
+    $action = $pxCtx->getBlockAction();
+
+    /* user defined logic comes here */
+    error_log('px score for user is ' . $block_score);
+    error_log('px recommended action for user is ' . $action);
+    error_log('px page uuid is ' . $block_uuid);
+
+    switch ($action) {
+        case "block":
+            log("do block");
+            break;
+        case "captcha":
+            log("do captcha");
+            break;
+        default:
+            log("unknown action");
+        }
+    }
 ```
 
 #### <a name="module-score"></a> Module Mode
@@ -421,6 +450,3 @@ Finally, run the `phpunit` command, or `phpunit <testName>` to execute a specifi
 ###Pull Request
 After you have completed the process, create a pull request to the Upstream repository. Please provide a complete and thorough description explaining the changes. Remember this code has to be read by our maintainers, so keep it simple, smart and accurate.
 
-###Thanks
-After all, you are helping us by contributing to this project, and we want to thank you for it.
-We highly appreciate your time invested in contributing to our project, and are glad to have people like you - kind helpers.

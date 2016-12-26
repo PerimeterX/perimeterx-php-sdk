@@ -50,7 +50,6 @@ class CookieV1 extends PerimeterxCookie
 
         /* hmac string with no ip */
         $hmac_str_withoutip = $base_hmac_str . $this->pxCtx->getUserAgent();
-
         if ($this->isHmacValid($hmac_str_withoutip, $this->getHmac()) or $this->isHmacValid($hmac_str_withip, $this->getHmac())) {
             return true;
         }
