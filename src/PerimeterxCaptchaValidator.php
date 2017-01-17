@@ -47,7 +47,7 @@ class PerimeterxCaptchaValidator extends PerimeterxRiskClient
                 return false;
             }
             /* remove pxCaptcha cookie to prevert reuse */
-            setcookie("_pxCaptcha", "", time() - 3600);
+            setcookie("_pxCaptcha", "", time() - 3600, "/");
             list($captcha, $vid, $uuid) = explode(':', $this->pxCaptcha, 3);
             if (!isset($captcha) || !isset($vid) || !isset($uuid)) {
                 return false;
