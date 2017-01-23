@@ -25,7 +25,8 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
                 'module_version' => $this->pxConfig['sdk_name'],
                 'http_method' => $this->pxCtx->getHttpMethod(),
                 'http_version' => $this->pxCtx->getHttpVersion(),
-                'risk_mode' => $risk_mode
+                'risk_mode' => $risk_mode,
+                'px_cookie_hmac' => $this->pxCtx->getCookieHmac()
             ]
         ];
 

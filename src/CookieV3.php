@@ -24,7 +24,7 @@ class CookieV3 extends PerimeterxCookie
         return $this->getDecodedCookie()->s;
     }
 
-    protected function getHmac()
+    public function getHmac()
     {
         return $this->cookieHash;
     }
