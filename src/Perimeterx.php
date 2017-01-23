@@ -164,7 +164,12 @@ final class Perimeterx
                 die();
             }
         } else {
-            $details = ['module_version' => $this->pxConfig['sdk_name'], 'http_version' => $pxCtx->getHttpVersion(), 'http_method' => $pxCtx->getHttpMethod()];
+            $details = [
+                'module_version' => $this->pxConfig['sdk_name'],
+                'http_version' => $pxCtx->getHttpVersion(),
+                'http_method' => $pxCtx->getHttpMethod(),
+                'px_cookie_hmac' => $pxCtx->getCookieHmac()
+            ];
             if ($pxCtx->getDecodedCookie()) {
                 $details['px_cookie'] = $pxCtx->getDecodedCookie();
             }
