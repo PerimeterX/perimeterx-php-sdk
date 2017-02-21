@@ -419,6 +419,18 @@ class PerimeterxContext
 
     public function setBlockAction($blockAction)
     {
-        $this->blockAction = $blockAction;
+        switch ($blockAction) {
+            case 'c':
+                $this->blockAction = 'captcha';
+                break;
+            case 'b':
+                $this->blockAction = 'block';
+                break;
+            case 'j':
+                $this->blockAction = 'challenge';
+                break;
+            default:
+                $this->blockAction = 'captcha';
+        }
     }
 }
