@@ -164,9 +164,14 @@ class PerimeterxContext
     protected $s2s_http_error_msg;
 
     /**
-     * @var block action
+     * @var string block action
      */
-    protected $blockAction;
+    protected $block_action;
+
+    /**
+     * @var string block data
+     */
+    protected $block_data;
 
     /**
      * @return string
@@ -414,23 +419,33 @@ class PerimeterxContext
      */
     public function getBlockAction()
     {
-        return $this->blockAction;
+        return $this->block_action;
     }
 
-    public function setBlockAction($blockAction)
+    public function setBlockAction($block_action)
     {
-        switch ($blockAction) {
+        switch ($block_action) {
             case 'c':
-                $this->blockAction = 'captcha';
+                $this->block_action = 'captcha';
                 break;
             case 'b':
-                $this->blockAction = 'block';
+                $this->block_action = 'block';
                 break;
             case 'j':
-                $this->blockAction = 'challenge';
+                $this->block_action = 'challenge';
                 break;
             default:
-                $this->blockAction = 'captcha';
+                $this->block_action = 'captcha';
         }
+    }
+
+    public function setBlockActionData($block_data = '') {
+        $this->block_data = $block_data;
+    }
+
+
+    public function getBlockActionData()
+    {
+        return $this->block_data;
     }
 }
