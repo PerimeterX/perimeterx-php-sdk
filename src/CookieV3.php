@@ -34,7 +34,7 @@ class CookieV3 extends PerimeterxCookie
     }
 
     public function getBlockAction() {
-        return $this->getDecodedCookie()->a == 'c' ? 'captcha' : 'block';
+        return $this->getDecodedCookie()->a;
     }
 
     /**

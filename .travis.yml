@@ -3,7 +3,6 @@ sudo: false
 php:
   - 5.6
   - 7.0
-  - nightly
 
 before_script:
   - cp tests/bootstrap.php.dist tests/bootstrap.php

@@ -50,17 +50,7 @@ class PerimeterxActivitiesClient
             $this->pxConfig['additional_activity_handler']($activityType, $pxCtx, $details);
         }
 
-        if ($activityType == 'page_requested' and !$this->pxConfig['send_page_activities']) {
-            return;
-        }
-        if ($activityType == 'block' and !$this->pxConfig['send_block_activities']) {
-            return;
-        }
-
-        if ($this->pxConfig['module_mode'] != Perimeterx::$ACTIVE_MODE) {
-            return;
-        }
-
+        $details['module_version'] = $this->pxConfig['sdk_name'];
         $pxData = [];
         $pxData['type'] = $activityType;
         $pxData['headers'] = $this->filterSensitiveHeaders($pxCtx);
@@ -75,12 +65,48 @@ class PerimeterxActivitiesClient
             $pxData['vid'] = $vid;
         }
 
-        $activities = [ $pxData ];
-
+        $activities = [$pxData];
         $headers = [
             'Authorization' => 'Bearer ' . $this->pxConfig['auth_token'],
             'Content-Type' => 'application/json'
         ];
         $this->httpClient->send('/api/v1/collector/s2s', 'POST', $activities, $headers, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout']);
+    }
+
+    /**
+     * @param PerimeterxContext $pxCtx
+     */
+    public function sendBlockActivity($pxCtx)
+    {
+        if (!$this->pxConfig['send_page_activities']) {
+            return;
+        }
+        
+        $details = [];
+        $details['block_uuid'] = $pxCtx->getUuid();
+        $details['block_score'] = $pxCtx->getScore();
+        $details['block_reason'] = $pxCtx->getBlockReason();
+
+        $this->sendToPerimeterx('block', $pxCtx, $details);
+    }
+
+    /**
+     * @param PerimeterxContext $pxCtx
+     */
+    public function sendPageRequestedActivity($pxCtx)
+    {
+        if (!$this->pxConfig['send_page_activities']) {
+            return;
+        }
+
+        $details = [];
+        $details['module_version'] = $this->pxConfig['sdk_name'];
+        $details['http_version'] = $pxCtx->getHttpVersion();
+        $details['http_method'] = $pxCtx->getHttpMethod();
+        if ($pxCtx->getDecodedCookie()) {
+            $details['px_cookie'] = $pxCtx->getDecodedCookie();
+        }
+
+        $this->sendToPerimeterx('page_requested', $pxCtx, $details);
     }
 }
