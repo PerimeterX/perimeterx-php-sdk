@@ -33,7 +33,7 @@ class CookieV1 extends PerimeterxCookie
 
     public function getBlockAction() {
         // v1 cookie will return captcha action
-        return 'captcha';
+        return 'c';
     }
 
     /**

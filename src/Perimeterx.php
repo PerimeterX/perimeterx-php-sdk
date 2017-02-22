@@ -81,6 +81,7 @@ final class Perimeterx
                 'auth_token' => null,
                 'module_enabled' => true,
                 'captcha_enabled' => true,
+                'challenge_enabled' => true,
                 'encryption_enabled' => true,
                 'blocking_score' => 70,
                 'sensitive_headers' => ['cookie', 'cookies'],
