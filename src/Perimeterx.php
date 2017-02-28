@@ -196,4 +196,12 @@ final class Perimeterx
             return 1;
         }
     }
+
+    /**
+     * @return string
+     */
+    public function getPxConfig()
+    {
+        return $this->pxConfig;
+    }
 }
