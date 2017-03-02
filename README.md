@@ -455,7 +455,7 @@ Feel free to check out the [Example App](https://github.com/PerimeterX/perimeter
 Before you create any pull request, make sure your project has passed all tests, and if any new features require it, write your own.
 
 To run any of the tests in the available suite, first open the ```bootstrap.php.dist``` file, and change the values according to the in-file insturctions. Then, rename the `bootstrap.php.dist` to `bootstrap.php`.
-Finally, run the `phpunit` command, or `phpunit <testName>` to execute a specific test (e.g. ```phpunit PerimeterxCookieTest```)
+Finally, run the `phpunit tests/PerimeterxCookieValidatorTest` command to run all tests, or `phpunit <testName>` to execute a specific test (e.g. ```phpunit PerimeterxCookieTest```)
 
 ###Pull Request
 After you have completed the process, create a pull request to the Upstream repository. Please provide a complete and thorough description, explaining the changes. Remember this code has to be read by our maintainers, so keep it simple, smart and accurate.
