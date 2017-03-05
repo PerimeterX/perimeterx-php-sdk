@@ -75,29 +75,6 @@ final class Perimeterx
             throw new PerimeterxException(PerimeterxException::$INVALID_LOGGER);
         }
 
-        // Logo validation
-        if (isset($pxConfig['custom_logo'])){
-          preg_match('/^https?:\/\/(?:[a-z0-9\-]+\.)+[a-z]{2,6}(?:\/[^#?]+)+\.(?:jpg|png|svg)$/',$pxConfig['custom_logo'],$matches);
-          if (!isset($matches[0])){
-            throw new PerimeterxException(PerimeterxException::$INVALID_LOGO_URL);
-          }
-        }
-
-        // CSS validation
-        if (isset($pxConfig['css_ref'])){
-          preg_match('/^https?:\/\/(?:[a-z0-9\-]+\.)+[a-z]{2,6}(?:\/[^#?]+)+\.(?:css)$/',$pxConfig['css_ref'],$matches);
-          if (!isset($matches[0])){
-            throw new PerimeterxException(PerimeterxException::$INVALID_CSS_REF);
-          }
-        }
-        // JS validation
-        if (isset($pxConfig['js_ref'])){
-          preg_match('/^https?:\/\/(?:[a-z0-9\-]+\.)+[a-z]{2,6}(?:\/[^#?]+)+\.(?:js)$/',$pxConfig['js_ref'],$matches);
-          if (!isset($matches[0])){
-            throw new PerimeterxException(PerimeterxException::$INVALID_JS_REF);
-          }
-        }
-
         try {
             $this->pxConfig = array_merge([
                 'app_id' => null,
