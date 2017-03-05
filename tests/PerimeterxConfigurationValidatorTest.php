@@ -7,6 +7,7 @@
   {
 
     protected $params;
+    protected $px;
 
     protected function setUp()
     {
@@ -17,16 +18,44 @@
         'blocking_score' => 80,
         'captcha_enabled' => false
       ];
+
+    }
+
+    protected function tearDown(){
+      $reflection = new ReflectionClass($this->px);
+      $instance = $reflection->getProperty('instance');
+      $instance->setAccessible(true);
+      $instance->setValue(null, null);
+      $instance->setAccessible(false);
     }
 
 
     public function testPxConfigurationAPIPath()
     {
-      $px = Perimeterx::Instance($this->params);
-      $pxConfig = $px->getPxConfig();
+      $this->px = Perimeterx::Instance($this->params);
+      $pxConfig = $this->px->getPxConfig();
 
       $this->assertEquals($pxConfig['perimeterx_server_host'],'https://sapi-pxmi1fumjs.perimeterx.net');
     }
+
+    public function testPxConfigurationCustomization()
+    {
+      $customParams = array_merge([
+        'css_ref' => 'http://www.google.com/stylesheet.css',
+        'js_ref' => 'http://www.google.com/script.js',
+        'custom_logo' => 'http://www.google.com/logo.png',
+      ],$this->params);
+
+      $this->px = Perimeterx::Instance($customParams);
+      $pxConfig = $this->px->getPxConfig();
+
+      $this->assertEquals($pxConfig['custom_logo'],'http://www.google.com/logo.png');
+      $this->assertEquals($pxConfig['js_ref'],'http://www.google.com/script.js');
+      $this->assertEquals($pxConfig['css_ref'],'http://www.google.com/stylesheet.css');
+    }
+
   }
+
+
 
 ?>
