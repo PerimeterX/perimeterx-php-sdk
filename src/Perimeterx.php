@@ -100,10 +100,8 @@ final class Perimeterx
             if (empty($this->pxConfig['logger'])) {
                 $this->pxConfig['logger'] = new PerimeterxLogger();
             }
-//
-//            if (!$this->pxConfig['perimeterx_server_host']) {
-//                $this->pxConfig['perimeterx_server_host'] = 'https://sapi-' . strtolower($this->pxConfig['app_id']) . '.glb1.perimeterx.net';
-//            }
+
+            $this->pxConfig['perimeterx_server_host'] = 'https://sapi-' . strtolower($this->pxConfig['app_id']) . '.perimeterx.net';
 
             $httpClient = new PerimeterxHttpClient($this->pxConfig);
             $this->pxConfig['http_client'] = $httpClient;
@@ -239,5 +237,13 @@ final class Perimeterx
 
             return 1;
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getPxConfig()
+    {
+        return $this->pxConfig;
     }
 }
