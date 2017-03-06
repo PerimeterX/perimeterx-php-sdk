@@ -14,6 +14,7 @@ Table of Contents
   *   [Basic Usage Example](#basic-usage)
 -   [Configuration](#configuration)
   *   [Blocking Score](#blocking-score)
+  *   [Custom Block Page](#custom-block-page)
   *   [Custom Block Action](#custom-block)
   *   [Enable/Disable Captcha](#captcha-support)
   *   [Extracting Real IP Address](#real-ip)
@@ -144,7 +145,7 @@ $px = Perimeterx::Instance($perimeterxConfig);
 $px->pxVerify();
 ```
 
-##Customizing Default Block Blocking Pages##
+## <a name="custom-block-page"></a> Customizing Default Block Pages
 **Custom logo insertion**
 Adding a custom logo to the blocking page is by providing the pxConfig a key ```custom_logo``` , the logo will be displayed at the top div of the the block page
 The logo's ```max-heigh``` property would be 150px and width would be set to ```auto```
