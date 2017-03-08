@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.3.0] - 2016-11-29
+### Added
+- Cookie v3 support (recomended action exposed on context)
+- Moved the risk v2 API
+
 ## [2.2.3] - 2016-11-29
 ### Added
 - Added TravisCI integration and badge

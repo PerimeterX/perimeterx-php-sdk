@@ -2,155 +2,121 @@
 
 namespace Perimeterx;
 
-class PerimeterxCookie
-{
+abstract class PerimeterxCookie {
 
     /**
      * @var string
      */
-    private $pxCookie;
+    protected $pxCookie;
 
     /**
      * @var object - perimeterx configuration object
      */
-    private $pxConfig;
+    protected $pxConfig;
 
     /**
      * @var PerimeterxContext
      */
-    private $pxCtx;
+    protected $pxCtx;
 
     /**
      * @var string
      */
-    private $cookieSecret;
+    protected $cookieSecret;
+
 
     /**
-     * @param $pxCtx PerimeterxContext - perimeterx context
-     * @param $pxConfig array - perimeterx configurations
+     * Factory method for creating PX Cookie object according to cookie version found on the request
      */
-    public function __construct($pxCtx, $pxConfig)
-    {
-        $this->pxCookie = $pxCtx->getPxCookie();
-        $this->pxConfig = $pxConfig;
-        $this->pxCtx = $pxCtx;
-        $this->cookieSecret = $pxConfig['cookie_key'];
+    public static function pxCookieFactory($pxCtx, $pxConfig) {
+        if (isset($pxCtx->getPxCookies()['v3'])) {
+            return new CookieV3($pxCtx, $pxConfig);
+        }
+        return new CookieV1($pxCtx, $pxConfig);
     }
 
-    /**
-     * @var \stdClass
+    /** @var \stdClass
      */
-    private $decodedCookie;
+    protected $decodedCookie;
 
-    public function getDecodedCookie()
-    {
+    public function getDecodedCookie() {
         return $this->decodedCookie;
     }
 
-    public function getTime()
-    {
+    protected function getCookie() {
+        return $this->pxCookie;
+    }
+
+    public function getTime() {
         return $this->getDecodedCookie()->t;
     }
 
-    public function getScore()
-    {
-        return $this->getDecodedCookie()->s->b;
-    }
+    abstract protected function getScore();
 
-    public function getUuid()
-    {
+    public function getUuid() {
         return $this->getDecodedCookie()->u;
     }
 
-    public function getVid()
-    {
+    public function getVid() {
         return $this->getDecodedCookie()->v;
     }
 
-    private function getHmac()
-    {
-        return $this->getDecodedCookie()->h;
-    }
+    abstract protected function getHmac();
 
-    /**
-     * Checks if the cookie's score is above the configured blocking score
+    abstract protected function isCookieFormatValid($cookie);
+
+    abstract public function getBlockAction();
+
+    /** Checks if the cookie's score is above the configured blocking score
      *
      * @return bool
      */
-    public function isHighScore()
-    {
+    public function isHighScore() {
         return ($this->getScore() >= $this->pxConfig['blocking_score']);
     }
 
-    /**
-     * Checks if the cookie has expired
+    /** Checks if the cookie has expired
      *
      * @return bool
      */
-    public function isExpired()
-    {
+    public function isExpired() {
         $dataTimeSec = $this->getTime() / 1000;
-
         return ($dataTimeSec < time());
     }
 
-    /**
-     * Checks that the cookie is secure via HMAC
+    /** Checks that the cookie is secure via HMAC
      *
      * @return bool
      */
-    public function isSecure()
-    {
-        $base_hmac_str = $this->getTime() . $this->decodedCookie->s->a . $this->getScore() . $this->getUuid() . $this->getVid();
+    abstract public function isSecure();
 
-        /* hmac string with ip - for backward support */
-        $hmac_str_withip = $base_hmac_str . $this->pxCtx->getIp() . $this->pxCtx->getUserAgent();
-
-        /* hmac string with no ip */
-        $hmac_str_withoutip = $base_hmac_str . $this->pxCtx->getUserAgent();
-
-        if ($this->isHmacValid($hmac_str_withoutip, $this->getHmac()) or $this->isHmacValid($hmac_str_withip, $this->getHmac())) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks that the cookie was deserialized succcessfully, has not expired, and is secure
+    /** Checks that the cookie was deserialized succcessfully, has not expired,
+     * and is secure
      *
      * @return bool
      */
-    public function isValid()
-    {
+    public function isValid() {
         return $this->deserialize() && !$this->isExpired() && $this->isSecure();
     }
 
-    /**
-     * Deserializes an encrypted and/or encoded cookie string.
+    /** Deserializes an encrypted and/or encoded cookie string.
      *
      * This must be called before using an instance.
      *
      * @return bool
      */
-    public function deserialize()
-    {
+    public function deserialize() {
         // only deserialize once
-        if ($this->decodedCookie !== null) {
-            return true;
-        }
+        if ($this->decodedCookie !== null) { return true; }
 
         if ($this->pxConfig['encryption_enabled']) {
             $cookie = $this->decrypt();
         } else {
             $cookie = $this->decode();
         }
-        $cookie = json_decode($cookie);
-        if ($cookie == null) {
-            return false;
-        }
+        $cookie = json_decode($cookie); if ($cookie == null) { return false; }
 
-        if (!isset($cookie->t, $cookie->s, $cookie->s->b, $cookie->u, $cookie->v, $cookie->h)) {
+        if (!$this->isCookieFormatValid($cookie)) {
             return false;
         }
 
@@ -165,7 +131,7 @@ class PerimeterxCookie
         $keylen = 32;
         $digest = 'sha256';
 
-        $cookie = $this->pxCookie;
+        $cookie = $this->getCookie();
         list($salt, $iterations, $cookie) = explode(":", $cookie);
         $iterations = intval($iterations);
         $salt = base64_decode($salt);
@@ -202,7 +168,7 @@ class PerimeterxCookie
         return json_decode($data_str);
     }
 
-    private function isHmacValid($hmac_str, $cookie_hmac)
+    protected function isHmacValid($hmac_str, $cookie_hmac)
     {
         $hmac = hash_hmac('sha256', $hmac_str, $this->cookieSecret);
 
