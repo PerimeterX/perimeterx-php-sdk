@@ -136,11 +136,19 @@ final class Perimeterx
         }
     }
 
+    /**
+     * @param PerimeterxContext $pxCtx
+     * @return bool - a true value if captcha need to be displayed
+     */
     private function shouldDisplayCaptcha($pxCtx)
     {
         return $this->pxConfig['captcha_enabled'] && $pxCtx->getBlockAction() == 'captcha';
     }
 
+    /**
+     * @param PerimeterxContext $pxCtx
+     * @return bool - a true value if a challenge need to be displayed
+     */
     private function shouldDisplayChallenge($pxCtx)
     {
         return $this->pxConfig['challenge_enabled'] && $pxCtx->getBlockAction() == 'challenge';
@@ -257,9 +265,8 @@ final class Perimeterx
             $client->sendResetRequest();
         } catch (\Exception $e) {
             $this->pxConfig['logger']->error('Uncaught exception while resetting perimeterx score' . $e->getCode() . ' ' . $e->getMessage());
-
-            return 1;
         }
+        return 1;
     }
 
     /**
