@@ -41,7 +41,7 @@ class PerimeterxCookieValidator
                 return false;
             }
 
-            $cookie = new PerimeterxCookie($this->pxCtx, $this->pxConfig);
+            $cookie = PerimeterxCookie::pxCookieFactory($this->pxCtx, $this->pxConfig);
             if (!$cookie->deserialize()) {
                 $this->pxConfig['logger']->warning('invalid cookie');
                 $this->pxCtx->setS2SCallReason('cookie_decryption_failed');
@@ -52,13 +52,14 @@ class PerimeterxCookieValidator
             $this->pxCtx->setScore($cookie->getScore());
             $this->pxCtx->setUuid($cookie->getUuid());
             $this->pxCtx->setVid($cookie->getVid());
+            $this->pxCtx->setBlockAction($cookie->getBlockAction());
 
             if ($cookie->isExpired()) {
                 $this->pxConfig['logger']->info('cookie expired');
                 $this->pxCtx->setS2SCallReason('cookie_expired');
                 return false;
             }
-            
+
             if ($cookie->isHighScore()) {
                 $this->pxConfig['logger']->info('cookie high score');
                 $this->pxCtx->setBlockReason('cookie_high_score');
