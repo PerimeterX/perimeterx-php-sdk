@@ -82,15 +82,16 @@ final class Perimeterx
                 'auth_token' => null,
                 'module_enabled' => true,
                 'captcha_enabled' => true,
+                'challenge_enabled' => true,
                 'encryption_enabled' => true,
                 'blocking_score' => 70,
                 'sensitive_headers' => ['cookie', 'cookies'],
                 'max_buffer_len' => 1,
                 'send_page_activities' => false,
                 'send_block_activities' => true,
-                'sdk_name' => 'PHP SDK v2.2.3',
+                'sdk_name' => 'PHP SDK v2.3.0',
                 'debug_mode' => false,
-                'perimeterx_server_host' => 'https://sapi.perimeterx.net',
+                'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
                 'module_mode' => Perimeterx::$ACTIVE_MODE,
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
@@ -100,8 +101,6 @@ final class Perimeterx
             if (empty($this->pxConfig['logger'])) {
                 $this->pxConfig['logger'] = new PerimeterxLogger();
             }
-
-            $this->pxConfig['perimeterx_server_host'] = 'https://sapi-' . strtolower($this->pxConfig['app_id']) . '.perimeterx.net';
 
             $httpClient = new PerimeterxHttpClient($this->pxConfig);
             $this->pxConfig['http_client'] = $httpClient;
@@ -139,78 +138,110 @@ final class Perimeterx
 
     /**
      * @param PerimeterxContext $pxCtx
+     * @return bool - a true value if captcha need to be displayed
+     */
+    private function shouldDisplayCaptcha($pxCtx)
+    {
+        return $this->pxConfig['captcha_enabled'] && $pxCtx->getBlockAction() == 'captcha';
+    }
+
+    /**
+     * @param PerimeterxContext $pxCtx
+     * @return bool - a true value if a challenge need to be displayed
+     */
+    private function shouldDisplayChallenge($pxCtx)
+    {
+        return $this->pxConfig['challenge_enabled'] && $pxCtx->getBlockAction() == 'challenge';
+    }
+
+    /**
+     * @param PerimeterxContext $pxCtx
      * @return bool - a true value when user is scored ok/blocking is disabled
      */
     private function handleVerification($pxCtx)
     {
-        $mustache = new \Mustache_Engine(array(
-          'loader' => new \Mustache_Loader_FilesystemLoader(dirname(__FILE__) . '/templates'),
-        ));
         $score = $pxCtx->getScore();
-        if (isset($score) and $score >= $this->pxConfig['blocking_score']) {
-            $this->pxActivitiesClient->sendToPerimeterx('block', $pxCtx, ['block_uuid' => $pxCtx->getUuid(), 'block_score' => $pxCtx->getScore(), 'block_reason' => $pxCtx->getBlockReason(), 'module_version' => $this->pxConfig['sdk_name']]);
-            if (isset($this->pxConfig['custom_block_handler'])) {
-                $this->pxConfig['custom_block_handler']($pxCtx);
-            } elseif (function_exists('pxCustomBlockHandler')) {
-                call_user_func('pxCustomBlockHandler', $pxCtx);
-            } elseif ($this->pxConfig['module_mode'] == Perimeterx::$ACTIVE_MODE) {
-                $block_uuid = $pxCtx->getUuid();
-
-                $templateInputs = array(
-                  'refId' => $block_uuid,
-                  'appId' => $this->pxConfig['app_id'],
-                  'vid' => $pxCtx->getVid(),
-                  'uuid' => $block_uuid,
-                  'logoVisibility' => isset($this->pxConfig['custom_logo']) ? 'visible' : 'hidden',
-                  'customLogo' => isset($this->pxConfig['custom_logo']) ? $this->pxConfig['custom_logo'] : '',
-                  'cssRef' => $this->getCssRef(),
-                  'jsRef' => $this->getJsRef()
-                );
-
-                if ($this->pxConfig['captcha_enabled']) {
-                    $html = $mustache->render('captcha',$templateInputs);
-                } else {
-                    $html = $mustache->render('block',$templateInputs);
-                }
-                header("Status: 403");
-                header("Content-Type: text/html");
-                echo $html;
-                die();
-            }
-        } else {
-            $details = ['module_version' => $this->pxConfig['sdk_name'], 'http_version' => $pxCtx->getHttpVersion(), 'http_method' => $pxCtx->getHttpMethod()];
-            if ($pxCtx->getDecodedCookie()) {
-                $details['px_cookie'] = $pxCtx->getDecodedCookie();
-            }
-            $this->pxActivitiesClient->sendToPerimeterx('page_requested', $pxCtx, $details);
+        /* score is ok - PASS traffic */
+        if (!isset($score) or $score < $this->pxConfig['blocking_score']) {
+            $this->pxActivitiesClient->sendPageRequestedActivity($pxCtx);
             return 1;
         }
+
+        $this->pxActivitiesClient->sendBlockActivity($pxCtx);
+        /* custom_block_handler - custom block handler defined by the user */
+        if (isset($this->pxConfig['custom_block_handler'])) {
+            $this->pxConfig['custom_block_handler']($pxCtx);
+            return 1;
+        }
+
+        /* DEPRECATED - custom block handler defined by the user as a user function */
+        if (function_exists('pxCustomBlockHandler')) {
+            $this->pxConfig['logger']->warning("Deprecation Warning: please using pxConfig['custom_block_handler'] to custom your block handler instead of pxCustomBlockHandler");
+            call_user_func('pxCustomBlockHandler', $pxCtx);
+            return 1;
+        }
+
+        if ($this->pxConfig['module_mode'] != Perimeterx::$ACTIVE_MODE) {
+            return 1;
+        }
+
+        $block_uuid = $pxCtx->getUuid();
+        $mustache = new \Mustache_Engine(array(
+            'loader' => new \Mustache_Loader_FilesystemLoader(dirname(__FILE__) . '/templates'),
+        ));
+        $templateInputs = array(
+            'refId' => $block_uuid,
+            'appId' => $this->pxConfig['app_id'],
+            'vid' => $pxCtx->getVid(),
+            'uuid' => $block_uuid,
+            'logoVisibility' => isset($this->pxConfig['custom_logo']) ? 'visible' : 'hidden',
+            'customLogo' => isset($this->pxConfig['custom_logo']) ? $this->pxConfig['custom_logo'] : '',
+            'cssRef' => $this->getCssRef(),
+            'jsRef' => $this->getJsRef()
+        );
+
+
+        /* generate return HTML */
+        if ($this->shouldDisplayChallenge($pxCtx)) {
+            /* set return html to challenge page */
+            $html = $pxCtx->getBlockActionData();
+        } elseif ($this->shouldDisplayCaptcha($pxCtx)) {
+            /* set return html to default captcha page */
+            $html = $mustache->render('captcha', $templateInputs);
+        } else {
+            /* set return html to default block page */
+            $html = $mustache->render('block', $templateInputs);
+        }
+        header("Status: 403");
+        header("Content-Type: text/html");
+        echo $html;
+        die();
     }
 
     /**
-    * Method for retreving jsRef from pxConfig if exists
-    */
+     * Method for retreving jsRef from pxConfig if exists
+     */
     private function getJsRef()
     {
-      $jsRefScript = '';
-      if (isset($this->pxConfig['js_ref'])){
-        $jsRefScript = $this->pxConfig['js_ref'];
-      }
-      return $jsRefScript;
+        $jsRefScript = '';
+        if (isset($this->pxConfig['js_ref'])) {
+            $jsRefScript = $this->pxConfig['js_ref'];
+        }
+        return $jsRefScript;
     }
 
 
     /**
-    * Method for retreving cssRef from pxConfig if exists
-    */
+     * Method for retreving cssRef from pxConfig if exists
+     */
     private function getCssRef()
     {
-      $cssRefScript = "";
-      if (isset($this->pxConfig['css_ref'])){
-        $cssRefScript = $this->pxConfig['css_ref'];
-      }
+        $cssRefScript = "";
+        if (isset($this->pxConfig['css_ref'])) {
+            $cssRefScript = $this->pxConfig['css_ref'];
+        }
 
-      return $cssRefScript;
+        return $cssRefScript;
     }
 
     /**
@@ -224,7 +255,7 @@ final class Perimeterx
             }
 
             $pxCtx = new PerimeterxContext($this->pxConfig);
-            $cookie = new PerimeterxCookie($pxCtx, $this->pxConfig);
+            $cookie = PerimeterxCookie::pxCookieFactory($pxCtx, $this->pxConfig);
             if ($cookie->isValid()) {
                 $pxCtx->setVid($cookie->getVid());
                 $pxCtx->setUuid($cookie->getUuid());
@@ -234,9 +265,8 @@ final class Perimeterx
             $client->sendResetRequest();
         } catch (\Exception $e) {
             $this->pxConfig['logger']->error('Uncaught exception while resetting perimeterx score' . $e->getCode() . ' ' . $e->getMessage());
-
-            return 1;
         }
+        return 1;
     }
 
     /**
