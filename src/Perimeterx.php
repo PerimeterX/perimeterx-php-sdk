@@ -74,6 +74,7 @@ final class Perimeterx
         if (isset($this->pxConfig['logger']) && !($this->pxConfig['logger'] instanceof LoggerInterface)) {
             throw new PerimeterxException(PerimeterxException::$INVALID_LOGGER);
         }
+
         try {
             $this->pxConfig = array_merge([
                 'app_id' => null,
@@ -94,7 +95,7 @@ final class Perimeterx
                 'module_mode' => Perimeterx::$ACTIVE_MODE,
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
-                'local_proxy' => false
+                'local_proxy' => false,
             ], $pxConfig);
 
             if (empty($this->pxConfig['logger'])) {
@@ -185,21 +186,62 @@ final class Perimeterx
         }
 
         $block_uuid = $pxCtx->getUuid();
+        $mustache = new \Mustache_Engine(array(
+            'loader' => new \Mustache_Loader_FilesystemLoader(dirname(__FILE__) . '/templates'),
+        ));
+        $templateInputs = array(
+            'refId' => $block_uuid,
+            'appId' => $this->pxConfig['app_id'],
+            'vid' => $pxCtx->getVid(),
+            'uuid' => $block_uuid,
+            'logoVisibility' => isset($this->pxConfig['custom_logo']) ? 'visible' : 'hidden',
+            'customLogo' => isset($this->pxConfig['custom_logo']) ? $this->pxConfig['custom_logo'] : '',
+            'cssRef' => $this->getCssRef(),
+            'jsRef' => $this->getJsRef()
+        );
+
+
         /* generate return HTML */
         if ($this->shouldDisplayChallenge($pxCtx)) {
             /* set return html to challenge page */
             $html = $pxCtx->getBlockActionData();
         } elseif ($this->shouldDisplayCaptcha($pxCtx)) {
             /* set return html to default captcha page */
-            $html = '<html lang="en"><head><link type="text/css" rel="stylesheet" media="screen, print" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"> <meta charset="UTF-8"> <title>Access to This Page Has Been Blocked</title> <style> p { width: 60%; margin: 0 auto; font-size: 35px; } body { background-color: #a2a2a2; font-family: "Open Sans"; margin: 5%; } img { width: 180px; } a { color: #2020B1; text-decoration: blink; } a:hover { color: #2b60c6; } </style> <script src="https://www.google.com/recaptcha/api.js"></script> <script> window.px_vid = "' . $pxCtx->getVid() . '" ; function handleCaptcha(response) { var name = \'_pxCaptcha\'; var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString(); var cookieParts = [name, \'=\', response + \':\' + window.px_vid + \':' . $block_uuid . ';\', \'expires=\', expiryUtc, \'; path=/\']; document.cookie = cookieParts.join(\'\'); location.reload(); } </script> </head> <body cz-shortcut-listen="true"> <div><img src="http://storage.googleapis.com/instapage-thumbnails/035ca0ab/e94de863/1460594818-1523851-467x110-perimeterx.png"> </div> <span style="color: white; font-size: 34px;">Access to This Page Has Been Blocked</span> <div style="font-size: 24px;color: #000042;"><br> Access is blocked according to the site security policy.<br> Your browsing behaviour fingerprinting made us think you may be a bot. <br> <br> This may happen as a result ofthe following: <ul> <li>JavaScript is disabled or not running properly.</li> <li>Your browsing behaviour fingerprinting are not likely to be a regular user.</li> </ul> To read more about the bot defender solution: <a href="https://www.perimeterx.com/bot-defender">https://www.perimeterx.com/bot-defender</a><br> If you think the blocking was done by mistake, contact the site administrator. <br> <div class="g-recaptcha" data-sitekey="6Lcj-R8TAAAAABs3FrRPuQhLMbp5QrHsHufzLf7b" data-callback="handleCaptcha" data-theme="dark"></div> <br><span style="font-size: 20px;">Block Reference: <span style="color: #525151;">#' . $block_uuid . '</span></span> </div> </body> </html>';
+            $html = $mustache->render('captcha', $templateInputs);
         } else {
             /* set return html to default block page */
-            $html = '<html lang="en"><head><link type="text/css" rel="stylesheet" media="screen, print" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"><meta charset="UTF-8"><title>Access to This Page Has Been Blocked</title><style> p {width: 60%;margin: 0 auto;font-size: 35px;}body {background-color: #a2a2a2;font-family: "Open Sans";margin: 5%;} img {width: 180px;}a {color: #2020B1;text-decoration: blink;}a:hover {color: #2b60c6;} </style><style type="text/css"></style></head><body cz-shortcut-listen="true"><div><img src="http://storage.googleapis.com/instapage-thumbnails/035ca0ab/e94de863/1460594818-1523851-467x110-perimeterx.png"></div><span style="color: white; font-size: 34px;">Access to This Page Has Been Blocked</span><div style="font-size: 24px;color: #000042;"><br> Access is blocked according to the site security policy.<br> Your browsing behaviour fingerprinting made us think you may be a bot. <br> <br> This may happen as a result ofthe following:<ul><li>JavaScript is disabled or not running properly.</li><li>Your browsing behaviour fingerprinting are not likely to be a regular user.</li></ul>To read more about the bot defender solution: <a href="https://www.perimeterx.com/bot-defender">https://www.perimeterx.com/bot-defender</a><br> If you think the blocking was done by mistake, contact the site administrator. <br> <br><span style="font-size: 20px;">Block Reference: <span style="color: #525151;">#' . $block_uuid . '</span></span></div></body></html>';
+            $html = $mustache->render('block', $templateInputs);
         }
         header("Status: 403");
         header("Content-Type: text/html");
         echo $html;
         die();
+    }
+
+    /**
+     * Method for retreving jsRef from pxConfig if exists
+     */
+    private function getJsRef()
+    {
+        $jsRefScript = '';
+        if (isset($this->pxConfig['js_ref'])) {
+            $jsRefScript = $this->pxConfig['js_ref'];
+        }
+        return $jsRefScript;
+    }
+
+
+    /**
+     * Method for retreving cssRef from pxConfig if exists
+     */
+    private function getCssRef()
+    {
+        $cssRefScript = "";
+        if (isset($this->pxConfig['css_ref'])) {
+            $cssRefScript = $this->pxConfig['css_ref'];
+        }
+
+        return $cssRefScript;
     }
 
     /**

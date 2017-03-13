@@ -13,6 +13,7 @@
   "hompage": "http://www.perimeterx.com",
   "type": "library",
   "require": {
+    "mustache/mustache": "^2.11.1",
     "guzzlehttp/guzzle": "~6.0",
     "php": ">=5.5",
     "psr/log": "^1.0.2"
