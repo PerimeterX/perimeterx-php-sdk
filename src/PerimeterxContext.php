@@ -169,9 +169,14 @@ class PerimeterxContext
     protected $s2s_http_error_msg;
 
     /**
-     * @var block action
+     * @var string block action
      */
     protected $blockAction;
+
+    /**
+     * @var string cookie hmac
+     */
+    protected $pxCookieHmac;
 
     /**
      * @return string
