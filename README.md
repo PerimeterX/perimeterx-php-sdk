@@ -14,6 +14,7 @@ Table of Contents
   *   [Basic Usage Example](#basic-usage)
 -   [Configuration](#configuration)
   *   [Blocking Score](#blocking-score)
+  *   [Custom Block Page](#custom-block-page)
   *   [Custom Block Action](#custom-block)
      * [Extracting Recomended Action](#block-action)   
   *   [Enable/Disable Captcha](#captcha-support)
@@ -34,7 +35,7 @@ Table of Contents
 <a name="dependencies"></a> Dependencies
 ----------------------------------------
 
--   [PHP >= v5.5](http://php.net/downloads.php)
+-   [v5.6 <= PHP <= v7.0.15](http://php.net/downloads.php)
 -   [mcrypt](http://php.net/manual/en/book.mcrypt.php)
 
 
@@ -57,8 +58,7 @@ use Perimeterx\Perimeterx;
 $perimeterxConfig = [
     'app_id' => 'APP_ID',
     'cookie_key' => 'COOKIE_SECRET',
-    'auth_token' => 'AUTH_
-    TOKEN',
+    'auth_token' => 'AUTH_TOKEN',
     'blocking_score' => 60
 ];
 
@@ -73,7 +73,7 @@ $px->pxVerify();
 
 #### Configuring Required Parameters
 
-Configuration options are set on the `$perimeterxConfig` variable. 
+Configuration options are set on the `$perimeterxConfig` variable.
 
 #### Required parameters:
 
@@ -146,6 +146,45 @@ $px = Perimeterx::Instance($perimeterxConfig);
 $px->pxVerify();
 ```
 
+## <a name="custom-block-page"></a> Customizing Default Block Pages
+**Custom logo insertion**
+Adding a custom logo to the blocking page is by providing the pxConfig a key ```custom_logo``` , the logo will be displayed at the top div of the the block page
+The logo's ```max-heigh``` property would be 150px and width would be set to ```auto```
+
+The key ```custom_logo```  expects a valid URL address such as ```https://s.perimeterx.net/logo.png```
+
+Example below:
+```php
+$perimeterxConfig = [
+    'app_id' => 'APP_ID',
+    'cookie_key' => 'COOKIE_SECRET',
+    'auth_token' => 'AUTH_TOKEN',
+    'blocking_score' => 60,
+    'custom_logo' => 'LOGO_URL'
+];
+```
+
+** Custom JS/CSS **
+
+The block page can be modified with a custom CSS by adding to the ```pxConfig``` the key ```css_ref``` and providing a valid URL to the css
+In addition there is also the option to add a custom JS file by adding ```js_ref``` key to the ```pxConfig``` and providing the JS file that will be loaded with the block page, this key also expects a valid URL
+
+On both cases if the URL is not a valid format an exception will be thrown
+
+Example below:
+```php
+$perimeterxConfig = [
+    'app_id' => 'APP_ID',
+    'cookie_key' => 'COOKIE_SECRET',
+    'auth_token' => 'AUTH_TOKEN',
+    'blocking_score' => 60,
+    'css_ref' => 'CSS_URL',
+    'js_ref' => 'JS_URL'
+];
+```
+
+Side notes: Custom logo/js/css can be added together
+
 **No Blocking, Monitor Only**
 ```php
 /**
@@ -155,7 +194,7 @@ $perimeterxConfig['custom_block_handler'] = function ($pxCtx)
     $block_score = $pxCtx->getScore();
     $block_uuid = $pxCtx->getUuid();
     $full_url = $pxCtx->getFullUrl();
-    
+
     // user defined logic goes here
 };
 
@@ -296,7 +335,7 @@ $perimeterxConfig = [
 The API Timeout, in seconds (float), to wait for the PerimeterX server API response.
 
 
-**Default:** 1 
+**Default:** 1
 
 ```php
 $perimeterxConfig = [
@@ -446,7 +485,7 @@ Feel free to check out the [Example App](https://github.com/PerimeterX/perimeter
 Before you create any pull request, make sure your project has passed all tests, and if any new features require it, write your own.
 
 To run any of the tests in the available suite, first open the ```bootstrap.php.dist``` file, and change the values according to the in-file insturctions. Then, rename the `bootstrap.php.dist` to `bootstrap.php`.
-Finally, run the `phpunit` command, or `phpunit <testName>` to execute a specific test (e.g. ```phpunit PerimeterxCookieTest```)
+Finally, run the `phpunit tests/PerimeterxCookieValidatorTest` command to run all tests, or `phpunit <testName>` to execute a specific test (e.g. ```phpunit PerimeterxCookieTest```)
 
 ###Pull Request
 After you have completed the process, create a pull request to the Upstream repository. Please provide a complete and thorough description, explaining the changes. Remember this code has to be read by our maintainers, so keep it simple, smart and accurate.

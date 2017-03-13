@@ -2,3 +2,4 @@
 /vendor
 tests/bootstrap.php
 composer.lock
+dev/
