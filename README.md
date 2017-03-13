@@ -35,7 +35,7 @@ Table of Contents
 <a name="dependencies"></a> Dependencies
 ----------------------------------------
 
--   [PHP >= v5.5](http://php.net/downloads.php)
+-   [v5.6 <= PHP <= v7.0.15](http://php.net/downloads.php)
 -   [mcrypt](http://php.net/manual/en/book.mcrypt.php)
 
 
@@ -73,7 +73,7 @@ $px->pxVerify();
 
 #### Configuring Required Parameters
 
-Configuration options are set on the `$perimeterxConfig` variable. 
+Configuration options are set on the `$perimeterxConfig` variable.
 
 #### Required parameters:
 
