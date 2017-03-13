@@ -107,6 +107,9 @@ class PerimeterxActivitiesClient
             $details['px_cookie'] = $pxCtx->getDecodedCookie();
         }
 
+        if ($pxCtx->getCookieHmac()) {
+            $details['px_cookie_hmac'] = $pxCtx->getCookieHmac();
+        }
         $this->sendToPerimeterx('page_requested', $pxCtx, $details);
     }
 }

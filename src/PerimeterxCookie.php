@@ -61,7 +61,7 @@ abstract class PerimeterxCookie {
         return $this->getDecodedCookie()->v;
     }
 
-    abstract protected function getHmac();
+    abstract public function getHmac();
 
     abstract protected function isCookieFormatValid($cookie);
 
