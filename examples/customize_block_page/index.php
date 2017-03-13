@@ -22,19 +22,19 @@
 <h1>PxDummy Webapp</h1>
 <script type="text/javascript">
     (function(){
-        window._pxAppId ='PXMI1FuMjS';
+        window._pxAppId ='PX_APP_ID';
         // Custom parameters
         // window._pxParam1 = "<param1>";
         var p = document.getElementsByTagName('script')[0],
             s = document.createElement('script');
         s.async = 1;
-        s.src = '//client.perimeterx.net/PXMI1FuMjS/main.min.js';
+        s.src = '//client.perimeterx.net/PX_APP_ID/main.min.js';
         p.parentNode.insertBefore(s,p);
     }());
 </script>
 <noscript>
     <div style="position:fixed; top:0; left:0; display:none" width="1" height="1">
-        <img src="//collector-PXMI1FuMjS.perimeterx.net/api/v1/collector/noScript.gif?appId=PXMI1FuMjS">
+        <img src="//collector-PX_APP_ID.perimeterx.net/api/v1/collector/noScript.gif?appId=PX_APP_ID">
     </div>
 </noscript>
 </body>
