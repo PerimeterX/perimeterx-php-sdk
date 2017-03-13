@@ -12,13 +12,12 @@
     protected function setUp()
     {
       $this->params = [
-        'app_id' => 'PXMI1FuMjS',
-        'cookie_key' => 'KONhrO4h2efKU+998WsKSL/K8WvmafI5tFnp16xYiQjhOd9g8AEqjIKlA+vvQwhY',
-        'auth_token' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZXMiOlsicmlza19zY29yZSIsInJlc3RfYXBpIl0sImlhdCI6MTQ4ODI3MTQyMSwic3ViIjoiUFhNSTFGdU1qUyIsImp0aSI6IjVmZWRhZGQwLTYwNzItNGUxOS1iN2MxLTdmMjk1ZWIwMDIwNSJ9.PykF4OCofWs0dL5uTOdDw2pHCJ9WalevUOUL366Me2o',
+        'app_id' => PX_APP_ID,
+        'cookie_key' => PX_COOKIE_KEY,
+        'auth_token' => PX_AUTH_TOKEN,
         'blocking_score' => 80,
         'captcha_enabled' => false
       ];
-
     }
 
     protected function tearDown(){
