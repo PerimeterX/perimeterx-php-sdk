@@ -22,7 +22,7 @@ class CookieV1 extends PerimeterxCookie
         return $this->getDecodedCookie()->s->b;
     }
 
-    protected function getHmac()
+    public function getHmac()
     {
         return $this->getDecodedCookie()->h;
     }

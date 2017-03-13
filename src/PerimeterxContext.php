@@ -77,6 +77,11 @@ class PerimeterxContext
     protected $decoded_px_cookie;
 
     /**
+     * @var string cookie hmac
+     */
+    protected $px_cookie_hmac;
+
+    /**
      * @var string perimeterx captcha cookie.
      */
     protected $px_captcha;
@@ -172,6 +177,11 @@ class PerimeterxContext
      * @var string block data
      */
     protected $block_data;
+
+    /**
+     * @var string cookie hmac
+     */
+    protected $pxCookieHmac;
 
     /**
      * @return string
@@ -447,5 +457,13 @@ class PerimeterxContext
     public function getBlockActionData()
     {
         return $this->block_data;
+    }
+
+    public function setCookieHmac($hmac) {
+        $this->pxCookieHmac = $hmac;
+    }
+
+    public function getCookieHmac() {
+        return $this->pxCookieHmac;
     }
 }
