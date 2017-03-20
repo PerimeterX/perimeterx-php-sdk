@@ -162,7 +162,8 @@
                   public_key: "19E4B3B8-6CBE-35CC-4205-FC79ECDDA765",
                   target_html: "CAPTCHA",
                   callback: function(token) {
-                      console.log("played", token);
+                      var pxCookie = "pxCaptcha=" + document.getElementById("FunCaptcha-Token").value
+                      console.log(pxCookie);
                   }
               });
           }
