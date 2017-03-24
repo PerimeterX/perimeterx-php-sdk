@@ -20,21 +20,19 @@
 
         .container {
             align-items: center;
-            display: flex;
             flex: 1;
             justify-content: space-between;
             flex-direction: column;
             height: 100%;
+            margin-left: 25px;
         }
 
         .container > div {
             width: 100%;
-            display: flex;
             justify-content: center;
         }
 
         .container > div > div {
-            display: flex;
             width: 80%;
         }
 
@@ -94,67 +92,24 @@
 
 <body>
 <section class="container">
-    <div class="customer-logo-wrapper">
-        <div class="customer-logo">
-            <img src="{{customLogo}}" alt="Logo"/>
-        </div>
-    </div>
     <div class="page-title-wrapper">
         <div class="page-title">
             <h1>Please verify you are a human</h1>
         </div>
     </div>
-    <div class="content-wrapper">
-        <div class="content">
-            <p>
-                Please click "I am not a robot" to continue
-            </p>
-        </div>
-        <p>
-            Access to this page has been denied because we believe you are using automation tools to browse the website.
-        </p>
-        <p>
-            This may happen as a result of the following:
-        </p>
-        <ul>
-            <li>
-                Javascript is disabled or blocked by an extension (ad blockers for example)
-            </li>
-            <li>
-                Your browser does not support cookies
-            </li>
-        </ul>
-        <p>
-            Please make sure that Javascript and cookies are enabled on your browser and that you are not blocking them
-            from loading.
-        </p>
-        <p>
-            Reference ID: #{{refId}}
-        </p>
-    </div>
-    <!--<div id="CAPTCHA"></div>-->
-
-    <div class="page-footer-wrapper">
-        <div class="page-footer">
-            <p>
-                Powered by
-                <a href="https://www.perimeterx.com">PerimeterX</a>
-                , Inc.
-            </p>
-        </div>
-    </div>
+    <div id="CAPTCHA">
 </section>
 <!-- Px -->
 <script>
     (
-            function () {
-                window._pxAppId = '{{appId}}';
-                var p = document.getElementsByTagName("script")[0], s = document.createElement("script");
+        function () {
+            window._pxAppId = '{{appId}}';
+            var p = document.getElementsByTagName("script")[0], s = document.createElement("script");
 
-                s.async = 1;
-                s.src = '//client.perimeterx.net/{{appId}}/main.min.js';
-                p.parentNode.insertBefore(s, p);
-            }()
+            s.async = 1;
+            s.src = '//client.perimeterx.net/{{appId}}/main.min.js';
+            p.parentNode.insertBefore(s, p);
+        }()
     );
 </script>
 <!-- Captcha -->
