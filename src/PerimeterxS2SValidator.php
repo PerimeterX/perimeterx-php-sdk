@@ -50,6 +50,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             'Authorization' => 'Bearer ' . $this->pxConfig['auth_token'],
             'Content-Type' => 'application/json'
         ];
+        var_dump($headers);
 
         if ($this->pxConfig['module_mode'] != Perimeterx::$ACTIVE_MODE and isset($this->pxConfig['custom_risk_handler'])) {
             $response = $this->pxConfig['custom_risk_handler']($this->pxConfig['perimeterx_server_host'] . self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers);

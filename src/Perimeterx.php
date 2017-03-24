@@ -95,6 +95,7 @@ final class Perimeterx
                 'module_mode' => Perimeterx::$ACTIVE_MODE,
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
+                'captcha_key' => '19E4B3B8-6CBE-35CC-4205-FC79ECDDA765',
                 'local_proxy' => false,
             ], $pxConfig);
 
@@ -194,6 +195,7 @@ final class Perimeterx
             'appId' => $this->pxConfig['app_id'],
             'vid' => $pxCtx->getVid(),
             'uuid' => $block_uuid,
+            'captcha_key' => $this->pxConfig['captcha_key'],
             'logoVisibility' => isset($this->pxConfig['custom_logo']) ? 'visible' : 'hidden',
             'customLogo' => isset($this->pxConfig['custom_logo']) ? $this->pxConfig['custom_logo'] : '',
             'cssRef' => $this->getCssRef(),
