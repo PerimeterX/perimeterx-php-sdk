@@ -96,6 +96,7 @@ final class Perimeterx
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
                 'local_proxy' => false,
+                'sensetive_routes_prefix' => []
             ], $pxConfig);
 
             if (empty($this->pxConfig['logger'])) {
