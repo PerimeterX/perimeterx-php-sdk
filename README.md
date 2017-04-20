@@ -329,7 +329,7 @@ $perimeterxConfig = [
 ]
 ```
 
-#### <a name="sensitive-routes"></a> Sensitive headers
+#### <a name="sensitive-routes"></a> Sensitive Routes
 
 List of routes prefix. The Perimeterx module will always match request uri by this prefix list and if match was found will create a server-to-server call for, even if the cookie score is low and valid.
 
