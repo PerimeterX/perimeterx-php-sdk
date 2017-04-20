@@ -64,6 +64,7 @@ class PerimeterxContext
             }
         }
         $this->http_method = $_SERVER['REQUEST_METHOD'];
+        $this->sensitive_route = $this->checkSensitiveRoutePrefix($pxConfig['sensitive_routes'], $this->uri);
     }
 
     /**
@@ -399,6 +400,17 @@ class PerimeterxContext
         $this->decoded_px_cookie = $cookie;
     }
 
+
+    private function checkSensitiveRoutePrefix($sensitive_routes, $uri)
+    {
+        foreach ($sensitive_routes as $route) {
+            if (strncmp($uri, $route, strlen($route)) === 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private function selfURL()
     {
         $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
@@ -449,7 +461,8 @@ class PerimeterxContext
         }
     }
 
-    public function setBlockActionData($block_data = '') {
+    public function setBlockActionData($block_data = '')
+    {
         $this->block_data = $block_data;
     }
 
@@ -459,11 +472,18 @@ class PerimeterxContext
         return $this->block_data;
     }
 
-    public function setCookieHmac($hmac) {
+    public function setCookieHmac($hmac)
+    {
         $this->pxCookieHmac = $hmac;
     }
 
-    public function getCookieHmac() {
+    public function getCookieHmac()
+    {
         return $this->pxCookieHmac;
+    }
+
+    public function isSensitiveRoute()
+    {
+        return $this->sensitive_route;
     }
 }

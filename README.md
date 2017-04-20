@@ -21,6 +21,7 @@ Table of Contents
   *   [Extracting Real IP Address](#real-ip)
   *   [Custom URI](#custom-uri)
   *   [Filter Sensitive Headers](#sensitive-headers)
+  *   [Sensitive Route](#sensitive-routes)
   *   [API Timeouts](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
   *   [Additional Page Activity Handler](#additional-page-activity-handler)
@@ -324,6 +325,20 @@ A list of sensitive headers can be configured to prevent specific headers from b
 $perimeterxConfig = [
 	..
     'sensitive_headers' => ['cookie', 'cookies', 'secret-header']
+    ..
+]
+```
+
+#### <a name="sensitive-routes"></a> Sensitive Routes
+
+List of routes prefix. The Perimeterx module will always match request uri by this prefix list and if match was found will create a server-to-server call for, even if the cookie score is low and valid.
+
+**Default: None**
+
+```php
+$perimeterxConfig = [
+	..
+    'sensitive_routes' => ['/login', '/user/profile']
     ..
 ]
 ```
