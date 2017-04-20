@@ -56,13 +56,13 @@ class PerimeterxConfigurationValidatorTest extends PHPUnit_Framework_TestCase
     public function testPxConfigurationSensitiveRoutePrefix()
     {
       $customParams = array_merge([
-        'sensitive_routes_prefix' => ['/','/login']
+        'sensitive_routes' => ['/','/login']
       ], $this->params);
 
       $this->px = Perimeterx::Instance($customParams);
       $pxConfig = $this->px->getPxConfig();
 
-      $this->assertArrayHasKey('sensitive_routes_prefix', $customParams);
+      $this->assertArrayHasKey('sensitive_routes', $customParams);
     }
 
 }

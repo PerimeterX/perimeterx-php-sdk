@@ -64,7 +64,7 @@ class PerimeterxContext
             }
         }
         $this->http_method = $_SERVER['REQUEST_METHOD'];
-        $this->sensitive_route = $this->checkSensitiveRoutePrefix($pxConfig['sensitive_routes_prefix'], $this->uri);
+        $this->sensitive_route = $this->checkSensitiveRoutePrefix($pxConfig['sensitive_routes'], $this->uri);
     }
 
     /**
@@ -401,9 +401,9 @@ class PerimeterxContext
     }
 
 
-    private function checkSensitiveRoutePrefix($sensitive_routes_prefix, $uri)
+    private function checkSensitiveRoutePrefix($sensitive_routes, $uri)
     {
-        foreach ($sensitive_routes_prefix as $route) {
+        foreach ($sensitive_routes as $route) {
             if (strncmp($uri, $route, strlen($route)) === 0) {
                 return true;
             }
