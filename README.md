@@ -21,7 +21,7 @@ Table of Contents
   *   [Extracting Real IP Address](#real-ip)
   *   [Custom URI](#custom-uri)
   *   [Filter Sensitive Headers](#sensitive-headers)
-  *   [Sensitive Route](#sensitive-route)
+  *   [Sensitive Route](#sensitive-routes)
   *   [API Timeouts](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
   *   [Additional Page Activity Handler](#additional-page-activity-handler)
