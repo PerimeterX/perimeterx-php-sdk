@@ -73,9 +73,9 @@ class PerimeterxCookieValidator
                 return false;
             }
 
-            // Case we have a sensetive route
-            if ($this->pxCtx->isSensetiveRoute()){
-              $this->pxConfig['logger']->info('cookie verification passed, risk api triggered by sensetive route');
+            // Case we have a sensitive route
+            if ($this->pxCtx->isSensitiveRoute()){
+              $this->pxConfig['logger']->info('cookie verification passed, risk api triggered by sensitive route');
               $this->pxCtx->setS2SCallReason('sensitive_route');
               return false;
             }

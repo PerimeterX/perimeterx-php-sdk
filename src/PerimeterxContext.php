@@ -401,13 +401,13 @@ class PerimeterxContext
     }
 
 
-    private function checkSensitiveRoutePrefix($sensitive_routes_prefix, $uri){
-      foreach($sensitive_routes_prefix as $route){
-        if (strncmp($route, $uri, strlen($route)) === 0){
-          return true;
+    private function checkSensitiveRoutePrefix($sensitive_routes_prefix, $uri) {
+        foreach($sensitive_routes_prefix as $route) {
+            if (strncmp($uri, $route, strlen($route)) === 0) {
+                return true;
+            }
         }
-      }
-      return false;
+        return false;
     }
 
     private function selfURL()
@@ -478,7 +478,7 @@ class PerimeterxContext
         return $this->pxCookieHmac;
     }
 
-    public function isSensetiveRoute(){
+    public function isSensitiveRoute(){
       return $this->sensitive_route;
     }
 }

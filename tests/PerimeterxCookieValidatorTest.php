@@ -275,7 +275,7 @@ class PerimeterxCookieValidatorTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testCookieVerificationFailedOnSensetiveRoute() {
+    public function testCookieVerificationFailedOnSensitiveRoute() {
 
         // far future, consistent cookie, 2116-11-14T00:00:00Z
         $cookie_time = '4634841600000';
@@ -298,7 +298,7 @@ class PerimeterxCookieValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('info', 'cookie verification passed, risk api triggered by sensetive route'),
+            'logger' => $this->getMockLogger('info', 'cookie verification passed, risk api triggered by sensitive route'),
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -421,7 +421,7 @@ class PerimeterxCookieValidatorTest extends PHPUnit_Framework_TestCase
     {
         $pxCtx = $this->getMockBuilder(PerimeterxContext::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPxCookie', 'getUserAgent', 'getIp','isSensetiveRoute'])
+            ->setMethods(['getPxCookie', 'getUserAgent', 'getIp','isSensitiveRoute'])
             ->getMock();
         $pxCtx->expects($this->any())
             ->method('getPxCookie')
@@ -432,7 +432,8 @@ class PerimeterxCookieValidatorTest extends PHPUnit_Framework_TestCase
         $pxCtx->expects($this->any())
             ->method('getIp')
             ->willReturn($ip);
-        $pxCtx->method('isSensetiveRoute')
+        $pxCtx->expects($this->any())
+            ->method('isSensitiveRoute')
             ->willReturn($sensitive_route);
         return $pxCtx;
     }
