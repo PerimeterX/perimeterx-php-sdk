@@ -401,8 +401,9 @@ class PerimeterxContext
     }
 
 
-    private function checkSensitiveRoutePrefix($sensitive_routes_prefix, $uri) {
-        foreach($sensitive_routes_prefix as $route) {
+    private function checkSensitiveRoutePrefix($sensitive_routes_prefix, $uri)
+    {
+        foreach ($sensitive_routes_prefix as $route) {
             if (strncmp($uri, $route, strlen($route)) === 0) {
                 return true;
             }
@@ -460,7 +461,8 @@ class PerimeterxContext
         }
     }
 
-    public function setBlockActionData($block_data = '') {
+    public function setBlockActionData($block_data = '')
+    {
         $this->block_data = $block_data;
     }
 
@@ -470,15 +472,18 @@ class PerimeterxContext
         return $this->block_data;
     }
 
-    public function setCookieHmac($hmac) {
+    public function setCookieHmac($hmac)
+    {
         $this->pxCookieHmac = $hmac;
     }
 
-    public function getCookieHmac() {
+    public function getCookieHmac()
+    {
         return $this->pxCookieHmac;
     }
 
-    public function isSensitiveRoute(){
-      return $this->sensitive_route;
+    public function isSensitiveRoute()
+    {
+        return $this->sensitive_route;
     }
 }
