@@ -89,6 +89,8 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
                 $this->pxCtx->setBlockReason('challenge');
             } elseif ($score >= $this->pxConfig['blocking_score']) {
                 $this->pxCtx->setBlockReason('s2s_high_score');
+            }else{
+                $this->pxCtx->setPassReason('s2s');
             }
         }
         if (isset($response, $response->error_msg)) {
