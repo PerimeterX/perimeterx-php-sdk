@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.5.0] - 2017-04-20
+### Added
+- sending cookie's original value when decrypt fails
+-
+## [2.4.1] - 2017-04-18
+### Added
+- sending cookie's original value when decrypt fails
+
+## [2.4.0] - 2017-03-13
+### Added
+- javascript challenge support
+- sending cookie's hamc on page requested for cookie replay detection
+
+### Modified
+- changed collector's server urls
+- redesigned default block/captcha pages + added the ability to inject css, js and logo files to the pages
+- more tests coverage
 
 ## [2.3.0] - 2016-11-29
 ### Added
