@@ -180,11 +180,6 @@ class PerimeterxContext
     protected $block_data;
 
     /**
-     * @var string cookie hmac
-     */
-    protected $pxCookieHmac;
-
-    /**
      * @return string
      */
     public function getVid()
@@ -474,12 +469,12 @@ class PerimeterxContext
 
     public function setCookieHmac($hmac)
     {
-        $this->pxCookieHmac = $hmac;
+        $this->px_cookie_hmac = $hmac;
     }
 
     public function getCookieHmac()
     {
-        return $this->pxCookieHmac;
+        return $this->px_cookie_hmac;
     }
 
     public function isSensitiveRoute()
