@@ -2,6 +2,8 @@
 
 namespace Perimeterx;
 
+use GuzzleHttp\Exception\ConnectException;
+
 class PerimeterxCaptchaValidator extends PerimeterxRiskClient
 {
     /**
@@ -42,6 +44,7 @@ class PerimeterxCaptchaValidator extends PerimeterxRiskClient
 
     public function verify()
     {
+        $startRiskRtt = $this->getTimeInMilliseconds();
         try {
             if (!isset($this->pxCaptcha)) {
                 return false;
@@ -56,10 +59,18 @@ class PerimeterxCaptchaValidator extends PerimeterxRiskClient
             $this->pxCtx->setVid($vid);
             $this->pxCtx->setUuid($uuid);
             $response = json_decode($this->sendCaptchaRequest($vid, $uuid, $captcha));
+            $this->pxCtx->setRiskRtt($this->getTimeInMilliseconds() - $startRiskRtt);
             if (isset($response->status) and $response->status == 0) {
+                $this->pxCtx->setPassReason('captcha');
                 return true;
             }
             return false;
+        } catch (ConnectException $e){
+            $this->pxCtx->setRiskRtt($this->getTimeInMilliseconds() - $startRiskRtt);
+
+            // Catch timeout and pass request
+            $this->pxCtx->setPassReason('captcha_timeout');
+            return true;
         } catch (\Exception $e) {
             return false;
         }

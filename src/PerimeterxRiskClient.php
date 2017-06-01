@@ -45,4 +45,11 @@ abstract class PerimeterxRiskClient
 
         return $retval;
     }
+
+    /**
+     * @return long current time in milliseconds
+     */
+    protected function getTimeInMilliseconds(){
+        return round(microtime(true) * 1000);
+    }
 }
