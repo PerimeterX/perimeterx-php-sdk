@@ -48,6 +48,7 @@ class PerimeterxContext
         }
         $this->full_url = $this->selfURL();
         $this->score = 0;
+        $this->risk_rtt = 0;
 
         if (isset($pxConfig['custom_user_ip'])) {
             $this->ip = $pxConfig['custom_user_ip']($this);
@@ -153,6 +154,16 @@ class PerimeterxContext
      * @var string block reason - get populated when user cross score
      */
     protected $block_reason;
+
+    /**
+     * @var string pass reason - describes why a page_requested activity sent
+     */
+    protected $pass_reason;
+
+    /**
+     * @var string pass reason - describes why a page_requested activity sent
+     */
+    protected $risk_rtt;
 
     /**
      * @var string user's score.
@@ -485,5 +496,35 @@ class PerimeterxContext
     public function expose()
     {
         return get_object_vars($this);
+    }
+
+    /**
+     * @param string
+     */
+    public function setPassReason($pass_reason)
+    {
+        $this->pass_reason = $pass_reason;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPassReason()
+    {
+        return $this->pass_reason;
+    }
+
+    /**
+     * @param int
+     */
+    public function setRiskRtt($risk_rtt){
+        $this->risk_rtt =  $risk_rtt;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRiskRtt(){
+        return $this->risk_rtt;
     }
 }

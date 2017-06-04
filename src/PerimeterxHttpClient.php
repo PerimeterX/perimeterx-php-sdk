@@ -33,21 +33,16 @@ class PerimeterxHttpClient
      */
     public function send($url, $method, $json, $headers, $timeout = 0, $connect_timeout = 0)
     {
-        try {
 
-            $json = self::fixJsonBody($json);
-            $rawResponse = $this->client->request($method, $url,
-                [
-                'json' => $json,
-                'headers' => $headers,
-                'timeout' => $timeout,
-                'connect_timeout' => $connect_timeout
-                ]
-            );
-        } catch (RequestException $e) {
-            $this->logger->error('http error ' . $e->getCode() . ' ' . $e->getMessage());
-            return json_encode(['error_msg' => $e->getMessage()]);
-        }
+        $json = self::fixJsonBody($json);
+        $rawResponse = $this->client->request($method, $url,
+            [
+            'json' => $json,
+            'headers' => $headers,
+            'timeout' => $timeout,
+            'connect_timeout' => $connect_timeout
+            ]
+        );
 
         $rawBody = (string)$rawResponse->getBody();
         return $rawBody;

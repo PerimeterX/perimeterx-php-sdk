@@ -70,7 +70,7 @@ class PerimeterxActivitiesClient
             'Authorization' => 'Bearer ' . $this->pxConfig['auth_token'],
             'Content-Type' => 'application/json'
         ];
-        $this->httpClient->send('/api/v1/collector/s2s', 'POST', $activities, $headers, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout']);
+        $this->httpClient->send('/api/v1/collector/s2s', 'POST', $activities, $headers);
     }
 
     /**
@@ -86,6 +86,7 @@ class PerimeterxActivitiesClient
         $details['block_uuid'] = $pxCtx->getUuid();
         $details['block_score'] = $pxCtx->getScore();
         $details['block_reason'] = $pxCtx->getBlockReason();
+        $details['risk_rtt'] = $pxCtx->getRiskRtt();
 
         $this->sendToPerimeterx('block', $pxCtx, $details);
     }
@@ -103,6 +104,9 @@ class PerimeterxActivitiesClient
         $details['module_version'] = $this->pxConfig['sdk_name'];
         $details['http_version'] = $pxCtx->getHttpVersion();
         $details['http_method'] = $pxCtx->getHttpMethod();
+        $details['pass_reason'] = $pxCtx->getPassReason();
+        $details['risk_rtt'] = $pxCtx->getRiskRtt();
+
         if ($pxCtx->getDecodedCookie()) {
             $details['px_cookie'] = $pxCtx->getDecodedCookie();
         }

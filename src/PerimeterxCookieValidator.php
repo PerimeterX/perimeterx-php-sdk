@@ -80,6 +80,7 @@ class PerimeterxCookieValidator
                 return false;
             }
 
+            $this->pxCtx->setPassReason('cookie');
             $this->pxConfig['logger']->info('cookie ok');
 
             return true;
