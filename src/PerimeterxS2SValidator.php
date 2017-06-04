@@ -2,6 +2,8 @@
 
 namespace Perimeterx;
 
+use GuzzleHttp\Exception\ConnectException;
+
 class PerimeterxS2SValidator extends PerimeterxRiskClient
 {
     const RISK_API_ENDPOINT = '/api/v2/risk';
@@ -55,13 +57,22 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             'Authorization' => 'Bearer ' . $this->pxConfig['auth_token'],
             'Content-Type' => 'application/json'
         ];
+        $startRiskRtt = $this->getTimeInMilliseconds();
+        try {
+            if ($this->pxConfig['module_mode'] != Perimeterx::$ACTIVE_MODE and isset($this->pxConfig['custom_risk_handler'])) {
+                $response = $this->pxConfig['custom_risk_handler']($this->pxConfig['perimeterx_server_host'] . self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers);
+            } else {
+                $response = $this->httpClient->send(self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout']);
+            }
+            $this->pxCtx->setRiskRtt($this->getTimeInMilliseconds() - $startRiskRtt);
+            return $response;
+        } catch ( ConnectException $e) {
+            $this->pxCtx->setRiskRtt($this->getTimeInMilliseconds() - $startRiskRtt);
 
-        if ($this->pxConfig['module_mode'] != Perimeterx::$ACTIVE_MODE and isset($this->pxConfig['custom_risk_handler'])) {
-            $response = $this->pxConfig['custom_risk_handler']($this->pxConfig['perimeterx_server_host'] . self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers);
-        } else {
-            $response = $this->httpClient->send(self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout']);
+            $this->pxCtx->setPassReason('s2s_timeout');
+            return json_encode(['error_msg' => $e->getMessage()]);
         }
-        return $response;
+
     }
 
     public function verify()
@@ -78,6 +89,8 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
                 $this->pxCtx->setBlockReason('challenge');
             } elseif ($score >= $this->pxConfig['blocking_score']) {
                 $this->pxCtx->setBlockReason('s2s_high_score');
+            }else{
+                $this->pxCtx->setPassReason('s2s');
             }
         }
         if (isset($response, $response->error_msg)) {

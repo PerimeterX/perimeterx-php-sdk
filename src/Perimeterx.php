@@ -114,6 +114,7 @@ final class Perimeterx
 
     public function pxVerify()
     {
+        $pxCtx = null;
         try {
             if (!$this->pxConfig['module_enabled']) {
                 return 1;
@@ -131,7 +132,11 @@ final class Perimeterx
                 $s2sValidator->verify();
             };
             return $this->handleVerification($pxCtx);
-        } catch (\Exception $e) {
+        } catch (\RuntimeException $e) {
+            if (!empty($pxCtx)) {
+                $pxCtx->setPassReason('error');
+                $this->pxActivitiesClient->sendPageRequestedActivity($pxCtx);
+            }
             $this->pxConfig['logger']->error('Uncaught exception while verifying perimeterx score ' . $e->getCode() . ' ' . $e->getMessage());
             return 1;
         }
@@ -264,7 +269,7 @@ final class Perimeterx
 
             $client = new PerimeterxResetClient($pxCtx, $this->pxConfig);
             $client->sendResetRequest();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->pxConfig['logger']->error('Uncaught exception while resetting perimeterx score' . $e->getCode() . ' ' . $e->getMessage());
         }
         return 1;
