@@ -50,6 +50,7 @@ class PerimeterxActivitiesClient
             $this->pxConfig['additional_activity_handler']($activityType, $pxCtx, $details);
         }
 
+        $details['block_uuid'] = $pxCtx->getUuid();
         $details['module_version'] = $this->pxConfig['sdk_name'];
         $pxData = [];
         $pxData['type'] = $activityType;
@@ -83,7 +84,6 @@ class PerimeterxActivitiesClient
         }
         
         $details = [];
-        $details['block_uuid'] = $pxCtx->getUuid();
         $details['block_score'] = $pxCtx->getScore();
         $details['block_reason'] = $pxCtx->getBlockReason();
         $details['risk_rtt'] = $pxCtx->getRiskRtt();
