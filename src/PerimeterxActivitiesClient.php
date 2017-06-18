@@ -101,6 +101,7 @@ class PerimeterxActivitiesClient
         }
 
         $details = [];
+        $details['client_uuid'] = $pxCtx->getUuid();
         $details['module_version'] = $this->pxConfig['sdk_name'];
         $details['http_version'] = $pxCtx->getHttpVersion();
         $details['http_method'] = $pxCtx->getHttpMethod();
