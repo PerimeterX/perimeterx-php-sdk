@@ -10,8 +10,8 @@ class TokenV3 extends PerimeterxToken
      */
     public function __construct($pxCtx, $pxConfig)
     {
-        list($hash, $token) = explode(":", $pxCtx->getPxToken(), 2);
-        $this->pxToken = $token;
+        list($hash, $token) = explode(":", $pxCtx->getPxCookie(), 2);
+        $this->pxPayload = $token;
         $this->tokenHash = $hash;
         $this->pxConfig = $pxConfig;
         $this->pxCtx = $pxCtx;
@@ -20,7 +20,7 @@ class TokenV3 extends PerimeterxToken
 
     public function getScore()
     {
-        return $this->getDecodedToken()->s;
+        return $this->getDecodedPayload()->s;
     }
 
     public function getHmac()
@@ -28,12 +28,12 @@ class TokenV3 extends PerimeterxToken
         return $this->tokenHash;
     }
 
-    protected function isTokenFormatValid($token) {
+    protected function isCookieFormatValid($token) {
         return isset($token->t, $token->s, $token->u, $token->v, $token->a);
     }
 
     public function getBlockAction() {
-        return $this->getDecodedToken()->a;
+        return $this->getDecodedPayload()->a;
     }
 
     /**
@@ -43,6 +43,6 @@ class TokenV3 extends PerimeterxToken
      */
     public function isSecure()
     {
-        return $this->isHmacValid($this->pxToken, $this->getHmac());
+        return $this->isHmacValid($this->pxPayload, $this->getHmac());
     }
 }

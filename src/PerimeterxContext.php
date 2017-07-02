@@ -4,24 +4,19 @@ namespace Perimeterx;
 
 class PerimeterxContext
 {
+    public static $MOBILE_SDK_HEADER = "X-PX-AUTHORIZATION";
     /**
      * @param $pxConfig array - perimeterx configurations
      */
     public function __construct($pxConfig)
     {
+
+        $this->cookie_origin = "cookie";
+
         if (isset($_SERVER['HTTP_COOKIE'])) {
             foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
                 if (!empty($rawcookie) && strpos($rawcookie, '=') !== false) {
-                    list($k, $v) = explode('=', $rawcookie, 2);
-                    if ($k == '_px3') {
-                        $this->px_cookies['v3'] = $v;
-                    }
-                    if ($k == '_px') {
-                        $this->px_cookies['v1'] = $v;
-                    }
-                    if ($k == '_pxCaptcha') {
-                        $this->px_captcha = $v;
-                    }
+                    $this->explodeCookieToVersion('=', $rawcookie);
                 }
             }
         }
@@ -38,17 +33,9 @@ class PerimeterxContext
             }
         }
 
-        if (isset($this->headers["X-PX-AUTHORIZATION"])) {
-            list($k, $v) = explode(':', $this->headers["X-PX-AUTHORIZATION"], 2);
-             if ($k == '3') {
-                $this->px_tokens['v3'] = $v;
-            }
-            if ($k == '1') {
-                $this->px_tokens['v1'] = $v;
-            }
-            if ($k == '_pxCaptcha') {
-                $this->px_captcha = $v;
-            }
+        if (isset($this->headers[PerimeterxContext::$MOBILE_SDK_HEADER])) {
+            $this->cookie_origin = "header";
+            $this->explodeCookieToVersion(':', $this->headers[PerimeterxContext::$MOBILE_SDK_HEADER]);
         }
 
         $this->hostname = $_SERVER['HTTP_HOST'];
@@ -82,14 +69,14 @@ class PerimeterxContext
     }
 
     /**
+     * @var string perimeterx cookie origin
+     */
+    protected $cookie_origin;
+
+    /**
      * @var string perimeterx risk cookie.
      */
     protected $px_cookies;
-
-     /**
-     * @var string perimeterx risk mobile header.
-     */
-    protected $px_tokens;
 
     /**
      * @var string perimeterx risk cookie.
@@ -97,19 +84,9 @@ class PerimeterxContext
     protected $decoded_px_cookie;
 
     /**
-     * @var string perimeterx risk token.
-     */
-    protected $decoded_px_token;
-
-    /**
      * @var string cookie hmac
      */
     protected $px_cookie_hmac;
-
-    /**
-     * @var string token hmac
-     */
-    protected $px_token_hmac;
 
 
     /**
@@ -348,19 +325,19 @@ class PerimeterxContext
     }
 
     /**
+     * @return string
+     */
+    public function getPxCookieOrigin()
+    {
+        return $this->cookie_origin;
+    }
+
+    /**
      * @return string - v3 cookie if exists, if not - v1 cookie
      */
     public function getPxCookie()
     {
         return isset($this->px_cookies['v3']) ? $this->px_cookies['v3'] : $this->px_cookies['v1'];
-    }
-
-    /**
-     * @return string - mobile sdk token
-     */
-    public function getPxToken()
-    {
-        return isset($this->px_tokens['v3']) ? $this->px_tokens['v3'] : $this->px_tokens['v1'];
     }
 
     /**
@@ -443,15 +420,6 @@ class PerimeterxContext
         $this->decoded_px_cookie = $cookie;
     }
 
-    /**
-     * @param string $cookie
-     */
-    public function setDecodedToken($token)
-    {
-        $this->decoded_px_token = $token;
-    }
-
-
     private function checkSensitiveRoutePrefix($sensitive_routes, $uri)
     {
         foreach ($sensitive_routes as $route) {
@@ -469,6 +437,19 @@ class PerimeterxContext
         $protocol = substr($l, 0, strpos($l, "/")) . $s;
         $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
         return $protocol . "://" . $_SERVER['HTTP_HOST'] . $port . $this->uri;
+    }
+
+    private function explodeCookieToVersion($delimiter, $cookie) {
+        list($k, $v) = explode($delimiter, $cookie, 2);
+        if ($k == '3' || $k == '_px3') {
+            $this->px_cookies['v3'] = $v;
+        }
+        if ($k == '1' || $k == '_px') {
+            $this->px_cookies['v1'] = $v;
+        }
+        if ($k == '_pxCaptcha') {
+            $this->px_captcha = $v;
+        }
     }
 
     /**
@@ -531,16 +512,6 @@ class PerimeterxContext
     public function getCookieHmac()
     {
         return $this->px_cookie_hmac;
-    }
-
-    public function setTokenHmac($hmac)
-    {
-        $this->px_token_hmac = $hmac;
-    }
-
-    public function getTokenHmac()
-    {
-        return $this->px_token_hmac;
     }
 
     public function isSensitiveRoute()

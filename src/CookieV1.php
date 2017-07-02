@@ -11,7 +11,7 @@ class CookieV1 extends PerimeterxCookie
      */
     public function __construct($pxCtx, $pxConfig)
     {
-        $this->pxCookie = $pxCtx->getPxCookie();
+        $this->pxPayload = $pxCtx->getPxCookie();
         $this->pxConfig = $pxConfig;
         $this->pxCtx = $pxCtx;
         $this->cookieSecret = $pxConfig['cookie_key'];
@@ -19,12 +19,12 @@ class CookieV1 extends PerimeterxCookie
 
     public function getScore()
     {
-        return $this->getDecodedCookie()->s->b;
+        return $this->getDecodedPayload()->s->b;
     }
 
     public function getHmac()
     {
-        return $this->getDecodedCookie()->h;
+        return $this->getDecodedPayload()->h;
     }
 
     protected function isCookieFormatValid($cookie) {
@@ -43,7 +43,7 @@ class CookieV1 extends PerimeterxCookie
      */
     public function isSecure()
     {
-        $base_hmac_str = $this->getTime() . $this->decodedCookie->s->a . $this->getScore() . $this->getUuid() . $this->getVid();
+        $base_hmac_str = $this->getTime() . $this->decodedPayload->s->a . $this->getScore() . $this->getUuid() . $this->getVid();
 
         /* hmac string with ip - for backward support */
         $hmac_str_withip = $base_hmac_str . $this->pxCtx->getIp() . $this->pxCtx->getUserAgent();

@@ -128,11 +128,7 @@ final class Perimeterx
                 return $this->handleVerification($pxCtx);
             };
 
-            if (array_key_exists(Perimeterx::$MOBILE_SDK_HEADER, $pxCtx->getHeaders())) {
-                $validator = new PerimeterxMobileTokenValidator($pxCtx, $this->pxConfig, Perimeterx::$MOBILE_SDK_HEADER);
-            } else {
-                $validator = new PerimeterxCookieValidator($pxCtx, $this->pxConfig);
-            }
+            $validator = new PerimeterxCookieValidator($pxCtx, $this->pxConfig);
 
             if (!$validator->verify()) {
                 $s2sValidator = new PerimeterxS2SValidator($pxCtx, $this->pxConfig);

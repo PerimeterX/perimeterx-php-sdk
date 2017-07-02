@@ -12,7 +12,7 @@ class CookieV3 extends PerimeterxCookie
     public function __construct($pxCtx, $pxConfig)
     {
         list($hash, $cookie) = explode(":", $pxCtx->getPxCookie(), 2);
-        $this->pxCookie = $cookie;
+        $this->pxPayload = $cookie;
         $this->cookieHash = $hash;
         $this->pxConfig = $pxConfig;
         $this->pxCtx = $pxCtx;
@@ -21,7 +21,7 @@ class CookieV3 extends PerimeterxCookie
 
     public function getScore()
     {
-        return $this->getDecodedCookie()->s;
+        return $this->getDecodedPayload()->s;
     }
 
     public function getHmac()
@@ -34,7 +34,7 @@ class CookieV3 extends PerimeterxCookie
     }
 
     public function getBlockAction() {
-        return $this->getDecodedCookie()->a;
+        return $this->getDecodedPayload()->a;
     }
 
     /**
@@ -44,7 +44,7 @@ class CookieV3 extends PerimeterxCookie
      */
     public function isSecure()
     {
-        $hmac_string = $this->pxCookie.$this->pxCtx->getUserAgent();
+        $hmac_string = $this->pxPayload.$this->pxCtx->getUserAgent();
 
         if ($this->isHmacValid($hmac_string, $this->getHmac())) {
             return true;

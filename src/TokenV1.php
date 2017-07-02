@@ -10,7 +10,7 @@ class TokenV1 extends PerimeterxToken
      */
     public function __construct($pxCtx, $pxConfig)
     {
-        $this->pxToken = $pxCtx->getPxToken();
+        $this->pxPayload = $pxCtx->getPxCookie();
         $this->pxConfig = $pxConfig;
         $this->pxCtx = $pxCtx;
         $this->cookieSecret = $pxConfig['cookie_key'];
