@@ -43,6 +43,7 @@ final class Perimeterx
 
     public static $MONITOR_MODE = 1;
     public static $ACTIVE_MODE = 2;
+    public static $MOBILE_SDK_HEADER = "X-PX-AUTHORIZATION";
 
     /**
      * Call this method to get singleton
@@ -121,13 +122,19 @@ final class Perimeterx
             }
 
             $pxCtx = new PerimeterxContext($this->pxConfig);
+
             $captchaValidator = new PerimeterxCaptchaValidator($pxCtx, $this->pxConfig);
             if ($captchaValidator->verify()) {
                 return $this->handleVerification($pxCtx);
             };
 
-            $cookieValidator = new PerimeterxCookieValidator($pxCtx, $this->pxConfig);
-            if (!$cookieValidator->verify()) {
+            if (array_key_exists(Perimeterx::$MOBILE_SDK_HEADER, $pxCtx->getHeaders())) {
+                $validator = new PerimeterxMobileTokenValidator($pxCtx, $this->pxConfig, Perimeterx::$MOBILE_SDK_HEADER);
+            } else {
+                $validator = new PerimeterxCookieValidator($pxCtx, $this->pxConfig);
+            }
+
+            if (!$validator->verify()) {
                 $s2sValidator = new PerimeterxS2SValidator($pxCtx, $this->pxConfig);
                 $s2sValidator->verify();
             };

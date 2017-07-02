@@ -38,6 +38,19 @@ class PerimeterxContext
             }
         }
 
+        if (isset($this->headers["X-PX-AUTHORIZATION"])) {
+            list($k, $v) = explode(':', $this->headers["X-PX-AUTHORIZATION"], 2);
+             if ($k == '3') {
+                $this->px_tokens['v3'] = $v;
+            }
+            if ($k == '1') {
+                $this->px_tokens['v1'] = $v;
+            }
+            if ($k == '_pxCaptcha') {
+                $this->px_captcha = $v;
+            }
+        }
+
         $this->hostname = $_SERVER['HTTP_HOST'];
         // User Agent isn't always sent by bots so handle it gracefully.
         $this->userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
@@ -73,15 +86,31 @@ class PerimeterxContext
      */
     protected $px_cookies;
 
+     /**
+     * @var string perimeterx risk mobile header.
+     */
+    protected $px_tokens;
+
     /**
      * @var string perimeterx risk cookie.
      */
     protected $decoded_px_cookie;
 
     /**
+     * @var string perimeterx risk token.
+     */
+    protected $decoded_px_token;
+
+    /**
      * @var string cookie hmac
      */
     protected $px_cookie_hmac;
+
+    /**
+     * @var string token hmac
+     */
+    protected $px_token_hmac;
+
 
     /**
      * @var string perimeterx captcha cookie.
@@ -327,6 +356,14 @@ class PerimeterxContext
     }
 
     /**
+     * @return string - mobile sdk token
+     */
+    public function getPxToken()
+    {
+        return isset($this->px_tokens['v3']) ? $this->px_tokens['v3'] : $this->px_tokens['v1'];
+    }
+
+    /**
      * @return array of px cookies found on the request
      */
     public function getPxCookies()
@@ -404,6 +441,14 @@ class PerimeterxContext
     public function setDecodedCookie($cookie)
     {
         $this->decoded_px_cookie = $cookie;
+    }
+
+    /**
+     * @param string $cookie
+     */
+    public function setDecodedToken($token)
+    {
+        $this->decoded_px_token = $token;
     }
 
 
@@ -486,6 +531,16 @@ class PerimeterxContext
     public function getCookieHmac()
     {
         return $this->px_cookie_hmac;
+    }
+
+    public function setTokenHmac($hmac)
+    {
+        $this->px_token_hmac = $hmac;
+    }
+
+    public function getTokenHmac()
+    {
+        return $this->px_token_hmac;
     }
 
     public function isSensitiveRoute()

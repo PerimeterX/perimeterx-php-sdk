@@ -2,12 +2,12 @@
 
 namespace Perimeterx;
 
-abstract class PerimeterxCookie {
+abstract class PerimeterxToken {
 
     /**
      * @var string
      */
-    protected $pxCookie;
+    protected $pxToken;
 
     /**
      * @var object - perimeterx configuration object
@@ -20,54 +20,46 @@ abstract class PerimeterxCookie {
     protected $pxCtx;
 
     /**
-     * @var string
-     */
-    protected $cookieSecret;
-
-
-    /**
      * Factory method for creating PX Cookie object according to cookie version found on the request
      */
-    public static function pxCookieFactory($pxCtx, $pxConfig) {
-        if (isset($pxCtx->getPxCookies()['v3'])) {
-            return new CookieV3($pxCtx, $pxConfig);
-        }
-        return new CookieV1($pxCtx, $pxConfig);
+    public static function pxTokenFactory($pxCtx, $pxConfig, $token) {
+        $tokenVersion = explode(":", $token)[0];
+        return ($tokenVersion == 3 ? new TokenV3($pxCtx, $pxConfig) : new TokenV1($pxCtx, $pxConfig));
     }
 
     /** @var \stdClass
      */
-    protected $decodedCookie;
+    protected $decodedToken;
 
-    public function getDecodedCookie() {
-        return $this->decodedCookie;
+    public function getDecodedToken() {
+        return $this->decodedToken;
     }
 
-    protected function getCookie() {
-        return $this->pxCookie;
+    protected function getToken() {
+        return $this->pxToken;
     }
 
     public function getTime() {
-        return $this->getDecodedCookie()->t;
+        return $this->getDecodedToken()->t;
+    }
+
+    public function getUuid() {
+        return $this->getDecodedToken()->u;
+    }
+
+    public function getVid() {
+        return $this->getDecodedToken()->v;
     }
 
     abstract protected function getScore();
 
-    public function getUuid() {
-        return $this->getDecodedCookie()->u;
-    }
-
-    public function getVid() {
-        return $this->getDecodedCookie()->v;
-    }
-
     abstract public function getHmac();
 
-    abstract protected function isCookieFormatValid($cookie);
+    abstract protected function isTokenFormatValid($token);
 
     abstract public function getBlockAction();
 
-    /** Checks if the cookie's score is above the configured blocking score
+    /** Checks if the token's score is above the configured blocking score
      *
      * @return bool
      */
@@ -75,7 +67,7 @@ abstract class PerimeterxCookie {
         return ($this->getScore() >= $this->pxConfig['blocking_score']);
     }
 
-    /** Checks if the cookie has expired
+    /** Checks if the token has expired
      *
      * @return bool
      */
@@ -84,13 +76,13 @@ abstract class PerimeterxCookie {
         return ($dataTimeSec < time());
     }
 
-    /** Checks that the cookie is secure via HMAC
+    /** Checks that the token is secure via HMAC
      *
      * @return bool
      */
     abstract public function isSecure();
 
-    /** Checks that the cookie was deserialized succcessfully, has not expired,
+    /** Checks that the token was deserialized succcessfully, has not expired,
      * and is secure
      *
      * @return bool
@@ -107,22 +99,22 @@ abstract class PerimeterxCookie {
      */
     public function deserialize() {
         // only deserialize once
-        if ($this->decodedCookie !== null) { return true; }
+        if ($this->decodedToken !== null) { return true; }
 
         if ($this->pxConfig['encryption_enabled']) {
-            $cookie = $this->decrypt();
+            $token = $this->decrypt();
         } else {
-            $cookie = $this->decode();
+            $token = $this->decode();
         }
-        $cookie = json_decode($cookie);
+        $token = json_decode($token);
 
-        if ($cookie == null) { return false; }
+        if ($token == null) { return false; }
 
-        if (!$this->isCookieFormatValid($cookie)) {
+        if (!$this->isTokenFormatValid($token)) {
             return false;
         }
 
-        $this->decodedCookie = $cookie;
+        $this->decodedToken = $token;
 
         return true;
     }
@@ -133,19 +125,20 @@ abstract class PerimeterxCookie {
         $keylen = 32;
         $digest = 'sha256';
 
-        $cookie = $this->getCookie();
-        list($salt, $iterations, $cookie) = explode(":", $cookie);
+        $token = $this->getToken();
+        $this->pxConfig['logger']->info($token);
+        list($salt, $iterations, $token) = explode(":", $token);
         $iterations = intval($iterations);
         $salt = base64_decode($salt);
-        $cookie = base64_decode($cookie);
+        $token = base64_decode($token);
 
 
         $derivation = hash_pbkdf2($digest, $this->cookieSecret, $salt, $iterations, $ivlen + $keylen, true);
         $key = substr($derivation, 0, $keylen);
         $iv = substr($derivation, $keylen);
-        $cookie = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $cookie, MCRYPT_MODE_CBC, $iv);
+        $token = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $token, MCRYPT_MODE_CBC, $iv);
 
-        return $this->unpad($cookie);
+        return $this->unpad($token);
     }
 
     private function unpad($str)
@@ -166,7 +159,7 @@ abstract class PerimeterxCookie {
      */
     private function decode()
     {
-        $data_str = base64_decode($this->pxCookie);
+        $data_str = base64_decode($this->pxToken);
         return json_decode($data_str);
     }
 
@@ -192,3 +185,5 @@ abstract class PerimeterxCookie {
         }
     }
 }
+
+
