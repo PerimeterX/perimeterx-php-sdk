@@ -18,12 +18,12 @@ class TokenV1 extends PerimeterxToken
 
     public function getScore()
     {
-        return $this->getDecodedToken()->s->b;
+        return $this->getDecodedPayload()->s->b;
     }
 
     public function getHmac()
     {
-        return $this->getDecodedToken()->h;
+        return $this->getDecodedPayload()->h;
     }
 
     protected function isCookieFormatValid($token) {
