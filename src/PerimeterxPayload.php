@@ -28,7 +28,7 @@ abstract class PerimeterxPayload {
      * Factory method for creating PX payload object according to the version found on the request
      */
     public static function pxPayloadFactory($pxCtx, $pxConfig) {
-        if ($pxCtx->getPxCookieOrigin() == "cookie") {
+        if ($pxCtx->getCookieOrigin() == "cookie") {
             return (isset($pxCtx->getPxCookies()['v3']) ? new CookieV3($pxCtx, $pxConfig) : new CookieV1($pxCtx, $pxConfig));
         } else {
             return (isset($pxCtx->getPxCookies()['v3']) ? new TokenV3($pxCtx, $pxConfig) : new TokenV1($pxCtx, $pxConfig));
@@ -132,7 +132,6 @@ abstract class PerimeterxPayload {
         $iterations = intval($iterations);
         $salt = base64_decode($salt);
         $payload = base64_decode($payload);
-
 
         $derivation = hash_pbkdf2($digest, $this->cookieSecret, $salt, $iterations, $ivlen + $keylen, true);
         $key = substr($derivation, 0, $keylen);

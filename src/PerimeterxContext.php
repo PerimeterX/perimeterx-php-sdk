@@ -327,7 +327,7 @@ class PerimeterxContext
     /**
      * @return string
      */
-    public function getPxCookieOrigin()
+    public function getCookieOrigin()
     {
         return $this->cookie_origin;
     }

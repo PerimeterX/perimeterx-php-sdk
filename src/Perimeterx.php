@@ -216,14 +216,28 @@ final class Perimeterx
             $html = $pxCtx->getBlockActionData();
         } elseif ($this->shouldDisplayCaptcha($pxCtx)) {
             /* set return html to default captcha page */
-            $html = $mustache->render('captcha', $templateInputs);
+            $html = $pxCtx->getCookieOrigin() == 'cookie' ? $mustache->render('captcha', $templateInputs) : $mustache->render('captcha.mobile', $templateInputs);
         } else {
             /* set return html to default block page */
             $html = $mustache->render('block', $templateInputs);
         }
+
         header("Status: 403");
-        header("Content-Type: text/html");
-        echo $html;
+        if ($pxCtx->getCookieOrigin() == 'cookie') {
+            header("Content-Type: text/html");
+            echo $html;
+        } else {
+            header("Content-Type: application/json");
+            $result = array(
+                'action' => $pxCtx->getBlockAction(),
+                'uuid' => $block_uuid,
+                'vid' => $pxCtx->getVid(),
+                'appId' => $this->pxConfig['app_id'],
+                'page' => base64_encode($html),
+                'collectorUrl' => $this->pxConfig['perimeterx_server_host']
+            );
+            echo json_encode($result);
+        }
         die();
     }
 
