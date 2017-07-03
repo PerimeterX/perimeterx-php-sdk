@@ -351,7 +351,7 @@ class PerimeterxCookieValidatorTest extends PHPUnit_Framework_TestCase
 
     public function testNoMobileHeaderCookie() {
         $pxCookie = null;
-        $userAgent = 'Mozilla';
+        $userAgent = self::USER_AGENT;
         $ip = self::IP;
         $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip, false, "header");
 

@@ -49,7 +49,6 @@ class CookieV3 extends PerimeterxCookie
         if ($this->isHmacValid($hmac_string, $this->getHmac())) {
             return true;
         }
-
         return false;
     }
 }
