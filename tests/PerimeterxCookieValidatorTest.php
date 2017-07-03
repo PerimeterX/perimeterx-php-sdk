@@ -79,7 +79,7 @@ class PerimeterxCookieValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('error', 'exception while verifying cookie'),
+            'logger' => $this->getMockLogger('error', 'exception while verifying cookie')
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -417,11 +417,11 @@ class PerimeterxCookieValidatorTest extends PHPUnit_Framework_TestCase
      *
      * @return \Perimeterx\PerimeterxContext
      */
-    private function getPxContext($pxCookie, $userAgent, $ip, $sensitive_route = false)
+    private function getPxContext($pxCookie, $userAgent, $ip, $sensitive_route = false, $cookie_origin = "cookie")
     {
         $pxCtx = $this->getMockBuilder(PerimeterxContext::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPxCookie', 'getUserAgent', 'getIp','isSensitiveRoute'])
+            ->setMethods(['getPxCookie', 'getUserAgent', 'getIp','isSensitiveRoute', 'getCookieOrigin'])
             ->getMock();
         $pxCtx->expects($this->any())
             ->method('getPxCookie')
@@ -435,6 +435,9 @@ class PerimeterxCookieValidatorTest extends PHPUnit_Framework_TestCase
         $pxCtx->expects($this->any())
             ->method('isSensitiveRoute')
             ->willReturn($sensitive_route);
+        $pxCtx->expects($this->any())
+            ->method('getCookieOrigin')
+            ->willReturn($cookie_origin);
         return $pxCtx;
     }
 

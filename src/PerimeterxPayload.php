@@ -71,7 +71,7 @@ abstract class PerimeterxPayload {
      *
      * @return bool
      */
-    public function isHighScore() {;
+    public function isHighScore() {
         return ($this->getScore() >= $this->pxConfig['blocking_score']);
     }
 
