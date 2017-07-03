@@ -63,12 +63,11 @@ class PerimeterxContext
     }
 
     private function extractIP($pxConfig) {
-        $pxConfig['logger']->warning('looking for ip');
         $all_headers = getallheaders();
 
-        if (isSet($pxConfig['ip_headers'])) {
+        if (isset($pxConfig['ip_headers'])) {
             foreach ($pxConfig['ip_headers'] as $header) {
-                if (isSet($all_headers[$header])) {
+                if (isset($all_headers[$header])) {
                     return $all_headers[$header];
                 }
             }
