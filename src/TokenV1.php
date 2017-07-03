@@ -42,7 +42,7 @@ class TokenV1 extends PerimeterxToken
      */
     public function isSecure()
     {
-        $base_hmac_str = $this->getTime() . $this->decodedToken->s->a . $this->getScore() . $this->getUuid() . $this->getVid();
+        $base_hmac_str = $this->getTime() . $this->decodedPayload->s->a . $this->getScore() . $this->getUuid() . $this->getVid();
 
         /* hmac string with ip - for backward support */
         $hmac_str_withip = $base_hmac_str . $this->pxCtx->getIp();

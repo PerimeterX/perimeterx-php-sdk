@@ -16,6 +16,7 @@ class PerimeterxCookieValidatorTest extends PHPUnit_Framework_TestCase
     const IP = '10.10.10.10';
     const USER_AGENT = 'Mozilla';
 
+    // cookie tests
     public function testNoCookie() {
 
         $pxCookie = null;
@@ -344,6 +345,298 @@ class PerimeterxCookieValidatorTest extends PHPUnit_Framework_TestCase
             null,
             null
         );
+    }
+
+    // mobile sdk cookie header tests
+
+    public function testNoMobileHeaderCookie() {
+        $pxCookie = null;
+        $userAgent = 'Mozilla';
+        $ip = self::IP;
+        $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip, false, "header");
+
+        $pxConfig = [
+            'encryption_enabled' => false,
+            'cookie_key' => self::COOKIE_KEY,
+            'blocking_score' => 70,
+            'logger' => $this->getMockLogger(),
+        ];
+
+        $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
+
+        $this->assertFalse($v->verify());
+        $this->assertPxContext($pxCtx, null, null, null, null, 'no_cookie', null);
+    }
+
+    public function testBadlyEncodedMobileHeaderCookie() {
+
+        $pxCookie = 'this is not base64 encoded json';
+        $userAgent = self::USER_AGENT;
+        $ip = self::IP;
+        $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip, false, "header");
+
+        $pxConfig = [
+            'encryption_enabled' => false,
+            'cookie_key' => self::COOKIE_KEY,
+            'blocking_score' => 70,
+            'logger' => $this->getMockLogger('warning', 'invalid cookie'),
+        ];
+
+        $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
+
+        $this->assertFalse($v->verify());
+        $this->assertPxContext($pxCtx, null, null, null, null, 'cookie_decryption_failed', null);
+    }
+
+    public function testMissingMobileHeaderCookieContentsThrowsException() {
+
+        $cookie_time = (time() + 1000) * 1000;
+        $cookie_uuid = self::COOKIE_UUID;
+        $cookie_vid = self::COOKIE_VID;
+        $cookie_hmac = 'something';
+        $cookie_score_a = 0;
+        $cookie_score_b = 0;
+
+        $pxCookie = $this->encodeCookie(
+            $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b)
+        );
+        $userAgent = self::USER_AGENT;
+        $ip = self::IP;
+        $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip);
+        $pxCtx->expects($this->any())
+            ->method('getIp')
+            ->willThrowException(new \Exception('inject an exception, not likely to come from getIp however'));
+
+        $pxConfig = [
+            'encryption_enabled' => false,
+            'cookie_key' => self::COOKIE_KEY,
+            'blocking_score' => 70,
+            'logger' => $this->getMockLogger('error', 'exception while verifying cookie')
+        ];
+
+        $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
+
+        $this->assertFalse($v->verify());
+        $this->assertPxContext(
+            $pxCtx,
+            $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b),
+            $cookie_uuid,
+            $cookie_vid,
+            $cookie_score_b,
+            'cookie_decryption_failed',
+            null
+        );
+    }
+
+    public function testInvalidMobileHeaderCookieContents() {
+
+        $cookie_time = (time() + 1000) * 1000;
+        $cookie_uuid = null;
+        $cookie_vid = self::COOKIE_VID;
+        $cookie_hmac = 'something';
+        $cookie_score_a = 0;
+        $cookie_score_b = 0;
+
+        $pxCookie = $this->encodeCookie(
+            $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b)
+        );
+        $userAgent = self::USER_AGENT;
+        $ip = self::IP;
+        $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip, false, "header");
+
+        $pxConfig = [
+            'encryption_enabled' => false,
+            'cookie_key' => 'asdf',
+            'blocking_score' => 70,
+            'logger' => $this->getMockLogger('warning', 'invalid cookie')
+        ];
+
+        $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
+
+        $this->assertFalse($v->verify());
+        $this->assertPxContext($pxCtx, null, null, null, null, 'cookie_decryption_failed', null);
+    }
+
+    public function testMobileHeaderCookieHighScore() {
+
+        $cookie_time = (time() + 1000) * 1000;
+        $cookie_uuid = self::COOKIE_UUID;
+        $cookie_vid = self::COOKIE_VID;
+        $cookie_hmac = 'something';
+        $cookie_score_a = 0;
+        $cookie_score_b = 100;
+
+        $pxCookie = $this->encodeCookie(
+            $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b)
+        );
+        $userAgent = self::USER_AGENT;
+        $ip = self::IP;
+        $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip, false, "header");
+
+        $pxConfig = [
+            'encryption_enabled' => false,
+            'cookie_key' => self::COOKIE_KEY,
+            'blocking_score' => 70,
+            'logger' => $this->getMockLogger('info', 'cookie high score')
+        ];
+
+        $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
+
+        $this->assertTrue($v->verify());
+        $this->assertPxContext(
+            $pxCtx,
+            $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b),
+            $cookie_uuid,
+            $cookie_vid,
+            $cookie_score_b,
+            null,
+            'cookie_high_score'
+        );
+    }
+
+    public function testMobileHeaderCookieExpired() {
+
+        $cookie_time = (time() - 1000) * 1000;
+        $cookie_uuid = self::COOKIE_UUID;
+        $cookie_vid = self::COOKIE_VID;
+        $cookie_hmac = 'something';
+        $cookie_score_a = 0;
+        $cookie_score_b = 0;
+
+        $pxCookie = $this->encodeCookie(
+            $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b)
+        );
+        $userAgent = self::USER_AGENT;
+        $ip = self::IP;
+        $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip, false, "header");
+
+        $pxConfig = [
+            'encryption_enabled' => false,
+            'cookie_key' => self::COOKIE_KEY,
+            'blocking_score' => 70,
+            'logger' => $this->getMockLogger('info', 'cookie expired')
+        ];
+
+        $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
+
+        $this->assertFalse($v->verify());
+        $this->assertPxContext(
+            $pxCtx,
+            $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b),
+            $cookie_uuid,
+            $cookie_vid,
+            $cookie_score_b,
+            'cookie_expired',
+            null
+        );
+    }
+
+    public function testMobileHeaderCookieHmacInvalid() {
+
+        $cookie_time = (time() + 1000) * 1000;
+        $cookie_uuid = self::COOKIE_UUID;
+        $cookie_vid = self::COOKIE_VID;
+        $cookie_hmac = 'something';
+        $cookie_score_a = 0;
+        $cookie_score_b = 0;
+
+        $pxCookie = $this->encodeCookie(
+            $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b)
+        );
+        $userAgent = self::USER_AGENT;
+        $ip = self::IP;
+        $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip, false, "header");
+
+        $pxConfig = [
+            'encryption_enabled' => false,
+            'cookie_key' => self::COOKIE_KEY,
+            'blocking_score' => 70,
+            'logger' => $this->getMockLogger('warning', 'cookie invalid hmac'),
+        ];
+
+        $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
+
+        $this->assertFalse($v->verify());
+        $this->assertPxContext(
+            $pxCtx,
+            $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b),
+            $cookie_uuid,
+            $cookie_vid,
+            $cookie_score_b,
+            'cookie_validation_failed',
+            null
+        );
+    }
+
+    public function testMobileHeaderCookieHmacValid() {
+
+        // far future, consistent cookie, 2116-11-14T00:00:00Z
+        $cookie_time = '4634841600000';
+        $cookie_uuid = self::COOKIE_UUID;
+        $cookie_vid = self::COOKIE_VID;
+        // calculated at time of writing
+        $cookie_hmac = '618f9835afa82c8c083c844f41b1c777d444e92a4e51981b745ab68d9041a055'; // hmac without user agent
+        $cookie_score_a = 0;
+        $cookie_score_b = 0;
+
+        $pxCookie = $this->encodeCookie(
+                $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b)
+            );
+        $userAgent = self::USER_AGENT;
+        $ip = self::IP;
+        $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip, false, "header");
+
+        $pxConfig = [
+            'encryption_enabled' => false,
+            'cookie_key' => self::COOKIE_KEY,
+            'blocking_score' => 70,
+            'logger' => $this->getMockLogger('info', 'cookie ok'),
+        ];
+
+        $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
+
+        $this->assertTrue($v->verify());
+        $this->assertPxContext(
+            $pxCtx,
+            $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b),
+            $cookie_uuid,
+            $cookie_vid,
+            $cookie_score_b,
+            null,
+            null
+        );
+    }
+
+    public function testMobileHeaderCookieVerificationFailedOnSensitiveRoute() {
+
+        // far future, consistent cookie, 2116-11-14T00:00:00Z
+        $cookie_time = '4634841600000';
+        $cookie_uuid = self::COOKIE_UUID;
+        $cookie_vid = self::COOKIE_VID;
+        // calculated at time of writing
+        $cookie_hmac = '618f9835afa82c8c083c844f41b1c777d444e92a4e51981b745ab68d9041a055';
+        $cookie_score_a = 0;
+        $cookie_score_b = 0;
+
+        $pxCookie = $this->encodeCookie(
+                $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_hmac, $cookie_score_a, $cookie_score_b)
+            );
+        $userAgent = self::USER_AGENT;
+        $ip = self::IP;
+        $pxCtx = $this->getPxContext($pxCookie, $userAgent, $ip, true, "header");
+
+        // Modify pxCtx to return true on sensitive route
+        $pxConfig = [
+            'encryption_enabled' => false,
+            'cookie_key' => self::COOKIE_KEY,
+            'blocking_score' => 70,
+            'logger' => $this->getMockLogger('info', 'cookie verification passed, risk api triggered by sensitive route'),
+        ];
+
+        $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
+
+        $this->assertFalse($v->verify());
+        $this->assertEquals("sensitive_route", $pxCtx->getS2SCallReason());
     }
 
     /**
