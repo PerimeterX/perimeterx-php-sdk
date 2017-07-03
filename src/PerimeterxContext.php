@@ -75,10 +75,6 @@ class PerimeterxContext
         if (isset($pxConfig['custom_user_ip'])) {
             return $pxConfig['custom_user_ip']($this);
         }
-        if (function_exists('pxCustomUserIP')) {
-            call_user_func('pxCustomUserIP', $this);
-            return $this->ip;
-        }
         return $_SERVER['REMOTE_ADDR'];
     }
 
