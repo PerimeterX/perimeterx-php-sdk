@@ -267,7 +267,7 @@ $perimeterxConfig = [
 
 > Note: IP extraction, according to your network setup, is very important. It is common to have a load balancer/proxy on top of your applications, in which case the PerimeterX module will send the system's internal IP as the user's. In order to properly perform processing and detection on server-to-server calls, PerimeterX module needs the real user's IP.
 
-The user's IP can be passed to the PerimeterX module using a custom user defined function on the $perimeterxConfig variable.
+The user's IP can be passed to the PerimeterX module using a custom user defined function on the $perimeterxConfig variable, or by passing a list of headers to extract the real IP from, ordered by priority.
 
 **Default with no predefined header:** `$_SERVER['REMOTE_ADDR']`
 
@@ -291,6 +291,12 @@ $perimeterxConfig['custom_user_ip'] = function ($pxCtx)
 
     return $ip;
 };
+
+$perimeterxConfig = [
+	..
+    'ip_headers' => ['X-TRUE-IP', 'X-Forwarded-For']
+    ..
+]
 
 $px = Perimeterx::Instance($perimeterxConfig);
 $px->pxVerify();

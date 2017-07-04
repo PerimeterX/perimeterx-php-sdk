@@ -50,13 +50,7 @@ class PerimeterxContext
         $this->score = 0;
         $this->risk_rtt = 0;
 
-        if (isset($pxConfig['custom_user_ip'])) {
-            $this->ip = $pxConfig['custom_user_ip']($this);
-        } elseif (function_exists('pxCustomUserIP')) {
-            call_user_func('pxCustomUserIP', $this);
-        } else {
-            $this->ip = $_SERVER['REMOTE_ADDR'];
-        }
+        $this->ip = $this->extractIP($pxConfig);
 
         if (isset($_SERVER['SERVER_PROTOCOL'])) {
             $httpVer = explode("/", $_SERVER['SERVER_PROTOCOL']);
@@ -66,6 +60,22 @@ class PerimeterxContext
         }
         $this->http_method = $_SERVER['REQUEST_METHOD'];
         $this->sensitive_route = $this->checkSensitiveRoutePrefix($pxConfig['sensitive_routes'], $this->uri);
+    }
+
+    private function extractIP($pxConfig) {
+        $all_headers = getallheaders();
+
+        if (isset($pxConfig['ip_headers'])) {
+            foreach ($pxConfig['ip_headers'] as $header) {
+                if (isset($all_headers[$header])) {
+                    return $all_headers[$header];
+                }
+            }
+        }
+        if (isset($pxConfig['custom_user_ip'])) {
+            return $pxConfig['custom_user_ip']($this);
+        }
+        return $_SERVER['REMOTE_ADDR'];
     }
 
     /**
