@@ -87,7 +87,7 @@ final class Perimeterx
                 'blocking_score' => 70,
                 'sensitive_headers' => ['cookie', 'cookies'],
                 'max_buffer_len' => 1,
-                'send_page_activities' => false,
+                'send_page_activities' => true,
                 'send_block_activities' => true,
                 'sdk_name' => 'PHP SDK v2.5.1',
                 'debug_mode' => false,
