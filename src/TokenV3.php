@@ -2,18 +2,17 @@
 
 namespace Perimeterx;
 
-class CookieV3 extends PerimeterxCookie
+class TokenV3 extends PerimeterxToken
 {
-
     /**
      * @param $pxCtx PerimeterxContext - perimeterx context
      * @param $pxConfig array - perimeterx configurations
      */
     public function __construct($pxCtx, $pxConfig)
     {
-        list($hash, $cookie) = explode(":", $pxCtx->getPxCookie(), 2);
-        $this->pxPayload = $cookie;
-        $this->cookieHash = $hash;
+        list($hash, $token) = explode(":", $pxCtx->getPxCookie(), 2);
+        $this->pxPayload = $token;
+        $this->tokenHash = $hash;
         $this->pxConfig = $pxConfig;
         $this->pxCtx = $pxCtx;
         $this->cookieSecret = $pxConfig['cookie_key'];
@@ -26,11 +25,11 @@ class CookieV3 extends PerimeterxCookie
 
     public function getHmac()
     {
-        return $this->cookieHash;
+        return $this->tokenHash;
     }
 
-    protected function isCookieFormatValid($cookie) {
-        return isset($cookie->t, $cookie->s, $cookie->u, $cookie->v, $cookie->a);
+    protected function isCookieFormatValid($token) {
+        return isset($token->t, $token->s, $token->u, $token->v, $token->a);
     }
 
     public function getBlockAction() {
@@ -44,11 +43,6 @@ class CookieV3 extends PerimeterxCookie
      */
     public function isSecure()
     {
-        $hmac_string = $this->pxPayload.$this->pxCtx->getUserAgent();
-
-        if ($this->isHmacValid($hmac_string, $this->getHmac())) {
-            return true;
-        }
-        return false;
+        return $this->isHmacValid($this->pxPayload, $this->getHmac());
     }
 }

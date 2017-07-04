@@ -50,6 +50,8 @@ class PerimeterxActivitiesClient
             $this->pxConfig['additional_activity_handler']($activityType, $pxCtx, $details);
         }
 
+        $details['cookie_origin'] = $pxCtx->getCookieOrigin();
+
         $details['module_version'] = $this->pxConfig['sdk_name'];
         $pxData = [];
         $pxData['type'] = $activityType;
@@ -81,7 +83,7 @@ class PerimeterxActivitiesClient
         if (!$this->pxConfig['send_page_activities']) {
             return;
         }
-        
+
         $details = [];
         $details['block_uuid'] = $pxCtx->getUuid();
         $details['block_score'] = $pxCtx->getScore();
