@@ -43,7 +43,6 @@ final class Perimeterx
 
     public static $MONITOR_MODE = 1;
     public static $ACTIVE_MODE = 2;
-    public static $MOBILE_SDK_HEADER = "X-PX-AUTHORIZATION";
 
     /**
      * Call this method to get singleton
