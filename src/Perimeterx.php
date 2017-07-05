@@ -198,6 +198,7 @@ final class Perimeterx
         $mustache = new \Mustache_Engine(array(
             'loader' => new \Mustache_Loader_FilesystemLoader(dirname(__FILE__) . '/templates'),
         ));
+
         $templateInputs = array(
             'refId' => $block_uuid,
             'appId' => $this->pxConfig['app_id'],
