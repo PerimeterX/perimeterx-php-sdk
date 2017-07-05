@@ -35,7 +35,9 @@ class PerimeterxContext
 
         if (isset($this->headers[PerimeterxContext::$MOBILE_SDK_HEADER])) {
             $this->cookie_origin = "header";
-            $this->explodeCookieToVersion(':', $this->headers[PerimeterxContext::$MOBILE_SDK_HEADER]);
+            if ($this->headers[PerimeterxContext::$MOBILE_SDK_HEADER] != "1") {
+                $this->explodeCookieToVersion(':', $this->headers[PerimeterxContext::$MOBILE_SDK_HEADER]);
+            }
         }
 
         $this->hostname = $_SERVER['HTTP_HOST'];
