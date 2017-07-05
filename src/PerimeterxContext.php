@@ -452,15 +452,17 @@ class PerimeterxContext
     }
 
     private function explodeCookieToVersion($delimiter, $cookie) {
-        list($k, $v) = explode($delimiter, $cookie, 2);
-        if ($k == '3' || $k == '_px3') {
-            $this->px_cookies['v3'] = $v;
-        }
-        if ($k == '1' || $k == '_px') {
-            $this->px_cookies['v1'] = $v;
-        }
-        if ($k == '_pxCaptcha') {
-            $this->px_captcha = $v;
+        if (strpos($delimiter, $cookie) !== false) {
+            list($k, $v) = explode($delimiter, $cookie, 2);
+            if ($k == '3' || $k == '_px3') {
+                $this->px_cookies['v3'] = $v;
+            }
+            if ($k == '1' || $k == '_px') {
+                $this->px_cookies['v1'] = $v;
+            }
+            if ($k == '_pxCaptcha') {
+                $this->px_captcha = $v;
+            }
         }
     }
 
