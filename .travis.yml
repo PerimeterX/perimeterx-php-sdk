@@ -9,6 +9,8 @@ before_script:
   - composer install --dev
   - composer update
 
-script: phpunit tests/PerimeterxCookieValidatorTest
-script: phpunit tests/PerimeterxCookieV3ValidatorTest
-
+script:
+  - phpunit tests/PerimeterxCookieValidatorTest
+  - phpunit tests/PerimeterxCookieV3ValidatorTest
+  - phpunit tests/PerimeterxConfigurationValidatorTest
+  - phpunit tests/PerimeterxS2SValidatorTest
