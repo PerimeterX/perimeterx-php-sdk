@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 
 class PerimeterxContextGoodCookie extends PerimeterxContext
 {
+
     /**
      * PerimeterxContextGoodCookie constructor.
      */
@@ -33,9 +34,38 @@ class PerimeterxContextGoodCookie extends PerimeterxContext
             'User-Agent' => $ua,
             'Content-type' => 'application/x-www-form-urlencoded'
         ];
-        
+
         $rawResponse = $httpclient->request('POST', '/api/v1/collector', ['body' => PX_ACTIVITY_PAYLOAD, 'headers' => $headers]);
         $response = json_decode($rawResponse->getBody());
-        return explode("|", $response->do[1])[3];
+        $px_cookie = explode("|", $response->do[1])[3];
+        return $px_cookie;
     }
+
+    public function getPxCookie(){
+        return $this->px_cookie;
+    }
+
+    public function getPxCookies(){
+        return ["V1" => $this->getPxCookie() ];
+    }
+
+    public function getUserAgent(){
+        return $this->userAgent;
+    }
+
+    public function isSensitiveRoute(){
+        return false;
+    }
+
+    public function getCookieOrigin(){
+        return "cookie";
+    }
+
+    public function setDecodedCookie($val){}
+    public function setScore($val){}
+    public function setUuid($val){}
+    public function setVid($val){}
+    public function setBlockAction($val){}
+    public function setCookieHmac($val){}
+    public function setPassReason($val){}
 }
