@@ -452,7 +452,7 @@ class PerimeterxContext
     }
 
     private function explodeCookieToVersion($delimiter, $cookie) {
-        if (strpos($delimiter, $cookie) !== false) {
+        if (strpos($cookie, $delimiter)) {
             list($k, $v) = explode($delimiter, $cookie, 2);
             if ($k == '3' || $k == '_px3') {
                 $this->px_cookies['v3'] = $v;
