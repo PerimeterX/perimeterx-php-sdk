@@ -28,7 +28,7 @@ class PerimeterxCookieValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger(),
+            'logger' => $this->getMockLogger('info', 'no cookie')
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -359,7 +359,7 @@ class PerimeterxCookieValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger(),
+            'logger' => $this->getMockLogger('info', 'no cookie')
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);

@@ -223,7 +223,7 @@ final class Perimeterx
             $html = $mustache->render('block', $templateInputs);
         }
 
-        header("Status: 403");
+        header("HTTP/1.1 403 Forbidden");
         if ($pxCtx->getCookieOrigin() == 'cookie') {
             header("Content-Type: text/html");
             echo $html;

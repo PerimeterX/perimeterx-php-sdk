@@ -36,11 +36,11 @@ class PerimeterxCookieValidator
     public function verify()
     {
         try {
-            if (!isset($this->pxCookie) || (isset($this->pxCookie) && $this->pxCookie == 1)) {
+            if (!isset($this->pxCookie) || (isset($this->pxCookie) && $this->pxCtx->getCookieOrigin() == "header" && $this->pxCookie == 1)) {
+                $this->pxConfig['logger']->info('no cookie');
                 $this->pxCtx->setS2SCallReason('no_cookie');
                 return false;
             }
-
             $cookie = PerimeterxPayload::pxPayloadFactory($this->pxCtx, $this->pxConfig);
             if (!$cookie->deserialize()) {
                 $this->pxConfig['logger']->warning('invalid cookie');
