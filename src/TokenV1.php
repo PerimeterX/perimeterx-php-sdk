@@ -44,12 +44,7 @@ class TokenV1 extends PerimeterxToken
     {
         $base_hmac_str = $this->getTime() . $this->decodedPayload->s->a . $this->getScore() . $this->getUuid() . $this->getVid();
 
-        /* hmac string with ip - for backward support */
-        $hmac_str_withip = $base_hmac_str . $this->pxCtx->getIp();
-
-        /* hmac string with no ip */
-        $hmac_str_withoutip = $base_hmac_str;
-        if ($this->isHmacValid($hmac_str_withoutip, $this->getHmac()) or $this->isHmacValid($hmac_str_withip, $this->getHmac())) {
+        if ($this->isHmacValid($base_hmac_str, $this->getHmac())) {
             return true;
         }
 
