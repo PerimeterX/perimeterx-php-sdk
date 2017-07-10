@@ -13,14 +13,6 @@ class PerimeterxContext
 
         $this->cookie_origin = "cookie";
 
-        if (isset($_SERVER['HTTP_COOKIE'])) {
-            foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
-                if (!empty($rawcookie) && strpos($rawcookie, '=') !== false) {
-                    $this->explodeCookieToVersion('=', $rawcookie);
-                }
-            }
-        }
-
         $this->start_time = microtime(true);
         if (function_exists('getallheaders')) {
             $this->headers = getallheaders();
@@ -37,6 +29,12 @@ class PerimeterxContext
             $this->cookie_origin = "header";
             if ($this->headers[PerimeterxContext::$MOBILE_SDK_HEADER] != "1") {
                 $this->explodeCookieToVersion(':', $this->headers[PerimeterxContext::$MOBILE_SDK_HEADER]);
+            }
+        } else if (isset($_SERVER['HTTP_COOKIE'])) {
+            foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
+                if (!empty($rawcookie) && strpos($rawcookie, '=') !== false) {
+                    $this->explodeCookieToVersion('=', $rawcookie);
+                }
             }
         }
 
@@ -463,6 +461,8 @@ class PerimeterxContext
             if ($k == '_pxCaptcha') {
                 $this->px_captcha = $v;
             }
+        } else {
+            $this->px_cookies['v3'] = $cookie;
         }
     }
 

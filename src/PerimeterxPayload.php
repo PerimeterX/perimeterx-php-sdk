@@ -128,7 +128,13 @@ abstract class PerimeterxPayload {
         $digest = 'sha256';
 
         $payload = $this->getPayload();
-        list($salt, $iterations, $payload) = explode(":", $payload);
+
+        $payloadParts = explode(":", $payload);
+        if (count($payloadParts) < 3) {
+            return null;
+        }
+
+        list($salt, $iterations, $payload) = $payloadParts;
         $iterations = intval($iterations);
         $salt = base64_decode($salt);
         $payload = base64_decode($payload);

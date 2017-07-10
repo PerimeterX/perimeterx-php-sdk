@@ -10,6 +10,10 @@ class TokenV3 extends PerimeterxToken
      */
     public function __construct($pxCtx, $pxConfig)
     {
+        $payloadParts = explode(":", $pxCtx->getPxCookie());
+        if (count($payloadParts) < 4) {
+            return null;
+        }
         list($hash, $token) = explode(":", $pxCtx->getPxCookie(), 2);
         $this->pxPayload = $token;
         $this->tokenHash = $hash;

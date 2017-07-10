@@ -41,12 +41,14 @@ class PerimeterxCookieValidator
                 $this->pxCtx->setS2SCallReason('no_cookie');
                 return false;
             }
+
             $cookie = PerimeterxPayload::pxPayloadFactory($this->pxCtx, $this->pxConfig);
             if (!$cookie->deserialize()) {
                 $this->pxConfig['logger']->warning('invalid cookie');
                 $this->pxCtx->setS2SCallReason('cookie_decryption_failed');
                 return false;
             }
+
 
             $this->pxCtx->setDecodedCookie($cookie->getDecodedPayload());
             $this->pxCtx->setScore($cookie->getScore());
