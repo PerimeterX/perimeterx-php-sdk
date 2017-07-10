@@ -49,7 +49,6 @@ class PerimeterxCookieValidator
                 return false;
             }
 
-
             $this->pxCtx->setDecodedCookie($cookie->getDecodedPayload());
             $this->pxCtx->setScore($cookie->getScore());
             $this->pxCtx->setUuid($cookie->getUuid());

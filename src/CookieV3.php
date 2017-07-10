@@ -11,8 +11,14 @@ class CookieV3 extends PerimeterxCookie
      */
     public function __construct($pxCtx, $pxConfig)
     {
+        if ($pxConfig['encryption_enabled']) {
+            $cookieValidPartsNumber = 4;
+        } else {
+            $cookieValidPartsNumber = 2;
+        }
+
         $payloadParts = explode(":", $pxCtx->getPxCookie());
-        if (count($payloadParts) < 4) {
+        if (count($payloadParts) < $cookieValidPartsNumber) {
             return null;
         }
         list($hash, $cookie) = explode(":", $pxCtx->getPxCookie(), 2);

@@ -165,7 +165,7 @@ abstract class PerimeterxPayload {
      */
     private function decode()
     {
-        $data_str = base64_decode($this->pxPayload);
+        $data_str = base64_decode($this->getPayload());
         return json_decode($data_str);
     }
 
