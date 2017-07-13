@@ -11,6 +11,16 @@ class CookieV3 extends PerimeterxCookie
      */
     public function __construct($pxCtx, $pxConfig)
     {
+        if ($pxConfig['encryption_enabled']) {
+            $cookieValidPartsNumber = 4;
+        } else {
+            $cookieValidPartsNumber = 2;
+        }
+
+        $payloadParts = explode(":", $pxCtx->getPxCookie());
+        if (count($payloadParts) < $cookieValidPartsNumber) {
+            return null;
+        }
         list($hash, $cookie) = explode(":", $pxCtx->getPxCookie(), 2);
         $this->pxPayload = $cookie;
         $this->cookieHash = $hash;
@@ -46,9 +56,6 @@ class CookieV3 extends PerimeterxCookie
     {
         $hmac_string = $this->pxPayload.$this->pxCtx->getUserAgent();
 
-        if ($this->isHmacValid($hmac_string, $this->getHmac())) {
-            return true;
-        }
-        return false;
+        return $this->isHmacValid($hmac_string, $this->getHmac());
     }
 }

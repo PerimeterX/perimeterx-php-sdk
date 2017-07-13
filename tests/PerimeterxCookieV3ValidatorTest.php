@@ -252,6 +252,23 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("sensitive_route", $pxCtx->getS2SCallReason());
     }
 
+    public function testEncryptedCookieDecryption() {
+        // far future encrypted cookie
+        $pxCookie = "eb34be587303f1ac7b04bed5fd5388bc3d2a0ad29a014ae6823ebfe27ba59ed4:2EK7x6pHyMwy6pB9PmYKhX7YaiAf3aay2MwzZhS+x8G/htGX6xfjbLt8Gkn3cgggpD/6ykXk5XjZ7UG9TePOiQ==:1000:8HgbjMrrYXbYhVwh8e0+Vnsg051OvqpKfYkZjzPZLIKyVCjwL5ufPj8s3BXl1bBTdhwqRXUZnq1vJuBpOoTBdrC+AUL/kYqLmW6JyF+MpjfIdKaSqGZag2qZRFGMJSSf3EBVZevInEbZMoNBjLAsHnbJAToZ2+ejIIIM6XmBGqo=";
+        $userAgent = self::USER_AGENT;
+        $pxCtx = $this->getPxContext($pxCookie, $userAgent, false);
+        $pxConfig = [
+            'encryption_enabled' => true,
+            'cookie_key' => self::COOKIE_KEY,
+            'blocking_score' => 70,
+            'logger' => $this->getMockLogger('info', 'cookie ok')
+        ];
+
+        $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
+
+        $this->assertTrue($v->verify());
+    }
+
     // mobile sdk token testings
     public function testNoMobileHeaderCookie() {
         $pxCookie = 1;
@@ -491,6 +508,24 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($v->verify());
         $this->assertEquals("sensitive_route", $pxCtx->getS2SCallReason());
+    }
+
+    public function testEncryptedTokenDecryption() {
+        // far future encrypted cookie
+        $cookie_origin="header";
+        $pxCookie = "8d4a0f41e65af5088266f1eb0db7bd4266309d3c471c097aea538e17c1ebe82d:mmjSIpdOpbZYsDjXe0vAieBbrG7k8JVJO2+9itMXUoZfugSlvRIqK4BUKPDAd2gftZtbwU0eA5LZXHf8VURI/w==:1000:KFCP3EU4qtGhRab+OgIYeg0SXhXWWfmSvmTK6+4J5vwN73/IVx/BkcRzC1inFxJ2jCHr+KqcQxEpcqyO1E91l2Wk38ddADYzuog3KhbsV9j2wXldnX0zWkc7dgnRHc8xJuck4NfrZivdfQNA0AC4k+z0sasqwRWQ5Eq1mjnIwf8=";
+        $userAgent = self::USER_AGENT;
+        $pxCtx = $this->getPxContext($pxCookie, $userAgent, false, $cookie_origin);
+        $pxConfig = [
+            'encryption_enabled' => true,
+            'cookie_key' => self::COOKIE_KEY,
+            'blocking_score' => 70,
+            'logger' => $this->getMockLogger('info', 'cookie ok')
+        ];
+
+        $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
+
+        $this->assertTrue($v->verify());
     }
 
     // private functions
