@@ -8,9 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [2.6.0] - 2017-06-04
 ### Added
 - Sending real uuid in page_requested
-- Support for MobileSDK
+- Support for Mobile SDK
 ### Changed
-- Real ip headers are now a list instead of single value
+- Real IP headers are now a list instead of single value (single
 - Sending page activities by default
 ### Fixed
 - On blocked, status code is 403
