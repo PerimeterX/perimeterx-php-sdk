@@ -1,7 +1,7 @@
 {
   "name": "perimeterx/php-sdk",
   "description": "PerimeterX SDK for PHP",
-  "version" : "2.5.1",
+  "version" : "2.6.0",
   "keywords": [
     "perimeterx",
     "websecurity",

@@ -5,8 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.6.0] - 2017-06-04
+### Added
+- Sending real uuid in page_requested
+- Support for MobileSDK
+### Changed
+- Real ip headers are now a list instead of single value
+- Sending page activities by default
+### Fixed
+- On blocked, status code is 403
+
 ## [2.5.1] - 2017-06-04
-### Added-
+### Added
 - sending pass_reason with page requested activities
 - sending risk_rtt on block/page_activity
 
