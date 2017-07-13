@@ -4,27 +4,14 @@ namespace Perimeterx;
 
 class PerimeterxContext
 {
+    public static $MOBILE_SDK_HEADER = "X-PX-AUTHORIZATION";
     /**
      * @param $pxConfig array - perimeterx configurations
      */
     public function __construct($pxConfig)
     {
-        if (isset($_SERVER['HTTP_COOKIE'])) {
-            foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
-                if (!empty($rawcookie) && strpos($rawcookie, '=') !== false) {
-                    list($k, $v) = explode('=', $rawcookie, 2);
-                    if ($k == '_px3') {
-                        $this->px_cookies['v3'] = $v;
-                    }
-                    if ($k == '_px') {
-                        $this->px_cookies['v1'] = $v;
-                    }
-                    if ($k == '_pxCaptcha') {
-                        $this->px_captcha = $v;
-                    }
-                }
-            }
-        }
+
+        $this->cookie_origin = "cookie";
 
         $this->start_time = microtime(true);
         if (function_exists('getallheaders')) {
@@ -34,6 +21,19 @@ class PerimeterxContext
             foreach ($_SERVER as $name => $value) {
                 if (substr($name, 0, 5) == 'HTTP_') {
                     $this->headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
+            }
+        }
+
+        if (isset($this->headers[PerimeterxContext::$MOBILE_SDK_HEADER])) {
+            $this->cookie_origin = "header";
+            if ($this->headers[PerimeterxContext::$MOBILE_SDK_HEADER] != "1") {
+                $this->explodeCookieToVersion(':', $this->headers[PerimeterxContext::$MOBILE_SDK_HEADER]);
+            }
+        } else if (isset($_SERVER['HTTP_COOKIE'])) {
+            foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
+                if (!empty($rawcookie) && strpos($rawcookie, '=') !== false) {
+                    $this->explodeCookieToVersion('=', $rawcookie);
                 }
             }
         }
@@ -50,13 +50,7 @@ class PerimeterxContext
         $this->score = 0;
         $this->risk_rtt = 0;
 
-        if (isset($pxConfig['custom_user_ip'])) {
-            $this->ip = $pxConfig['custom_user_ip']($this);
-        } elseif (function_exists('pxCustomUserIP')) {
-            call_user_func('pxCustomUserIP', $this);
-        } else {
-            $this->ip = $_SERVER['REMOTE_ADDR'];
-        }
+        $this->ip = $this->extractIP($pxConfig);
 
         if (isset($_SERVER['SERVER_PROTOCOL'])) {
             $httpVer = explode("/", $_SERVER['SERVER_PROTOCOL']);
@@ -67,6 +61,27 @@ class PerimeterxContext
         $this->http_method = $_SERVER['REQUEST_METHOD'];
         $this->sensitive_route = $this->checkSensitiveRoutePrefix($pxConfig['sensitive_routes'], $this->uri);
     }
+
+    private function extractIP($pxConfig) {
+        $all_headers = getallheaders();
+
+        if (isset($pxConfig['ip_headers'])) {
+            foreach ($pxConfig['ip_headers'] as $header) {
+                if (isset($all_headers[$header])) {
+                    return $all_headers[$header];
+                }
+            }
+        }
+        if (isset($pxConfig['custom_user_ip'])) {
+            return $pxConfig['custom_user_ip']($this);
+        }
+        return $_SERVER['REMOTE_ADDR'];
+    }
+
+    /**
+     * @var string perimeterx cookie origin
+     */
+    protected $cookie_origin;
 
     /**
      * @var string perimeterx risk cookie.
@@ -82,6 +97,7 @@ class PerimeterxContext
      * @var string cookie hmac
      */
     protected $px_cookie_hmac;
+
 
     /**
      * @var string perimeterx captcha cookie.
@@ -319,6 +335,14 @@ class PerimeterxContext
     }
 
     /**
+     * @return string
+     */
+    public function getCookieOrigin()
+    {
+        return $this->cookie_origin;
+    }
+
+    /**
      * @return string - v3 cookie if exists, if not - v1 cookie
      */
     public function getPxCookie()
@@ -406,7 +430,6 @@ class PerimeterxContext
         $this->decoded_px_cookie = $cookie;
     }
 
-
     private function checkSensitiveRoutePrefix($sensitive_routes, $uri)
     {
         foreach ($sensitive_routes as $route) {
@@ -424,6 +447,23 @@ class PerimeterxContext
         $protocol = substr($l, 0, strpos($l, "/")) . $s;
         $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
         return $protocol . "://" . $_SERVER['HTTP_HOST'] . $port . $this->uri;
+    }
+
+    private function explodeCookieToVersion($delimiter, $cookie) {
+        if (strpos($cookie, $delimiter)) {
+            list($k, $v) = explode($delimiter, $cookie, 2);
+            if ($k == '3' || $k == '_px3') {
+                $this->px_cookies['v3'] = $v;
+            }
+            if ($k == '1' || $k == '_px') {
+                $this->px_cookies['v1'] = $v;
+            }
+            if ($k == '_pxCaptcha') {
+                $this->px_captcha = $v;
+            }
+        } else {
+            $this->px_cookies['v3'] = $cookie;
+        }
     }
 
     /**
