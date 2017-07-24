@@ -207,7 +207,8 @@ final class Perimeterx
             'logoVisibility' => isset($this->pxConfig['custom_logo']) ? 'visible' : 'hidden',
             'customLogo' => isset($this->pxConfig['custom_logo']) ? $this->pxConfig['custom_logo'] : '',
             'cssRef' => $this->getCssRef(),
-            'jsRef' => $this->getJsRef()
+            'jsRef' => $this->getJsRef(),
+            'hostUrl' => $this->pxConfig['perimeterx_server_host']
         );
 
 
