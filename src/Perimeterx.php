@@ -207,20 +207,26 @@ final class Perimeterx
             'logoVisibility' => isset($this->pxConfig['custom_logo']) ? 'visible' : 'hidden',
             'customLogo' => isset($this->pxConfig['custom_logo']) ? $this->pxConfig['custom_logo'] : '',
             'cssRef' => $this->getCssRef(),
-            'jsRef' => $this->getJsRef()
+            'jsRef' => $this->getJsRef(),
+            'hostUrl' => $this->pxConfig['perimeterx_server_host']
         );
 
 
+        $templateNamePostfix = "";
         /* generate return HTML */
+        if ($pxCtx->getCookieOrigin() == 'header') {
+            $templateNamePostfix = ".mobile";
+        }
+
         if ($this->shouldDisplayChallenge($pxCtx)) {
             /* set return html to challenge page */
             $html = $pxCtx->getBlockActionData();
         } elseif ($this->shouldDisplayCaptcha($pxCtx)) {
             /* set return html to default captcha page */
-            $html = $pxCtx->getCookieOrigin() == 'cookie' ? $mustache->render('captcha', $templateInputs) : $mustache->render('captcha.mobile', $templateInputs);
+            $html = $mustache->render('captcha' . $templateNamePostfix, $templateInputs);
         } else {
             /* set return html to default block page */
-            $html = $mustache->render('block', $templateInputs);
+            $html = $mustache->render('block' . $templateNamePostfix, $templateInputs);
         }
 
         header("HTTP/1.1 403 Forbidden");
