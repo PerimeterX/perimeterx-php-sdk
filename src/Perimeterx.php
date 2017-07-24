@@ -211,16 +211,21 @@ final class Perimeterx
         );
 
 
+        $templateNamePostfix = "";
         /* generate return HTML */
+        if ($pxCtx->getCookieOrigin() == 'header') {
+            $templateNamePostfix = ".mobile";
+        }
+
         if ($this->shouldDisplayChallenge($pxCtx)) {
             /* set return html to challenge page */
             $html = $pxCtx->getBlockActionData();
         } elseif ($this->shouldDisplayCaptcha($pxCtx)) {
             /* set return html to default captcha page */
-            $html = $pxCtx->getCookieOrigin() == 'cookie' ? $mustache->render('captcha', $templateInputs) : $mustache->render('captcha.mobile', $templateInputs);
+            $html = $mustache->render('captcha' . $templateNamePostfix, $templateInputs);
         } else {
             /* set return html to default block page */
-            $html = $mustache->render('block', $templateInputs);
+            $html = $mustache->render('block' . $templateNamePostfix, $templateInputs);
         }
 
         header("HTTP/1.1 403 Forbidden");
