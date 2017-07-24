@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.6.0] - 2017-06-04
+### Changed
+- Removed perimeterx snippet from mobile app block pages 
+### Fixed
+- Added missing host-url parameter
+
+
+## [2.6.0] - 2017-06-04
 ### Added
 - Sending real uuid in page_requested
 - Support for Mobile SDK
