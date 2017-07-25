@@ -34,7 +34,7 @@ class PerimeterxConfigurationValidatorTest extends PHPUnit_Framework_TestCase
     {
         $this->px = Perimeterx::Instance($this->params);
         $pxConfig = $this->px->getPxConfig();
-        $this->assertEquals($pxConfig['perimeterx_server_host'], 'https://sapi-' . strtolower(PX_APP_ID) . '.perimeterx.net');
+        $this->assertEquals($pxConfig['perimeterx_server_host'], 'https://collector-' . strtolower(PX_APP_ID) . '.perimeterx.net');
     }
 
     public function testPxConfigurationCustomization()

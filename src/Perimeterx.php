@@ -91,7 +91,7 @@ final class Perimeterx
                 'send_block_activities' => true,
                 'sdk_name' => 'PHP SDK v2.6.1',
                 'debug_mode' => false,
-                'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
+                'perimeterx_server_host' => 'https://collector-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
                 'module_mode' => Perimeterx::$ACTIVE_MODE,
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
