@@ -91,7 +91,7 @@ final class Perimeterx
                 'send_block_activities' => true,
                 'sdk_name' => 'PHP SDK v2.6.1',
                 'debug_mode' => false,
-                'perimeterx_server_host' => 'https://collector-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
+                'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
                 'module_mode' => Perimeterx::$ACTIVE_MODE,
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
@@ -208,7 +208,7 @@ final class Perimeterx
             'customLogo' => isset($this->pxConfig['custom_logo']) ? $this->pxConfig['custom_logo'] : '',
             'cssRef' => $this->getCssRef(),
             'jsRef' => $this->getJsRef(),
-            'hostUrl' => $this->pxConfig['perimeterx_server_host']
+            'hostUrl' => 'https://collector-' . strtolower($pxConfig['app_id']) . '.perimeterx.net'
         );
 
 
@@ -241,7 +241,7 @@ final class Perimeterx
                 'vid' => $pxCtx->getVid(),
                 'appId' => $this->pxConfig['app_id'],
                 'page' => base64_encode($html),
-                'collectorUrl' => $this->pxConfig['perimeterx_server_host']
+                'collectorUrl' => 'https://collector-' . strtolower($pxConfig['app_id']) . '.perimeterx.net'
             );
             echo json_encode($result);
         }
