@@ -36,21 +36,26 @@ class PerimeterxCookieValidator
     public function verify()
     {
         try {
-            if (!isset($this->pxCookie) || (isset($this->pxCookie) && $this->pxCtx->getCookieOrigin() == "header" && $this->pxCookie == 1)) {
-                $this->pxConfig['logger']->info('no cookie');
+            if (!isset($this->pxCookie)) {
                 $this->pxCtx->setS2SCallReason('no_cookie');
                 return false;
             }
 
-            if (isset($this->pxCookie) && $this->pxCtx->getCookieOrigin() == "header" && $this->pxCookie == 2) {
-                $this->pxConfig['logger']->info('Could not connect to server');
-                $this->pxCtx->setS2SCallReason('mobile_sdk_connection_error');
+            // Mobile SDK traffic
+            if (isset($this->pxCookie) && $this->pxCtx->getCookieOrigin() == "header") {
+                switch ($this->pxCookie) {
+                    case 2:
+                        $this->pxCtx->setS2SCallReason('mobile_sdk_connection_error');
+                        break;
+                    case 1:
+                    default:
+                        $this->pxCtx->setS2SCallReason('no_cookie');
+                }
                 return false;
             }
 
             $cookie = PerimeterxPayload::pxPayloadFactory($this->pxCtx, $this->pxConfig);
             if (!$cookie->deserialize()) {
-                $this->pxConfig['logger']->warning('invalid cookie');
                 $this->pxCtx->setS2SCallReason('cookie_decryption_failed');
                 return false;
             }
