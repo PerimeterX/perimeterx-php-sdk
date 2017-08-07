@@ -37,6 +37,7 @@ class PerimeterxCookieValidator
     {
         try {
             if (!isset($this->pxCookie)) {
+                $this->pxConfig['logger']->info('no cookie');
                 $this->pxCtx->setS2SCallReason('no_cookie');
                 return false;
             }
