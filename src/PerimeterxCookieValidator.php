@@ -42,6 +42,12 @@ class PerimeterxCookieValidator
                 return false;
             }
 
+            if (isset($this->pxCookie) && $this->pxCtx->getCookieOrigin() == "header" && $this->pxCookie == 2) {
+                $this->pxConfig['logger']->info('Could not connect to server');
+                $this->pxCtx->setS2SCallReason('mobile_sdk_connection_error');
+                return false;
+            }
+
             $cookie = PerimeterxPayload::pxPayloadFactory($this->pxCtx, $this->pxConfig);
             if (!$cookie->deserialize()) {
                 $this->pxConfig['logger']->warning('invalid cookie');
