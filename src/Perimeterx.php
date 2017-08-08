@@ -199,7 +199,7 @@ final class Perimeterx
             'loader' => new \Mustache_Loader_FilesystemLoader(dirname(__FILE__) . '/templates'),
         ));
 
-        $collectorUrl = 'https://collector-' . strtolower($pxConfig['app_id']) . '.perimeterx.net';
+        $collectorUrl = 'https://collector-' . strtolower($this->pxConfig['app_id']) . '.perimeterx.net';
 
         $templateInputs = array(
             'refId' => $block_uuid,
