@@ -199,6 +199,8 @@ final class Perimeterx
             'loader' => new \Mustache_Loader_FilesystemLoader(dirname(__FILE__) . '/templates'),
         ));
 
+        $collectorUrl = 'https://collector-' . strtolower($this->pxConfig['app_id']) . '.perimeterx.net';
+
         $templateInputs = array(
             'refId' => $block_uuid,
             'appId' => $this->pxConfig['app_id'],
@@ -208,7 +210,7 @@ final class Perimeterx
             'customLogo' => isset($this->pxConfig['custom_logo']) ? $this->pxConfig['custom_logo'] : '',
             'cssRef' => $this->getCssRef(),
             'jsRef' => $this->getJsRef(),
-            'hostUrl' => $this->pxConfig['perimeterx_server_host']
+            'hostUrl' => $collectorUrl
         );
 
 
@@ -241,7 +243,7 @@ final class Perimeterx
                 'vid' => $pxCtx->getVid(),
                 'appId' => $this->pxConfig['app_id'],
                 'page' => base64_encode($html),
-                'collectorUrl' => $this->pxConfig['perimeterx_server_host']
+                'collectorUrl' => $collectorUrl
             );
             echo json_encode($result);
         }

@@ -5,6 +5,7 @@ namespace Perimeterx;
 class PerimeterxContext
 {
     public static $MOBILE_SDK_HEADER = "X-PX-AUTHORIZATION";
+
     /**
      * @param $pxConfig array - perimeterx configurations
      */
@@ -62,7 +63,8 @@ class PerimeterxContext
         $this->sensitive_route = $this->checkSensitiveRoutePrefix($pxConfig['sensitive_routes'], $this->uri);
     }
 
-    private function extractIP($pxConfig) {
+    private function extractIP($pxConfig)
+    {
         $all_headers = getallheaders();
 
         if (isset($pxConfig['ip_headers'])) {
@@ -449,7 +451,8 @@ class PerimeterxContext
         return $protocol . "://" . $_SERVER['HTTP_HOST'] . $port . $this->uri;
     }
 
-    private function explodeCookieToVersion($delimiter, $cookie) {
+    private function explodeCookieToVersion($delimiter, $cookie)
+    {
         if (strpos($cookie, $delimiter)) {
             list($k, $v) = explode($delimiter, $cookie, 2);
             if ($k == '3' || $k == '_px3') {
@@ -557,14 +560,16 @@ class PerimeterxContext
     /**
      * @param int
      */
-    public function setRiskRtt($risk_rtt){
-        $this->risk_rtt =  $risk_rtt;
+    public function setRiskRtt($risk_rtt)
+    {
+        $this->risk_rtt = $risk_rtt;
     }
 
     /**
      * @return int
      */
-    public function getRiskRtt(){
+    public function getRiskRtt()
+    {
         return $this->risk_rtt;
     }
 }
