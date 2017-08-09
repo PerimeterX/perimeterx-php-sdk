@@ -455,19 +455,16 @@ class PerimeterxContext
     {
         if (strpos($cookie, $delimiter)) {
             list($k, $v) = explode($delimiter, $cookie, 2);
-            if ($k == '3' || $k == '_px4') {
-                error_log('cookie v4');
+            if ($k == '3' || $k == '_px3') {
                 $this->px_cookies['v3'] = $v;
             }
             if ($k == '1' || $k == '_px') {
-                error_log("takeing cookie v1");
                 $this->px_cookies['v1'] = $v;
             }
             if ($k == '_pxCaptcha') {
                 $this->px_captcha = $v;
             }
         } else {
-            error_log("takeing cookie v5");
             $this->px_cookies['v3'] = $cookie;
         }
     }
