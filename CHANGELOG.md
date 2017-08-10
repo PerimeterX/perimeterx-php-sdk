@@ -5,12 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.6.0] - 2017-06-04
+## [2.6.2] - 2017-06-04
+### Added
+- New s2s_call_reason for mobile sdk connection error
+### Fixed
+- Fixed collectorUrl for mobile sdk response
+
+## [2.6.1] - 2017-06-04
 ### Changed
 - Removed perimeterx snippet from mobile app block pages 
 ### Fixed
 - Added missing host-url parameter
-
 
 ## [2.6.0] - 2017-06-04
 ### Added
