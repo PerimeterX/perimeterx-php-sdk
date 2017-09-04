@@ -97,7 +97,8 @@ final class Perimeterx
                 'api_connect_timeout' => 1,
                 'local_proxy' => false,
                 'sensitive_routes' => [],
-                'ip_headers' => []
+                'ip_headers' => [],
+                'captcha_provider' => 'reCaptcha'
             ], $pxConfig);
 
             if (empty($this->pxConfig['logger'])) {
