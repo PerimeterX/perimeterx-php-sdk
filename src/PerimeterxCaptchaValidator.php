@@ -21,24 +21,26 @@ class PerimeterxCaptchaValidator extends PerimeterxRiskClient
         $this->pxCaptcha = $pxCtx->getPxCaptcha();
     }
 
-    private function sendCaptchaRequest($vid, $uuid, $captcha)
+    private function sendCaptchaRequest()
     {
         $requestBody = [
             'request' => [
                 'ip' => $this->pxCtx->getIp(),
                 'headers' => $this->formatHeaders(),
-                'uri' => $this->pxCtx->getUri()
+                'uri' => $this->pxCtx->getUri(),
+                'captchaType' => $this->pxConfig['captcha_provider']
             ],
-            'pxCaptcha' => $captcha,
-            'vid' => $vid,
-            'uuid' => $uuid,
+            'additional' => [
+                'module_version' => $this->pxConfig['sdk_name']
+            ],
+            'pxCaptcha' => $this->pxCaptcha,
             'hostname' => $this->pxCtx->getHostname()
         ];
         $headers = [
             'Authorization' => 'Bearer ' . $this->pxConfig['auth_token'],
             'Content-Type' => 'application/json'
         ];
-        $response = $this->httpClient->send('/api/v1/risk/captcha', 'POST', $requestBody, $headers, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout']);
+        $response = $this->httpClient->send('/api/v2/risk/captcha', 'POST', $requestBody, $headers, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout']);
         return $response;
     }
 
@@ -51,14 +53,7 @@ class PerimeterxCaptchaValidator extends PerimeterxRiskClient
             }
             /* remove pxCaptcha cookie to prevert reuse */
             setcookie("_pxCaptcha", "", time() - 3600, "/");
-            list($captcha, $vid, $uuid) = explode(':', $this->pxCaptcha, 3);
-            if (!isset($captcha) || !isset($vid) || !isset($uuid)) {
-                return false;
-            }
-
-            $this->pxCtx->setVid($vid);
-            $this->pxCtx->setUuid($uuid);
-            $response = json_decode($this->sendCaptchaRequest($vid, $uuid, $captcha));
+            $response = json_decode($this->sendCaptchaRequest());
             $this->pxCtx->setRiskRtt($this->getTimeInMilliseconds() - $startRiskRtt);
             if (isset($response->status) and $response->status == 0) {
                 $this->pxCtx->setPassReason('captcha');
