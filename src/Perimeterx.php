@@ -225,7 +225,7 @@ final class Perimeterx
             /* set return html to challenge page */
             $html = $pxCtx->getBlockActionData();
         } elseif ($this->shouldDisplayCaptcha($pxCtx)) {
-            $templateName = $this->pxConfig['captcha_provider'] == 'funCaptcha' ? 'funcaptcha' : 'captcha';
+            $templateName = strtolower($this->pxConfig['captcha_provider']);
             /* set return html to default captcha page */
             $html = $mustache->render($templateName . $templateNamePostfix, $templateInputs);
         } else {
