@@ -96,6 +96,7 @@ final class Perimeterx
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
                 'local_proxy' => false,
+                'captcha_provider' => 'reCaptcha',
                 'sensitive_routes' => [],
                 'ip_headers' => []
             ], $pxConfig);
@@ -224,8 +225,9 @@ final class Perimeterx
             /* set return html to challenge page */
             $html = $pxCtx->getBlockActionData();
         } elseif ($this->shouldDisplayCaptcha($pxCtx)) {
+            $templateName = strtolower($this->pxConfig['captcha_provider']);
             /* set return html to default captcha page */
-            $html = $mustache->render('captcha' . $templateNamePostfix, $templateInputs);
+            $html = $mustache->render($templateName . $templateNamePostfix, $templateInputs);
         } else {
             /* set return html to default block page */
             $html = $mustache->render('block' . $templateNamePostfix, $templateInputs);
