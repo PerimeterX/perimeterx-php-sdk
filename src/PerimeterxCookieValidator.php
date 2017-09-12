@@ -53,6 +53,10 @@ class PerimeterxCookieValidator
                     $this->pxCtx->setS2SCallReason('mobile_sdk_connection_error');
                     return false;
                 }
+                if ($this->pxCookie == 3) {
+                    $this->pxCtx->setS2SCallReason('mobile_sdk_pinning_error');
+                    return false;
+                }
             }
 
             $cookie = PerimeterxPayload::pxPayloadFactory($this->pxCtx, $this->pxConfig);
