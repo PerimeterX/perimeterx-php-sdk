@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.7.0] - 2017-11-05
+### Added
+ - Support funCaptcha 
+ - Support new captcha flow
+ - Support mobile sdk pinning error
+### Fixed
+ - Mobile sdks flow
+### Changed
+ - Default block socre is set to 100 instead of 70
+ - Default monitor_mode is set to $MONITOR_MODE
+   In order to get the module to blocking mode, set `module_mode => Perimeterx::$ACTIVE_MODE`
+   Examples can be found on README.md or in the examples directory
+ 
+
 ## [2.6.2] - 2017-06-04
 ### Added
 - New s2s_call_reason for mobile sdk connection error
