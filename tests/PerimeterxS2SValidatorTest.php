@@ -65,7 +65,7 @@ class PerimeterxS2SValidatorTest extends PHPUnit_Framework_TestCase
       $invocations = $spy->getInvocations();
 
       $last = end($invocations);
-      $this->assertEquals($pxCookie, $last->parameters[2]["additional"]["px_orig_cookie"]);
+      $this->assertEquals($pxCookie, $last->parameters[2]["additional"]["px_cookie_orig"]);
     }
 
 

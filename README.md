@@ -19,7 +19,6 @@ Table of Contents
   *   [Custom Block Page](#custom-block-page)
   *   [Custom Block Action](#custom-block)
      * [Extracting Recomended Action](#block-action)   
-  *   [Enable/Disable Captcha](#captcha-support)
   *   [Extracting Real IP Address](#real-ip)
   *   [Custom URI](#custom-uri)
   *   [Filter Sensitive Headers](#sensitive-headers)
@@ -27,6 +26,7 @@ Table of Contents
   *   [API Timeouts](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
   *   [Additional Page Activity Handler](#additional-page-activity-handler)
+  *   [Captcha Provider](#captcha-provider)
   *   [Logging](#logging)
   *   [Debug Mode](#debug-mode)
 -   [Contributing](#contributing)
@@ -62,7 +62,8 @@ $perimeterxConfig = [
     'app_id' => 'APP_ID',
     'cookie_key' => 'COOKIE_SECRET',
     'auth_token' => 'AUTH_TOKEN',
-    'blocking_score' => 60
+    'blocking_score' => 60,
+    'module_mode' => Perimeterx::$ACTIVE_MODE
 ];
 
 /* Obtain PerimeterX SDK instance */
@@ -83,12 +84,13 @@ Configuration options are set on the `$perimeterxConfig` variable.
 - app_id
 - cookie_key
 - auth_token
+- module_mode
 
 All parameters are obtainable via the PerimeterX Portal. (Applications and Policies pages)
 
 #### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
 
-**Default blocking value:** 70
+**Default blocking value:** 100
 
 ```php
 $perimeterxConfig = [
@@ -236,7 +238,7 @@ $perimeterxConfig['custom_block_handler'] = function ($pxCtx) {
 
 #### <a name="module-score"></a> Module Mode
 
-**Default mode:** `Perimeterx::$ACTIVE_MODE`
+**Default mode:** `Perimeterx::$MONITOR_MODE`
 
 **Possible Values:**
 
@@ -246,21 +248,7 @@ $perimeterxConfig['custom_block_handler'] = function ($pxCtx) {
 ```php
 $perimeterxConfig = [
 	..
-    'module_mode' => Perimeterx::$MONITOR_MODE
-    ..
-]
-```
-
-#### <a name="captcha-support"></a>Enable/Disable CAPTCHA on the block page
-
-By enabling CAPTCHA support, a CAPTCHA will be served as part of the block page, giving real users the ability to identify as a human. By solving the CAPTCHA, the user's score is then cleaned up and the user is allowed to continue normal use.
-
-**Default value: true**
-
-```php
-$perimeterxConfig = [
-	..
-    'captcha_enabled' => true
+    'module_mode' => Perimeterx::$ACTIVE_MODE
     ..
 ]
 ```
@@ -458,6 +446,21 @@ $perimeterxConfig['additional_activity_handler'] = function ($activityType, $pxC
 $px = Perimeterx::Instance($perimeterxConfig);
 $px->pxVerify();
 ```
+
+#### <a name="captcha-provider"></a> Captcha Provider
+Sets the type of which captcha provider to use.
+The default block page comes with support, reCaptcha and funCaptcha.
+
+**Values:** 'reCaptcha', 'funCaptcha'
+**Default:** 'reCaptcha'
+```php
+$perimeterxConfig = [
+    ..
+    'captcha_provider' => 'funCaptcha',
+    ..
+]
+```
+
 
 #### <a name="logging"></a> Logging
 

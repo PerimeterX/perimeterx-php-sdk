@@ -9,6 +9,7 @@
       'cookie_key' => '',
       'auth_token' => '',
       'blocking_score' => 80,
+      'module_mode' => Perimeterx::$ACTIVE_MODE,
       'custom_logo' => 'https://s.perimeterx.net/logo.png',
       'js_ref' => 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'
   ];

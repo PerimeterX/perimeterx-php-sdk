@@ -157,6 +157,8 @@ abstract class PerimeterxPayload {
                 return mb_substr($str, 0, $len - $pad);
             }
         }
+
+        $str = trim($str, "\x00..\x1F"); // removes unprintable whitespaces
         return $str;
     }
 

@@ -45,7 +45,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
 
         if ( $this->pxCtx->getS2SCallReason() ==  'cookie_decryption_failed') {
           $this->pxConfig['logger']->info('attaching px_orig_cookie to request');
-          $requestBody['additional']['px_orig_cookie'] = $this->pxCtx->getPxCookie();
+          $requestBody['additional']['px_cookie_orig'] = $this->pxCtx->getPxCookie();
         }
 
         if (in_array($this->pxCtx->getS2SCallReason(), ['cookie_expired', 'cookie_validation_failed'])) {

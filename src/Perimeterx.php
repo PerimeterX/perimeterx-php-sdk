@@ -84,18 +84,19 @@ final class Perimeterx
                 'captcha_enabled' => true,
                 'challenge_enabled' => true,
                 'encryption_enabled' => true,
-                'blocking_score' => 70,
+                'blocking_score' => 100,
                 'sensitive_headers' => ['cookie', 'cookies'],
                 'max_buffer_len' => 1,
                 'send_page_activities' => true,
                 'send_block_activities' => true,
-                'sdk_name' => 'PHP SDK v2.6.2',
+                'sdk_name' => 'PHP SDK v2.7.0',
                 'debug_mode' => false,
                 'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
-                'module_mode' => Perimeterx::$ACTIVE_MODE,
+                'module_mode' => Perimeterx::$MONITOR_MODE,
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
                 'local_proxy' => false,
+                'captcha_provider' => 'reCaptcha',
                 'sensitive_routes' => [],
                 'ip_headers' => []
             ], $pxConfig);
@@ -224,8 +225,9 @@ final class Perimeterx
             /* set return html to challenge page */
             $html = $pxCtx->getBlockActionData();
         } elseif ($this->shouldDisplayCaptcha($pxCtx)) {
+            $templateName = strtolower($this->pxConfig['captcha_provider']);
             /* set return html to default captcha page */
-            $html = $mustache->render('captcha' . $templateNamePostfix, $templateInputs);
+            $html = $mustache->render($templateName . $templateNamePostfix, $templateInputs);
         } else {
             /* set return html to default block page */
             $html = $mustache->render('block' . $templateNamePostfix, $templateInputs);

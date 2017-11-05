@@ -44,13 +44,20 @@ class PerimeterxCookieValidator
 
             // Mobile SDK traffic
             if (isset($this->pxCookie) && $this->pxCtx->getCookieOrigin() == "header") {
-                if ($this->pxCookie == 1) {
+
+                if ((string)$this->pxCookie === "1") {
                     $this->pxConfig['logger']->info('no cookie');
                     $this->pxCtx->setS2SCallReason('no_cookie');
                     return false;
                 }
-                if ($this->pxCookie == 2) {
+                if ((string)$this->pxCookie === "2") {
+                    $this->pxConfig['logger']->info('mobile sdk connection error');
                     $this->pxCtx->setS2SCallReason('mobile_sdk_connection_error');
+                    return false;
+                }
+                if ((string)$this->pxCookie === "3") {
+                     $this->pxConfig['logger']->info('mobile sdk pinning error');
+                    $this->pxCtx->setS2SCallReason('mobile_sdk_pinning_error');
                     return false;
                 }
             }

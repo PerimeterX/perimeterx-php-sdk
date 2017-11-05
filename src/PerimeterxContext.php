@@ -26,11 +26,10 @@ class PerimeterxContext
             }
         }
 
-        if (isset($this->headers[PerimeterxContext::$MOBILE_SDK_HEADER])) {
+        $headers = array_change_key_case($this->headers, CASE_UPPER);
+        if (isset($headers[PerimeterxContext::$MOBILE_SDK_HEADER])) {
             $this->cookie_origin = "header";
-            if ($this->headers[PerimeterxContext::$MOBILE_SDK_HEADER] != "1") {
-                $this->explodeCookieToVersion(':', $this->headers[PerimeterxContext::$MOBILE_SDK_HEADER]);
-            }
+            $this->explodeCookieToVersion(':', $headers[PerimeterxContext::$MOBILE_SDK_HEADER]);
         } else if (isset($_SERVER['HTTP_COOKIE'])) {
             foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
                 if (!empty($rawcookie) && strpos($rawcookie, '=') !== false) {
