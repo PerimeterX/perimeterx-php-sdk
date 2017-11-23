@@ -28,6 +28,7 @@ Table of Contents
   *   [Additional Page Activity Handler](#additional-page-activity-handler)
   *   [Captcha Provider](#captcha-provider)
   *   [Logging](#logging)
+  *   [Module Mode](#module-mode)
   *   [Debug Mode](#debug-mode)
 -   [Contributing](#contributing)
   *   [Tests](#tests)
@@ -236,7 +237,7 @@ $perimeterxConfig['custom_block_handler'] = function ($pxCtx) {
     }
 ```
 
-#### <a name="module-score"></a> Module Mode
+#### <a name="module-mode"></a> Module Mode
 
 **Default mode:** `Perimeterx::$MONITOR_MODE`
 

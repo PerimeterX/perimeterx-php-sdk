@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  - Mobile sdks flow
 ### Changed
  - Default block socre is set to 100 instead of 70
- - Default monitor_mode is set to $MONITOR_MODE
+ - Default module_mode is set to $MONITOR_MODE
    In order to get the module to blocking mode, set `module_mode => Perimeterx::$ACTIVE_MODE`
    Examples can be found on README.md or in the examples directory
  
