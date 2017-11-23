@@ -50,7 +50,7 @@ class PerimeterxContext
         $this->score = 0;
         $this->risk_rtt = 0;
 
-        $this->ip = $this->extractIP($pxConfig);
+        $this->ip = $this->extractIP($pxConfig, $headers);
 
         if (isset($_SERVER['SERVER_PROTOCOL'])) {
             $httpVer = explode("/", $_SERVER['SERVER_PROTOCOL']);
@@ -62,14 +62,12 @@ class PerimeterxContext
         $this->sensitive_route = $this->checkSensitiveRoutePrefix($pxConfig['sensitive_routes'], $this->uri);
     }
 
-    private function extractIP($pxConfig)
+    private function extractIP($pxConfig, $headers)
     {
-        $all_headers = getallheaders();
-
         if (isset($pxConfig['ip_headers'])) {
             foreach ($pxConfig['ip_headers'] as $header) {
-                if (isset($all_headers[$header])) {
-                    return $all_headers[$header];
+                if (isset($headers[strtoupper($header)])) {
+                    return $headers[$header];
                 }
             }
         }
