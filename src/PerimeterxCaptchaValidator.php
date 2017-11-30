@@ -73,6 +73,7 @@ class PerimeterxCaptchaValidator extends PerimeterxRiskClient
             $this->pxCtx->setPassReason('captcha_timeout');
             return true;
         } catch (\Exception $e) {
+            $this->pxConfig['logger']->error("Unexpected exception while evaluating Captcha cookie. {$e->getMessage()}");
             return false;
         }
     }

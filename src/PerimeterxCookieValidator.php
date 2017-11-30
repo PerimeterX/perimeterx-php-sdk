@@ -87,7 +87,7 @@ class PerimeterxCookieValidator
             }
 
             if ($cookie->isHighScore()) {
-                $this->pxConfig['logger']->debug("Cookie evaluation ended successfully, risk score: {$this->$cookie->getScore()}");
+                $this->pxConfig['logger']->debug("Cookie evaluation ended successfully, risk score: {$cookie->getScore()}");
                 $this->pxCtx->setBlockReason('cookie_high_score');
                 return true;
             }

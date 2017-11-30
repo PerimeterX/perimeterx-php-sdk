@@ -228,13 +228,16 @@ final class Perimeterx
         if ($this->shouldDisplayChallenge($pxCtx)) {
             /* set return html to challenge page */
             $html = $pxCtx->getBlockActionData();
+            $this->pxConfig['logger']->debug("Enforcing action: Challenge page is served");
         } elseif ($this->shouldDisplayCaptcha($pxCtx)) {
             $templateName = strtolower($this->pxConfig['captcha_provider']);
             /* set return html to default captcha page */
             $html = $mustache->render($templateName . $templateNamePostfix, $templateInputs);
+            $this->pxConfig['logger']->debug("Enforcing action: Captcha page is served");
         } else {
             /* set return html to default block page */
             $html = $mustache->render('block' . $templateNamePostfix, $templateInputs);
+            $this->pxConfig['logger']->debug("Enforcing action: Block page is served");
         }
 
         header("HTTP/1.1 403 Forbidden");
