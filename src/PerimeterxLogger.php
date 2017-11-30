@@ -9,6 +9,16 @@ use Psr\Log\LogLevel;
 class PerimeterxLogger extends AbstractLogger
 {
 
+    protected $debug_mode;
+    protected $debug_prefix;
+    protected $error_prefix;
+
+    public function __construct($pxConfig) {
+        $this->debug_mode = $pxConfig['debug_mode'];
+        $this->debug_prefix = "[PerimeterX - DEBUG][{$pxConfig['app_id']}] -";
+        $this->error_prefix = "[PerimeterX - ERROR][{$pxConfig['app_id']}] -";
+    }
+
     /**
      * Logs with an arbitrary level.
      *
@@ -20,6 +30,10 @@ class PerimeterxLogger extends AbstractLogger
      */
     public function log($level, $message, array $context = [])
     {
+        if (!$this->debug_mode) {
+            return;
+        }
+
         $valid_log_levels = [
             LogLevel::EMERGENCY,
             LogLevel::ALERT,
@@ -35,7 +49,7 @@ class PerimeterxLogger extends AbstractLogger
             throw new InvalidArgumentException($level . ' is not a defined level in the PSR-3 specification.');
         }
 
-        error_log($this->interpolate((string)$message, $context));
+        error_log($this->interpolate((string)$message, $context, $level));
     }
 
     /**
@@ -51,10 +65,11 @@ class PerimeterxLogger extends AbstractLogger
      *
      * @return string
      */
-    private function interpolate($message, array $context = [])
+    private function interpolate($message, array $context = [], $level)
     {
         // build a replacement array with braces around the context keys
         $replace = [];
+        $full_message;
         foreach ($context as $key => $val) {
             // check that the value can be casted to string
             if (!is_array($val) && (!is_object($val) || method_exists($val, '__toString'))) {
@@ -62,7 +77,9 @@ class PerimeterxLogger extends AbstractLogger
             }
         }
 
+        $full_message = strtr($message, $replace);
+
         // interpolate replacement values into the message and return
-        return strtr($message, $replace);
+        return $level === LogLevel::DEBUG ? "$this->debug_prefix$full_message" : "$this->error_prefix$full_message";
     }
 }

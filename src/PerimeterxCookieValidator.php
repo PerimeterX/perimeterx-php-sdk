@@ -37,7 +37,7 @@ class PerimeterxCookieValidator
     {
         try {
             if (!isset($this->pxCookie)) {
-                $this->pxConfig['logger']->info('no cookie');
+                $this->pxConfig['logger']->debug('Cookie is missing');
                 $this->pxCtx->setS2SCallReason('no_cookie');
                 return false;
             }
@@ -46,25 +46,27 @@ class PerimeterxCookieValidator
             if (isset($this->pxCookie) && $this->pxCtx->getCookieOrigin() == "header") {
 
                 if ((string)$this->pxCookie === "1") {
-                    $this->pxConfig['logger']->info('no cookie');
+                    $this->pxConfig['logger']->debug('Mobile special token - no token');
                     $this->pxCtx->setS2SCallReason('no_cookie');
                     return false;
                 }
                 if ((string)$this->pxCookie === "2") {
-                    $this->pxConfig['logger']->info('mobile sdk connection error');
+                    $this->pxConfig['logger']->debug('Mobile special token - connection error');
                     $this->pxCtx->setS2SCallReason('mobile_sdk_connection_error');
                     return false;
                 }
                 if ((string)$this->pxCookie === "3") {
-                     $this->pxConfig['logger']->info('mobile sdk pinning error');
+                     $this->pxConfig['logger']->debug('Mobile special token - pinning issue');
                     $this->pxCtx->setS2SCallReason('mobile_sdk_pinning_error');
                     return false;
                 }
             }
 
             $cookie = PerimeterxPayload::pxPayloadFactory($this->pxCtx, $this->pxConfig);
+            $this->pxConfig['logger']->debug("Cookie {$this->pxCtx->getCookieVersion()} found, Evaluating");
+
             if (!$cookie->deserialize()) {
-                $this->pxConfig['logger']->warning('invalid cookie');
+                $this->pxConfig['logger']->debug("Cookie decryption failed, value: {$this->pxCtx->getPxCookie()}");
                 $this->pxCtx->setS2SCallReason('cookie_decryption_failed');
                 return false;
             }
@@ -77,32 +79,35 @@ class PerimeterxCookieValidator
             $this->pxCtx->setCookieHmac($cookie->getHmac());
 
             if ($cookie->isExpired()) {
-                $this->pxConfig['logger']->info('cookie expired');
+                $payloadString = json_encode($cookie->getDecodedPayload());
+                $cookieAge = $this->getTimeInMilliseconds() - $cookie->getTime();
+                $this->pxConfig['logger']->debug("Cookie TTL is expired, value: $payloadString, age: $cookieAge");
                 $this->pxCtx->setS2SCallReason('cookie_expired');
                 return false;
             }
 
             if ($cookie->isHighScore()) {
-                $this->pxConfig['logger']->info('cookie high score');
+                $this->pxConfig['logger']->debug("Cookie evaluation ended successfully, risk score: {$this->$cookie->getScore()}");
                 $this->pxCtx->setBlockReason('cookie_high_score');
                 return true;
             }
 
             if (!$cookie->isSecure()) {
-                $this->pxConfig['logger']->warning('cookie invalid hmac');
+                $payloadString = json_encode($cookie->getDecodedPayload());
+                $this->pxConfig['logger']->debug("Cookie HMAC validation failed, value: $payloadString, user-agent: {$this->pxCtx->getUserAgent()}");
                 $this->pxCtx->setS2SCallReason('cookie_validation_failed');
                 return false;
             }
 
             // Case we have a sensitive route
             if ($this->pxCtx->isSensitiveRoute()) {
-                $this->pxConfig['logger']->info('cookie verification passed, risk api triggered by sensitive route');
+                $this->pxConfig['logger']->debug("Sensitive route match, sending Risk API. path: {$this->pxCtx->getUri()}");
                 $this->pxCtx->setS2SCallReason('sensitive_route');
                 return false;
             }
 
             $this->pxCtx->setPassReason('cookie');
-            $this->pxConfig['logger']->info('cookie ok');
+            $this->pxConfig['logger']->debug("Cookie evaluation ended successfully, risk score: {$this->$cookie->getScore()}");
 
             return true;
         } catch (\Exception $e) {
@@ -110,5 +115,8 @@ class PerimeterxCookieValidator
             $this->pxCtx->setS2SCallReason('cookie_decryption_failed');
             return false;
         }
+    }
+    private function getTimeInMilliseconds(){
+        return round(microtime(true) * 1000);
     }
 }

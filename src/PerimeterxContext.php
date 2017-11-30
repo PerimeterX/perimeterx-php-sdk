@@ -213,6 +213,15 @@ class PerimeterxContext
         return $this->vid;
     }
 
+
+    /**
+     * @return string
+     */
+    public function getCookieVersion()
+    {
+        return isset($this->px_cookies['v3']) ? "V3" : "V1";
+    }
+
     /**
      * @return string
      */

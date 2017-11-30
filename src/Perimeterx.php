@@ -102,7 +102,7 @@ final class Perimeterx
             ], $pxConfig);
 
             if (empty($this->pxConfig['logger'])) {
-                $this->pxConfig['logger'] = new PerimeterxLogger();
+                $this->pxConfig['logger'] = new PerimeterxLogger($this->pxConfig);
             }
 
             $httpClient = new PerimeterxHttpClient($this->pxConfig);
@@ -117,18 +117,22 @@ final class Perimeterx
     public function pxVerify()
     {
         $pxCtx = null;
+        $this->pxConfig['logger']->debug('Starting request verification');
         try {
             if (!$this->pxConfig['module_enabled']) {
+                $this->pxConfig['logger']->debug('Request will not be verified, module is disabled');
                 return 1;
             }
 
             $pxCtx = new PerimeterxContext($this->pxConfig);
+            $this->pxConfig['logger']->debug('Request context created successfully');
 
             $captchaValidator = new PerimeterxCaptchaValidator($pxCtx, $this->pxConfig);
             if ($captchaValidator->verify()) {
                 return $this->handleVerification($pxCtx);
             };
 
+            $this->pxConfig['logger']->debug('No Captcha cookie present on the request');
             $validator = new PerimeterxCookieValidator($pxCtx, $this->pxConfig);
 
             if (!$validator->verify()) {
