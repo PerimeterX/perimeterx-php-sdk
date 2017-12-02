@@ -111,7 +111,7 @@ class PerimeterxCookieValidator
 
             return true;
         } catch (\Exception $e) {
-            $this->pxConfig['logger']->error('exception while verifying cookie');
+            $this->pxConfig['logger']->error("Unexpected exception while evaluating Risk cookie. {$e->getMessage()}");
             $this->pxCtx->setS2SCallReason('cookie_decryption_failed');
             return false;
         }

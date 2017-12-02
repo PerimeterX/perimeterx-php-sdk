@@ -73,7 +73,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             $this->pxConfig['logger']->debug("Risk API timed out, round_trip_time: {$this->pxCtx->getRiskRtt()}");
             return json_encode(['error_msg' => $e->getMessage()]);
         } catch (\Exception $e) {
-            $this->pxConfig['logger']->error("Unexpected exception while evaluating Risk cookie. {$e->getMessage()}");
+            $this->pxConfig['logger']->error("Unexpected exception in Risk API call: {$e->getMessage()}");
             return false;
         }
     }
