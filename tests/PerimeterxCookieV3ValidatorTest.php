@@ -26,7 +26,7 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('info', 'no cookie')
+            'logger' => $this->getMockLogger('debug', 'Cookie is missing')
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -45,7 +45,7 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('warning', 'invalid cookie'),
+            'logger' => $this->getMockLogger('debug', "Cookie decryption failed, value: $pxCookie", 1),
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -72,7 +72,7 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('warning', 'invalid cookie')
+            'logger' => $this->getMockLogger('debug', "Cookie decryption failed, value: $pxCookie", 1)
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -98,7 +98,7 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('info', 'cookie high score'),
+            'logger' => $this->getMockLogger('debug', "Cookie evaluation ended successfully, risk score: $cookie_score", 1),
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -122,8 +122,11 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
         $cookie_vid = self::COOKIE_VID;
         $cookie_score = 0;
 
+        $decodedCookie = $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_score);
+        $decodedCookieString = json_encode($decodedCookie);
+
         $pxPayload = $this->encodeCookie(
-            $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_score)
+            $decodedCookie
         );
         $pxCookie = $this->signCookie($pxPayload).":".$pxPayload;
         $userAgent = self::USER_AGENT;
@@ -133,7 +136,7 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('info', 'cookie expired'),
+            'logger' => $this->getMockLogger('debug', "Cookie TTL is expired, value: $decodedCookieString, age: ", 1),
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -157,8 +160,11 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
         $cookie_vid = self::COOKIE_VID;
         $cookie_score = 0;
 
+        $cookieObject =  $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_score);
+        $decryptedCookie = json_encode($cookieObject);
+
         $pxPayload = $this->encodeCookie(
-            $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_score)
+            $cookieObject
         );
         $pxCookie = "fakehmacyay".":".$pxPayload;
         $userAgent = self::USER_AGENT;
@@ -168,7 +174,7 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('warning', 'cookie invalid hmac'),
+            'logger' => $this->getMockLogger('debug', "Cookie HMAC validation failed, value: $decryptedCookie, user-agent: $userAgent", 1),
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -205,7 +211,7 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('info', 'cookie ok'),
+            'logger' => $this->getMockLogger('debug', "Cookie evaluation ended successfully, risk score: $cookie_score", 1),
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -243,7 +249,7 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('info', 'cookie verification passed, risk api triggered by sensitive route'),
+            'logger' => $this->getMockLogger('debug', "Sensitive route match, sending Risk API. path: ", 1),
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -261,7 +267,7 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => true,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('info', 'cookie ok')
+            'logger' => $this->getMockLogger('debug', "Cookie evaluation ended successfully, risk score: 0", 1)
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -279,7 +285,7 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('info', 'no cookie')
+            'logger' => $this->getMockLogger('debug', 'Mobile special token - no token')
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -298,7 +304,7 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('warning', 'invalid cookie'),
+            'logger' => $this->getMockLogger('debug', "Cookie decryption failed, value: $pxCookie", 1),
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -326,7 +332,7 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('warning', 'invalid cookie')
+            'logger' => $this->getMockLogger('debug', "Cookie decryption failed, value: $pxCookie", 1)
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -353,7 +359,7 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('info', 'cookie high score'),
+            'logger' => $this->getMockLogger('debug', "ookie evaluation ended successfully, risk score: $cookie_score", 1),
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -378,8 +384,11 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
         $cookie_vid = self::COOKIE_VID;
         $cookie_score = 0;
 
+        $decodedCookie = $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_score);
+        $decodedCookieString = json_encode($decodedCookie);
+
         $pxPayload = $this->encodeCookie(
-            $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_score)
+            $decodedCookie
         );
         $pxCookie = $this->signCookie($pxPayload, $cookie_origin).":".$pxPayload;
         $userAgent = self::USER_AGENT;
@@ -389,7 +398,7 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('info', 'cookie expired'),
+            'logger' => $this->getMockLogger('debug', "Cookie TTL is expired, value: $decodedCookieString, age: ", 1),
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -406,28 +415,32 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function tesMobileHeadertCookieHmacInvalid() {
+    public function testMobileHeadertCookieHmacInvalid() {
 
+        $cookie_origin="header";
         $cookie_time = (time() + 1000) * 1000;
         $cookie_uuid = self::COOKIE_UUID;
         $cookie_vid = self::COOKIE_VID;
         $cookie_score = 0;
 
+        $cookieObject =  $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_score);
+        $decryptedCookie = json_encode($cookieObject);
+
         $pxPayload = $this->encodeCookie(
-            $this->createCookie($cookie_time, $cookie_vid, $cookie_uuid, $cookie_score)
+            $cookieObject
         );
         $pxCookie = "fakehmacyay".":".$pxPayload;
         $userAgent = self::USER_AGENT;
-        $pxCtx = $this->getPxContext($pxCookie, $userAgent);
+        $pxCtx = $this->getPxContext($pxCookie, $userAgent, false, $cookie_origin);
 
         $pxConfig = [
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('warning', 'cookie invalid hmac')
+            'logger' => $this->getMockLogger('debug', "Cookie HMAC validation failed, value: $decryptedCookie, user-agent: $userAgent", 1),
         ];
 
-        $v = new PerimeterxCookieValidator($pxCtx, $pxConfig, false, "header");
+        $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
 
         $this->assertFalse($v->verify());
         $this->assertPxContext(
@@ -462,7 +475,7 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('info', 'cookie ok'),
+            'logger' => $this->getMockLogger('debug', "Cookie evaluation ended successfully, risk score: $cookie_score", 1),
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -501,7 +514,7 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('info', 'cookie verification passed, risk api triggered by sensitive route'),
+            'logger' => $this->getMockLogger('debug', "Sensitive route match, sending Risk API. path: ", 1),
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -520,7 +533,7 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => true,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('info', 'cookie ok')
+            'logger' => $this->getMockLogger('debug', "Cookie evaluation ended successfully, risk score: 0", 1)
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
@@ -529,16 +542,16 @@ class PerimeterxCookieV3ValidatorTest extends PHPUnit_Framework_TestCase
     }
 
     // private functions
-    private function getMockLogger($expected_level = null, $expected_message = null)
+    private function getMockLogger($expected_level = null, $expected_message = null, $msgIndex = 0)
     {
-        $levels = ['info', 'warning', 'error'];
+        $levels = ['info', 'debug', 'warning', 'error'];
         $logger = $this->createMock(AbstractLogger::class);
 
         foreach ($levels as $level) {
             if ($expected_level === $level) {
-                $logger->expects($this->once())
+                $logger->expects($this->at($msgIndex))
                     ->method($expected_level)
-                    ->with($expected_message);
+                    ->with($this->stringContains($expected_message));
             } else {
                 $logger->expects($this->never())
                     ->method($level);

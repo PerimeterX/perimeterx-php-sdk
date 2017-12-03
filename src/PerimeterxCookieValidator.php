@@ -107,7 +107,7 @@ class PerimeterxCookieValidator
             }
 
             $this->pxCtx->setPassReason('cookie');
-            $this->pxConfig['logger']->debug("Cookie evaluation ended successfully, risk score: {$this->$cookie->getScore()}");
+            $this->pxConfig['logger']->debug("Cookie evaluation ended successfully, risk score: {$cookie->getScore()}");
 
             return true;
         } catch (\Exception $e) {

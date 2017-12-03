@@ -41,8 +41,7 @@ class CookieV1 extends PerimeterxCookie
      *
      * @return bool
      */
-    public function isSecure()
-    {
+    public function isSecure() {
         $base_hmac_str = $this->getTime() . $this->decodedPayload->s->a . $this->getScore() . $this->getUuid() . $this->getVid();
 
         /* hmac string with ip - for backward support */
