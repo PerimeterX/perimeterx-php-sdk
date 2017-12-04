@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.8.0] - 2017-12-04
+### Changed
+- Enhanced module logs
+### Fixed
+- Headers extraction fix
+- Fixed debug_mode flag in relation to log output
+
 ## [2.7.0] - 2017-11-05
 ### Added
  - Support funCaptcha 
