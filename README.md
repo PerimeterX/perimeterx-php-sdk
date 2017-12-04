@@ -491,15 +491,20 @@ $perimeterxConfig = [
 ]
 ```
 
-Once enabled, you can expect log messages in the following format:
+Once enabled, debug messages coming out from PerimeterX should be in the following template:
+```
+[PerimeterX - DEBUG][APP_ID] - MESSAGE
+```
+
+An example debug log for an high score cookie:
 
 ```
-[Mon Dec  4 14:03:50 2017] [PerimeterX - DEBUG][PXMI1FuMjS] -Starting request verification
-[Mon Dec  4 14:03:50 2017] [PerimeterX - DEBUG][PXMI1FuMjS] -Request context created successfully
-[Mon Dec  4 14:03:50 2017] [PerimeterX - DEBUG][PXMI1FuMjS] -No Captcha cookie present on the request
-[Mon Dec  4 14:03:50 2017] [PerimeterX - DEBUG][PXMI1FuMjS] -Cookie V3 found, Evaluating
-[Mon Dec  4 14:03:50 2017] [PerimeterX - DEBUG][PXMI1FuMjS] -Cookie evaluation ended successfully, risk score: 100
-[Mon Dec  4 14:03:51 2017] [PerimeterX - DEBUG][PXMI1FuMjS] -Enforcing action: Captcha page is served
+[Mon Dec  4 14:03:50 2017] [PerimeterX - DEBUG][APP_ID] -Starting request verification
+[Mon Dec  4 14:03:50 2017] [PerimeterX - DEBUG][APP_ID] -Request context created successfully
+[Mon Dec  4 14:03:50 2017] [PerimeterX - DEBUG][APP_ID] -No Captcha cookie present on the request
+[Mon Dec  4 14:03:50 2017] [PerimeterX - DEBUG][APP_ID] -Cookie V3 found, Evaluating
+[Mon Dec  4 14:03:50 2017] [PerimeterX - DEBUG][APP_ID] -Cookie evaluation ended successfully, risk score: 100
+[Mon Dec  4 14:03:51 2017] [PerimeterX - DEBUG][APP_ID] -Enforcing action: Captcha page is served
 ```
 
 <a name="contributing"></a> Contributing
