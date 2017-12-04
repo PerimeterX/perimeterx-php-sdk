@@ -490,6 +490,16 @@ $perimeterxConfig = [
     ..
 ]
 ```
+
+Once enabled, you can expect log messages in the following format:
+
+```
+[Mon Dec  4 13:59:58 2017] [PerimeterX - DEBUG][PXMI1FuMjS] -Starting request verification
+[Mon Dec  4 13:59:58 2017] [PerimeterX - DEBUG][PXMI1FuMjS] -Request context created successfully
+[Mon Dec  4 13:59:58 2017] [PerimeterX - DEBUG][PXMI1FuMjS] -No Captcha cookie present on the request
+[Mon Dec  4 13:59:58 2017] [PerimeterX - DEBUG][PXMI1FuMjS] -Cookie V3 found, Evaluating
+```
+
 <a name="contributing"></a> Contributing
 ----------------------------------------
 
