@@ -29,6 +29,7 @@ class PerimeterxContext
         $headers = array_change_key_case($this->headers, CASE_UPPER);
         if (isset($headers[PerimeterxContext::$MOBILE_SDK_HEADER])) {
             $this->cookie_origin = "header";
+            $pxConfig['logger']->debug("Mobile SDK token detected");
             $this->explodeCookieToVersion(':', $headers[PerimeterxContext::$MOBILE_SDK_HEADER]);
         } else if (isset($_SERVER['HTTP_COOKIE'])) {
             foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
@@ -50,7 +51,7 @@ class PerimeterxContext
         $this->score = 0;
         $this->risk_rtt = 0;
 
-        $this->ip = $this->extractIP($pxConfig);
+        $this->ip = $this->extractIP($pxConfig, $headers);
 
         if (isset($_SERVER['SERVER_PROTOCOL'])) {
             $httpVer = explode("/", $_SERVER['SERVER_PROTOCOL']);
@@ -62,14 +63,12 @@ class PerimeterxContext
         $this->sensitive_route = $this->checkSensitiveRoutePrefix($pxConfig['sensitive_routes'], $this->uri);
     }
 
-    private function extractIP($pxConfig)
+    private function extractIP($pxConfig, $headers)
     {
-        $all_headers = getallheaders();
-
         if (isset($pxConfig['ip_headers'])) {
             foreach ($pxConfig['ip_headers'] as $header) {
-                if (isset($all_headers[$header])) {
-                    return $all_headers[$header];
+                if (isset($headers[strtoupper($header)])) {
+                    return $headers[$header];
                 }
             }
         }
@@ -213,6 +212,15 @@ class PerimeterxContext
     public function getVid()
     {
         return $this->vid;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getCookieVersion()
+    {
+        return isset($this->px_cookies['v3']) ? "V3" : "V1";
     }
 
     /**
