@@ -69,18 +69,22 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             return $response;
         } catch ( ConnectException $e) {
             $this->pxCtx->setRiskRtt($this->getTimeInMilliseconds() - $startRiskRtt);
-
             $this->pxCtx->setPassReason('s2s_timeout');
+            $this->pxConfig['logger']->debug("Risk API timed out, round_trip_time: {$this->pxCtx->getRiskRtt()}");
             return json_encode(['error_msg' => $e->getMessage()]);
+        } catch (\Exception $e) {
+            $this->pxConfig['logger']->error("Unexpected exception in Risk API call: {$e->getMessage()}");
+            return false;
         }
-
     }
 
     public function verify()
     {
+        $this->pxConfig['logger']->debug("Evaluating Risk API request, call reason: {$this->pxCtx->getS2SCallReason()}");
         $response = json_decode($this->sendRiskRequest());
         $this->pxCtx->setIsMadeS2SRiskApiCall(true);
         if (isset($response, $response->score, $response->action)) {
+            $this->pxConfig['logger']->debug("Risk API response returned successfully, risk score: {$response->score}, round_trip_time: {$this->pxCtx->getRiskRtt()}");
             $score = $response->score;
             $this->pxCtx->setScore($score);
             $this->pxCtx->setUuid($response->uuid);
@@ -89,8 +93,10 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
                 $this->pxCtx->setBlockActionData($response->action_data->body);
                 $this->pxCtx->setBlockReason('challenge');
             } elseif ($score >= $this->pxConfig['blocking_score']) {
+                $this->pxConfig['logger']->debug("Risk score is higher or equal to blocking score. score: $score blocking score: {$this->pxConfig['blocking_score']}");
                 $this->pxCtx->setBlockReason('s2s_high_score');
             }else{
+                $this->pxConfig['logger']->debug("Risk score is lower than blocking score. score: $score blocking score: {$this->pxConfig['blocking_score']}");
                 $this->pxCtx->setPassReason('s2s');
             }
         }

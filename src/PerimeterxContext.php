@@ -29,6 +29,7 @@ class PerimeterxContext
         $headers = array_change_key_case($this->headers, CASE_UPPER);
         if (isset($headers[PerimeterxContext::$MOBILE_SDK_HEADER])) {
             $this->cookie_origin = "header";
+            $pxConfig['logger']->debug("Mobile SDK token detected");
             $this->explodeCookieToVersion(':', $headers[PerimeterxContext::$MOBILE_SDK_HEADER]);
         } else if (isset($_SERVER['HTTP_COOKIE'])) {
             foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
@@ -211,6 +212,15 @@ class PerimeterxContext
     public function getVid()
     {
         return $this->vid;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getCookieVersion()
+    {
+        return isset($this->px_cookies['v3']) ? "V3" : "V1";
     }
 
     /**
