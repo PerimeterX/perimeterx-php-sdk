@@ -492,11 +492,13 @@ $perimeterxConfig = [
 ```
 
 Once enabled, debug messages coming out from PerimeterX should be in the following template:
-```
-[PerimeterX - DEBUG][APP_ID] - MESSAGE
-```
 
-An example debug log for an high score cookie:
+`[PerimeterX - DEBUG][APP_ID] - MESSAGE` - for debug messages
+
+`[PerimeterX - ERROR][APP_ID] - MESSAGE` - for error messages
+
+An example 
+log for an high score cookie:
 
 ```
 [Mon Dec  4 14:03:50 2017] [PerimeterX - DEBUG][APP_ID] -Starting request verification
