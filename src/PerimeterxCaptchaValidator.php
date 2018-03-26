@@ -51,22 +51,29 @@ class PerimeterxCaptchaValidator extends PerimeterxRiskClient
             if (!isset($this->pxCaptcha)) {
                 return false;
             }
+
+            $this->pxConfig['logger']->debug('Captcha cookie found, evaluating');
             /* remove pxCaptcha cookie to prevert reuse */
             setcookie("_pxCaptcha", "", time() - 3600, "/");
             $response = json_decode($this->sendCaptchaRequest());
             $this->pxCtx->setRiskRtt($this->getTimeInMilliseconds() - $startRiskRtt);
             if (isset($response->status) and $response->status == 0) {
+                $this->pxConfig['logger']->debug('Captcha API response validation status: passed');
                 $this->pxCtx->setPassReason('captcha');
                 return true;
             }
+
+            $this->pxConfig['logger']->debug('Captcha API response validation status: failed');
             return false;
         } catch (ConnectException $e){
             $this->pxCtx->setRiskRtt($this->getTimeInMilliseconds() - $startRiskRtt);
 
             // Catch timeout and pass request
+            $this->pxConfig['logger']->debug('Captcha response timeout - passing request');
             $this->pxCtx->setPassReason('captcha_timeout');
             return true;
         } catch (\Exception $e) {
+            $this->pxConfig['logger']->error("Unexpected exception while evaluating Captcha cookie. {$e->getMessage()}");
             return false;
         }
     }
