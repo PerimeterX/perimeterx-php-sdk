@@ -161,6 +161,15 @@ final class Perimeterx
 
     /**
      * @param PerimeterxContext $pxCtx
+     * @return bool - a true value if rate limit template need to be displayed
+     */
+    private function shouldDisplayRateLimit($pxCtx)
+    {
+        return $pxCtx->getBlockAction() == 'ratelimit';
+    }
+
+    /**
+     * @param PerimeterxContext $pxCtx
      * @return bool - a true value if a challenge need to be displayed
      */
     private function shouldDisplayChallenge($pxCtx)
@@ -225,10 +234,15 @@ final class Perimeterx
             $templateNamePostfix = ".mobile";
         }
 
+        http_response_code(403);
         if ($this->shouldDisplayChallenge($pxCtx)) {
             /* set return html to challenge page */
             $html = $pxCtx->getBlockActionData();
             $this->pxConfig['logger']->debug("Enforcing action: Challenge page is served");
+        } elseif ($this->shouldDisplayRateLimit($pxCtx)) {
+            http_response_code(429);
+            $html = $mustache->render('ratelimit');
+            $this->pxConfig['logger']->debug("Enforcing action: Rate limit page is served");
         } elseif ($this->shouldDisplayCaptcha($pxCtx)) {
             $templateName = strtolower($this->pxConfig['captcha_provider']);
             /* set return html to default captcha page */
@@ -240,7 +254,6 @@ final class Perimeterx
             $this->pxConfig['logger']->debug("Enforcing action: Block page is served");
         }
 
-        header("HTTP/1.1 403 Forbidden");
         if ($pxCtx->getCookieOrigin() == 'cookie') {
             header("Content-Type: text/html");
             echo $html;
