@@ -112,10 +112,12 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             if ($response->action == 'j' && $response->action_data && $response->action_data->body) {
                 $this->pxCtx->setBlockActionData($response->action_data->body);
                 $this->pxCtx->setBlockReason('challenge');
+            } elseif ($response->action == 'r') {
+                $this->pxCtx->setBlockReason('exceeded_rate_limit');
             } elseif ($score >= $this->pxConfig['blocking_score']) {
                 $this->pxConfig['logger']->debug("Risk score is higher or equal to blocking score. score: $score blocking score: {$this->pxConfig['blocking_score']}");
                 $this->pxCtx->setBlockReason('s2s_high_score');
-            }else{
+            } else {
                 $this->pxConfig['logger']->debug("Risk score is lower than blocking score. score: $score blocking score: {$this->pxConfig['blocking_score']}");
                 $this->pxCtx->setPassReason('s2s');
             }

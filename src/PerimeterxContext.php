@@ -589,6 +589,9 @@ class PerimeterxContext
             case 'j':
                 $this->block_action = 'challenge';
                 break;
+            case 'r':
+                $this->block_action = 'ratelimit';
+                break;
             default:
                 $this->block_action = 'captcha';
         }
