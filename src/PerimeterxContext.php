@@ -381,7 +381,7 @@ class PerimeterxContext
     }
 
     /**
-     * @param string $s2s_call_reason
+     * @param string original_token_error
      */
     public function setOriginalTokenError($original_token_error)
     {
