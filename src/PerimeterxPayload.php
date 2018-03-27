@@ -31,7 +31,7 @@ abstract class PerimeterxPayload {
         if ($pxCtx->getCookieOrigin() == "cookie") {
             return (isset($pxCtx->getPxCookies()['v3']) ? new CookieV3($pxCtx, $pxConfig) : new CookieV1($pxCtx, $pxConfig));
         } else {
-            return (isset($pxCtx->getPxCookies()['v3']) ? new TokenV3($pxCtx, $pxConfig) : new TokenV1($pxCtx, $pxConfig));
+            return (isset($pxCtx->getPxCookies()['v3']) ? new TokenV3($pxCtx, $pxConfig, $pxCtx->getPxCookie()) : new TokenV1($pxCtx, $pxConfig, $pxCtx->getPxCookie()));
         }
     }
 

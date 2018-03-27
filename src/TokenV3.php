@@ -8,7 +8,7 @@ class TokenV3 extends PerimeterxToken
      * @param $pxCtx PerimeterxContext - perimeterx context
      * @param $pxConfig array - perimeterx configurations
      */
-    public function __construct($pxCtx, $pxConfig)
+    public function __construct($pxCtx, $pxConfig, $payload)
     {
         if ($pxConfig['encryption_enabled']) {
             $cookieValidPartsNumber = 4;
@@ -16,11 +16,14 @@ class TokenV3 extends PerimeterxToken
             $cookieValidPartsNumber = 2;
         }
 
-        $payloadParts = explode(":", $pxCtx->getPxCookie());
+
+
+        $payloadParts = explode(":", $payload);
         if (count($payloadParts) < $cookieValidPartsNumber) {
             return null;
         }
-        list($hash, $token) = explode(":", $pxCtx->getPxCookie(), 2);
+        list($hash, $token) = explode(":", $payload, 2);
+
         $this->pxPayload = $token;
         $this->tokenHash = $hash;
         $this->pxConfig = $pxConfig;

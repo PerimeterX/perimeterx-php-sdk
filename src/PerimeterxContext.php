@@ -5,13 +5,13 @@ namespace Perimeterx;
 class PerimeterxContext
 {
     public static $MOBILE_SDK_HEADER = "X-PX-AUTHORIZATION";
+    public static $MOBILE_SDK_ORIGINAL_TOKEN_HEADER = "X-PX-ORIGINAL-TOKEN";
 
     /**
      * @param $pxConfig array - perimeterx configurations
      */
     public function __construct($pxConfig)
     {
-
         $this->cookie_origin = "cookie";
 
         $this->start_time = microtime(true);
@@ -28,6 +28,7 @@ class PerimeterxContext
 
         $headers = array_change_key_case($this->headers, CASE_UPPER);
         if (isset($headers[PerimeterxContext::$MOBILE_SDK_HEADER])) {
+            $this->original_token = $headers[PerimeterxContext::$MOBILE_SDK_ORIGINAL_TOKEN_HEADER];
             $this->cookie_origin = "header";
             $pxConfig['logger']->debug("Mobile SDK token detected");
             $this->explodeCookieToVersion(':', $headers[PerimeterxContext::$MOBILE_SDK_HEADER]);
@@ -84,6 +85,11 @@ class PerimeterxContext
     protected $cookie_origin;
 
     /**
+     * @var string perimeterx original token
+     */
+    protected $original_token;
+
+    /**
      * @var string perimeterx risk cookie.
      */
     protected $px_cookies;
@@ -92,6 +98,11 @@ class PerimeterxContext
      * @var string perimeterx risk cookie.
      */
     protected $decoded_px_cookie;
+
+    /**
+     * @var string perimeterx decoded original token.
+     */
+    protected $decoded_original_token;
 
     /**
      * @var string cookie hmac
@@ -155,6 +166,11 @@ class PerimeterxContext
      */
     protected $s2s_call_reason;
 
+     /**
+     * @var string original token error - get populated if original token verification fails.
+     */
+    protected $original_token_error;
+
     /**
      * @var string user's score.
      */
@@ -182,9 +198,14 @@ class PerimeterxContext
     protected $risk_rtt;
 
     /**
-     * @var string user's score.
+     * @var string user's uuid.
      */
     protected $uuid;
+
+    /**
+     * @var string user's original uuid.
+     */
+    protected $original_token_uuid;
 
     /**
      * @var bool true if request was sent to S2S risk api
@@ -264,6 +285,22 @@ class PerimeterxContext
     }
 
     /**
+     * @return string
+     */
+    public function getOriginalTokenUuid()
+    {
+        return $this->original_token_uuid;
+    }
+
+    /**
+     * @param string $uuid
+     */
+    public function setOriginalTokenUuid($uuid)
+    {
+        $this->original_token_uuid = $uuid;
+    }
+
+    /**
      * @param string $is_made_s2s_api_call
      */
     public function setIsMadeS2SRiskApiCall($is_made_s2s_api_call)
@@ -338,6 +375,22 @@ class PerimeterxContext
     /**
      * @return string
      */
+    public function getOriginalTokenError()
+    {
+        return $this->original_token_error;
+    }
+
+    /**
+     * @param string original_token_error
+     */
+    public function setOriginalTokenError($original_token_error)
+    {
+        $this->original_token_error = $original_token_error;
+    }
+
+    /**
+     * @return string
+     */
     public function getUserAgent()
     {
         return $this->userAgent;
@@ -349,6 +402,14 @@ class PerimeterxContext
     public function getCookieOrigin()
     {
         return $this->cookie_origin;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOriginalToken()
+    {
+        return $this->original_token;
     }
 
     /**
@@ -437,6 +498,22 @@ class PerimeterxContext
     public function setDecodedCookie($cookie)
     {
         $this->decoded_px_cookie = $cookie;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDecodedOriginalToken()
+    {
+        return $this->decoded_original_token;
+    }
+
+    /**
+     * @param string $token
+     */
+    public function setDecodedOriginalToken($token)
+    {
+        $this->decoded_original_token = $token;
     }
 
     private function checkSensitiveRoutePrefix($sensitive_routes, $uri)

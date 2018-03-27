@@ -44,20 +44,14 @@ class PerimeterxCookieValidator
 
             // Mobile SDK traffic
             if (isset($this->pxCookie) && $this->pxCtx->getCookieOrigin() == "header") {
-
-                if ((string)$this->pxCookie === "1") {
-                    $this->pxConfig['logger']->debug('Mobile special token - no token');
-                    $this->pxCtx->setS2SCallReason('no_cookie');
-                    return false;
-                }
-                if ((string)$this->pxCookie === "2") {
-                    $this->pxConfig['logger']->debug('Mobile special token - connection error');
-                    $this->pxCtx->setS2SCallReason('mobile_sdk_connection_error');
-                    return false;
-                }
-                if ((string)$this->pxCookie === "3") {
-                     $this->pxConfig['logger']->debug('Mobile special token - pinning issue');
-                    $this->pxCtx->setS2SCallReason('mobile_sdk_pinning_error');
+                $cookieValue = (string)$this->pxCookie;
+                if (preg_match('/^\d+$/', $cookieValue)) {
+                    $this->pxCtx->setS2SCallReason('mobile_error_' . $cookieValue);
+                    $this->pxConfig['logger']->debug("Mobile special token: {$this->pxCtx->getPxCookie()}");
+                    if ($this->pxCtx->getOriginalToken()) {
+                        $validator = new PerimeterxOriginalTokenValidator($this->pxCtx, $this->pxConfig);
+                        $validator->verify();
+                    }
                     return false;
                 }
             }

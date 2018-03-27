@@ -12,5 +12,6 @@ before_script:
 script:
   - phpunit tests/PerimeterxCookieValidatorTest
   - phpunit tests/PerimeterxCookieV3ValidatorTest
+  - phpunit tests/PerimeterxOriginalTokenValidatorTest
   - phpunit tests/PerimeterxConfigurationValidatorTest
   - phpunit tests/PerimeterxS2SValidatorTest
