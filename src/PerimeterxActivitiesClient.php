@@ -90,7 +90,9 @@ class PerimeterxActivitiesClient
         $details['block_reason'] = $pxCtx->getBlockReason();
         $details['risk_rtt'] = $pxCtx->getRiskRtt();
 
-        $this->sendToPerimeterx('block', $pxCtx, $details);
+        $activityType = $this->pxConfig['module_mode'] == Perimeterx::$ACTIVE_MODE ? "block" : "simulated_block";
+
+        $this->sendToPerimeterx($activityType, $pxCtx, $details);
     }
 
     /**
