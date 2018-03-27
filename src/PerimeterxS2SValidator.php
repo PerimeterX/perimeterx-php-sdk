@@ -43,7 +43,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             $requestBody['uuid'] = $uuid;
         }
 
-        if ( $this->pxCtx->getS2SCallReason() ==  'cookie_decryption_failed') {
+        if ($this->pxCtx->getS2SCallReason() ==  'cookie_decryption_failed') {
           $this->pxConfig['logger']->info('attaching px_orig_cookie to request');
           $requestBody['additional']['px_cookie_orig'] = $this->pxCtx->getPxCookie();
         }
@@ -52,6 +52,26 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             if ($this->pxCtx->getDecodedCookie()) {
                 $requestBody['additional']['px_cookie'] = $this->pxCtx->getDecodedCookie();
             }
+        }
+
+        $original_uuid = $this->pxCtx->getOriginalTokenUuid();
+        if (isset($original_uuid)) {
+            $requestBody['additional']['original_uuid'] = $original_uuid;
+        }
+
+        $original_token_error = $this->pxCtx->getOriginalTokenError();
+        if (isset($original_token_error)) {
+            $requestBody['additional']['original_token_error'] = $original_token_error;
+        }
+
+        $original_token = $this->pxCtx->getOriginalToken();
+        if (isset($original_token)) {
+            $requestBody['additional']['original_token'] = $original_token;
+        }
+
+        $decoded_original_token = $this->pxCtx->getDecodedOriginalToken();
+        if (isset($decoded_original_token)) {
+            $requestBody['additional']['px_decoded_original_token'] = $decoded_original_token;
         }
 
         $headers = [

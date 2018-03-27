@@ -327,13 +327,13 @@ class PerimeterxCookieValidatorTest extends PHPUnit_Framework_TestCase
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('debug', 'Mobile special token - no token')
+            'logger' => $this->getMockLogger('debug', 'Mobile special token: 1')
         ];
 
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
 
         $this->assertFalse($v->verify());
-        $this->assertPxContext($pxCtx, null, null, null, null, 'no_cookie', null);
+        $this->assertPxContext($pxCtx, null, null, null, null, 'mobile_error_1', null);
     }
 
     public function testBadlyEncodedMobileHeaderCookie() {

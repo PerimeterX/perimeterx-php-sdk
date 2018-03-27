@@ -8,9 +8,9 @@ class TokenV1 extends PerimeterxToken
      * @param $pxCtx PerimeterxContext - perimeterx context
      * @param $pxConfig array - perimeterx configurations
      */
-    public function __construct($pxCtx, $pxConfig)
+    public function __construct($pxCtx, $pxConfig, $payload)
     {
-        $this->pxPayload = $pxCtx->getPxCookie();
+        $this->pxPayload = $payload;
         $this->pxConfig = $pxConfig;
         $this->pxCtx = $pxCtx;
         $this->cookieSecret = $pxConfig['cookie_key'];
