@@ -450,7 +450,7 @@ $px->pxVerify();
 ```
 
 #### <a name="enrich-custom-params"></a> Enrich Custom Params
-With the `enrich-custom-params` function you can add up to 10 custom parameters to be sent back to PerimeterX servers.
+With the `enrich_custom_params` function you can add up to 10 custom parameters to be sent back to PerimeterX servers.
 When set, the function is called before seting the payload on every request to PerimetrX servers. The parameters should be passed according to the correct order (1-10).
 
 **Default:** not set
@@ -459,7 +459,7 @@ When set, the function is called before seting the payload on every request to P
 /**
  * @param array             $customParamsArray
  */
-$perimeterxConfig['enrich-custom-params'] = function ($customParamsArray)
+$perimeterxConfig['enrich_custom_params'] = function ($customParamsArray)
 {
     // user defined logic comes here
 };
@@ -473,7 +473,7 @@ $px->pxVerify();
 /**
  * @param array             $customParamsArray
  */
-$perimeterxConfig['enrich-custom-params'] = function ($customParamsArray)
+$perimeterxConfig['enrich_custom_params'] = function ($customParamsArray)
 {
     $customParamsArray['custom_param1'] = "UserId";
     $customParamsArray['custom_param2'] = "SesionId";
