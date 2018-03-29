@@ -18,7 +18,7 @@ Table of Contents
   *   [Blocking Score](#blocking-score)
   *   [Custom Block Page](#custom-block-page)
   *   [Custom Block Action](#custom-block)
-     * [Extracting Recomended Action](#block-action)   
+     * [Extracting Recomended Action](#block-action)
   *   [Extracting Real IP Address](#real-ip)
   *   [Custom URI](#custom-uri)
   *   [Filter Sensitive Headers](#sensitive-headers)
@@ -26,6 +26,7 @@ Table of Contents
   *   [API Timeouts](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
   *   [Additional Page Activity Handler](#additional-page-activity-handler)
+  *   [Enrich Custom Params](#enrich-custom-params)
   *   [Captcha Provider](#captcha-provider)
   *   [Logging](#logging)
   *   [Module Mode](#module-mode)
@@ -123,7 +124,7 @@ $perimeterxConfig['custom_block_handler'] = function ($pxCtx)
 
 $px = Perimeterx::Instance($perimeterxConfig);
 $px->pxVerify();
-```      
+```
 
 ###### Examples
 
@@ -448,6 +449,38 @@ $px = Perimeterx::Instance($perimeterxConfig);
 $px->pxVerify();
 ```
 
+#### <a name="enrich-custom-params"></a> Enrich Custom Params
+With the `enrich_custom_params` function you can add up to 10 custom parameters to be sent back to PerimeterX servers.
+When set, the function is called before seting the payload on every request to PerimetrX servers. The parameters should be passed according to the correct order (1-10).
+
+**Default:** not set
+
+```php
+/**
+ * @param array             $customParamsArray
+ */
+$perimeterxConfig['enrich_custom_params'] = function ($customParamsArray)
+{
+    // user defined logic comes here
+};
+
+$px = Perimeterx::Instance($perimeterxConfig);
+$px->pxVerify();
+```
+
+###### Enrich Custom Params Usage Examples
+```php
+/**
+ * @param array             $customParamsArray
+ */
+$perimeterxConfig['enrich_custom_params'] = function ($customParamsArray)
+{
+    $customParamsArray['custom_param1'] = "UserId";
+    $customParamsArray['custom_param2'] = "SesionId";
+    return $customParamsArray;
+};
+```
+
 #### <a name="captcha-provider"></a> Captcha Provider
 Sets the type of which captcha provider to use.
 The default block page comes with support, reCaptcha and funCaptcha.
@@ -497,7 +530,7 @@ Once enabled, debug messages coming out from PerimeterX should be in the followi
 
 `[PerimeterX - ERROR][APP_ID] - MESSAGE` - for error messages
 
-An example 
+An example
 log for an high score cookie:
 
 ```
