@@ -92,6 +92,7 @@ final class Perimeterx
                 'sdk_name' => 'PHP SDK v2.8.0',
                 'debug_mode' => false,
                 'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
+                'captcha_script_host' => 'http://sample-go.pxchk.net:8081',
                 'module_mode' => Perimeterx::$MONITOR_MODE,
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
@@ -127,14 +128,7 @@ final class Perimeterx
             $pxCtx = new PerimeterxContext($this->pxConfig);
             $this->pxConfig['logger']->debug('Request context created successfully');
 
-            $captchaValidator = new PerimeterxCaptchaValidator($pxCtx, $this->pxConfig);
-            if ($captchaValidator->verify()) {
-                return $this->handleVerification($pxCtx);
-            };
-
-            $this->pxConfig['logger']->debug('No Captcha cookie present on the request');
             $validator = new PerimeterxCookieValidator($pxCtx, $this->pxConfig);
-
             if (!$validator->verify()) {
                 $s2sValidator = new PerimeterxS2SValidator($pxCtx, $this->pxConfig);
                 $s2sValidator->verify();
@@ -215,6 +209,15 @@ final class Perimeterx
 
         $collectorUrl = 'https://collector-' . strtolower($this->pxConfig['app_id']) . '.perimeterx.net';
 
+        $templateNamePostfix = "";
+        /* generate return HTML */
+        if ($pxCtx->getCookieOrigin() == 'header') {
+            $templateNamePostfix = ".mobile";
+        }
+
+
+        $scriptBody = $this->pxConfig['http_client']->get_captcha_script(strtolower($this->pxConfig['captcha_provider']) . $templateNamePostfix, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout']);
+
         $templateInputs = array(
             'refId' => $block_uuid,
             'appId' => $this->pxConfig['app_id'],
@@ -224,15 +227,9 @@ final class Perimeterx
             'customLogo' => isset($this->pxConfig['custom_logo']) ? $this->pxConfig['custom_logo'] : '',
             'cssRef' => $this->getCssRef(),
             'jsRef' => $this->getJsRef(),
-            'hostUrl' => $collectorUrl
+            'hostUrl' => $collectorUrl,
+            'blockScript' => $scriptBody
         );
-
-
-        $templateNamePostfix = "";
-        /* generate return HTML */
-        if ($pxCtx->getCookieOrigin() == 'header') {
-            $templateNamePostfix = ".mobile";
-        }
 
         http_response_code(403);
         if ($this->shouldDisplayChallenge($pxCtx)) {
@@ -243,15 +240,10 @@ final class Perimeterx
             http_response_code(429);
             $html = $mustache->render('ratelimit');
             $this->pxConfig['logger']->debug("Enforcing action: Rate limit page is served");
-        } elseif ($this->shouldDisplayCaptcha($pxCtx)) {
-            $templateName = strtolower($this->pxConfig['captcha_provider']);
-            /* set return html to default captcha page */
-            $html = $mustache->render($templateName . $templateNamePostfix, $templateInputs);
-            $this->pxConfig['logger']->debug("Enforcing action: Captcha page is served");
         } else {
             /* set return html to default block page */
-            $html = $mustache->render('block' . $templateNamePostfix, $templateInputs);
-            $this->pxConfig['logger']->debug("Enforcing action: Block page is served");
+            $html = $mustache->render('block_template', $templateInputs);
+            $this->pxConfig['logger']->debug("Enforcing action: {$pxCtx->getBlockAction()} page is served");
         }
 
         if ($pxCtx->getCookieOrigin() == 'cookie') {
