@@ -68,10 +68,10 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
 
         if ($this->pxCtx->getS2SCallReason() == 'no_cookie') {
             if (isset($_COOKIE["_pxvid"])) {
-                $requestBody['additional']['pxvid'] = $_COOKIE["_pxvid"];
+                $requestBody['vid'] = $_COOKIE["_pxvid"];
             }
             if (isset($_COOKIE["_pxvidh"])) {
-                $requestBody['additional']['pxvidh'] = $_COOKIE["_pxvidh"];
+                $requestBody['vidh'] = $_COOKIE["_pxvidh"];
                 $this->pxCtx->setS2SCallReason('no_cookie_w_vid');
                 $requestBody['additional']['s2s_call_reason'] = $this->pxCtx->getS2SCallReason();
             }
