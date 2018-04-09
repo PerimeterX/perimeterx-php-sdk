@@ -92,7 +92,7 @@ final class Perimeterx
                 'sdk_name' => 'PHP SDK v2.8.0',
                 'debug_mode' => false,
                 'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
-                'captcha_script_host' => 'http://sample-go.pxchk.net:8081',
+                'captcha_script_host' => 'https://captcha.perimeterx.net',
                 'module_mode' => Perimeterx::$MONITOR_MODE,
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
