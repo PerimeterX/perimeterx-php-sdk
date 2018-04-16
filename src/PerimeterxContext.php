@@ -109,12 +109,6 @@ class PerimeterxContext
      */
     protected $px_cookie_hmac;
 
-
-    /**
-     * @var string perimeterx captcha cookie.
-     */
-    protected $px_captcha;
-
     /**
      * @var string user's ip.
      */
@@ -471,22 +465,6 @@ class PerimeterxContext
     /**
      * @return string
      */
-    public function getPxCaptcha()
-    {
-        return $this->px_captcha;
-    }
-
-    /**
-     * @param string $px_captcha
-     */
-    public function setPxCaptcha($px_captcha)
-    {
-        $this->px_captcha = $px_captcha;
-    }
-
-    /**
-     * @return string
-     */
     public function getDecodedCookie()
     {
         return $this->decoded_px_cookie;
@@ -544,9 +522,6 @@ class PerimeterxContext
             }
             if ($k == '1' || $k == '_px') {
                 $this->px_cookies['v1'] = $v;
-            }
-            if ($k == '_pxCaptcha') {
-                $this->px_captcha = $v;
             }
         } else {
             $this->px_cookies['v3'] = $cookie;

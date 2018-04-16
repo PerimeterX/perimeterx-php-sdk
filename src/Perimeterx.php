@@ -92,6 +92,7 @@ final class Perimeterx
                 'sdk_name' => 'PHP SDK v2.8.0',
                 'debug_mode' => false,
                 'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
+                'captcha_script_host' => 'https://captcha.px-cdn.net',
                 'module_mode' => Perimeterx::$MONITOR_MODE,
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
@@ -127,14 +128,7 @@ final class Perimeterx
             $pxCtx = new PerimeterxContext($this->pxConfig);
             $this->pxConfig['logger']->debug('Request context created successfully');
 
-            $captchaValidator = new PerimeterxCaptchaValidator($pxCtx, $this->pxConfig);
-            if ($captchaValidator->verify()) {
-                return $this->handleVerification($pxCtx);
-            };
-
-            $this->pxConfig['logger']->debug('No Captcha cookie present on the request');
             $validator = new PerimeterxCookieValidator($pxCtx, $this->pxConfig);
-
             if (!$validator->verify()) {
                 $s2sValidator = new PerimeterxS2SValidator($pxCtx, $this->pxConfig);
                 $s2sValidator->verify();
@@ -215,6 +209,14 @@ final class Perimeterx
 
         $collectorUrl = 'https://collector-' . strtolower($this->pxConfig['app_id']) . '.perimeterx.net';
 
+        $templateNamePostfix = "";
+        /* generate return HTML */
+        if ($pxCtx->getCookieOrigin() == 'header') {
+            $templateNamePostfix = ".mobile";
+        }
+
+        $scriptBody = $this->getCaptchaScript($this->pxConfig, $templateNamePostfix);
+
         $templateInputs = array(
             'refId' => $block_uuid,
             'appId' => $this->pxConfig['app_id'],
@@ -224,15 +226,10 @@ final class Perimeterx
             'customLogo' => isset($this->pxConfig['custom_logo']) ? $this->pxConfig['custom_logo'] : '',
             'cssRef' => $this->getCssRef(),
             'jsRef' => $this->getJsRef(),
-            'hostUrl' => $collectorUrl
+            'hostUrl' => $collectorUrl,
+            'blockScript' => $scriptBody,
+            'jsClientSrc' => "//client.perimeterx.net/{$this->pxConfig['app_id']}/main.min.js"
         );
-
-
-        $templateNamePostfix = "";
-        /* generate return HTML */
-        if ($pxCtx->getCookieOrigin() == 'header') {
-            $templateNamePostfix = ".mobile";
-        }
 
         http_response_code(403);
         if ($this->shouldDisplayChallenge($pxCtx)) {
@@ -243,15 +240,10 @@ final class Perimeterx
             http_response_code(429);
             $html = $mustache->render('ratelimit');
             $this->pxConfig['logger']->debug("Enforcing action: Rate limit page is served");
-        } elseif ($this->shouldDisplayCaptcha($pxCtx)) {
-            $templateName = strtolower($this->pxConfig['captcha_provider']);
-            /* set return html to default captcha page */
-            $html = $mustache->render($templateName . $templateNamePostfix, $templateInputs);
-            $this->pxConfig['logger']->debug("Enforcing action: Captcha page is served");
         } else {
             /* set return html to default block page */
-            $html = $mustache->render('block' . $templateNamePostfix, $templateInputs);
-            $this->pxConfig['logger']->debug("Enforcing action: Block page is served");
+            $html = $mustache->render('block_template', $templateInputs);
+            $this->pxConfig['logger']->debug("Enforcing action: {$pxCtx->getBlockAction()} page is served");
         }
 
         if ($pxCtx->getCookieOrigin() == 'cookie') {
@@ -270,6 +262,14 @@ final class Perimeterx
             echo json_encode($result);
         }
         die();
+    }
+
+    /*
+     * Method for assembling the Captcha script tag source
+     */
+    private function getCaptchaScript($pxConfig, $templateNamePostfix) {
+        $captchaTemplate = strtolower($this->pxConfig['captcha_provider']) . $templateNamePostfix;
+        return "{$pxConfig['captcha_script_host']}/{$captchaTemplate}.js";
     }
 
     /**
