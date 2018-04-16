@@ -24,7 +24,6 @@ class PerimeterxHttpClient
     public function __construct($config)
     {
         $this->client = new Client(['base_uri' => $config['perimeterx_server_host']]);
-        $this->captcha_client = new Client(['base_uri' => $config['captcha_script_host']]);
         $this->logger = $config['logger'];
     }
 
