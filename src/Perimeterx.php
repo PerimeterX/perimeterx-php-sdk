@@ -227,7 +227,8 @@ final class Perimeterx
             'cssRef' => $this->getCssRef(),
             'jsRef' => $this->getJsRef(),
             'hostUrl' => $collectorUrl,
-            'blockScript' => $scriptBody
+            'blockScript' => $scriptBody,
+            'jsClientSrc' => "//client.perimeterx.net/{$this->pxConfig['app_id']}/main.min.js"
         );
 
         http_response_code(403);
