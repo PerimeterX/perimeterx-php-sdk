@@ -92,7 +92,7 @@ final class Perimeterx
                 'sdk_name' => 'PHP SDK v2.8.0',
                 'debug_mode' => false,
                 'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
-                'captcha_script_host' => 'https://captcha.perimeterx.net',
+                'captcha_script_host' => 'https://captcha.px-cdn.net',
                 'module_mode' => Perimeterx::$MONITOR_MODE,
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
@@ -215,8 +215,7 @@ final class Perimeterx
             $templateNamePostfix = ".mobile";
         }
 
-
-        $scriptBody = $this->pxConfig['http_client']->get_captcha_script(strtolower($this->pxConfig['captcha_provider']) . $templateNamePostfix, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout']);
+        $scriptBody = $this->getCaptchaScript($this->pxConfig, $templateNamePostfix);
 
         $templateInputs = array(
             'refId' => $block_uuid,
@@ -262,6 +261,14 @@ final class Perimeterx
             echo json_encode($result);
         }
         die();
+    }
+
+    /*
+     * Method for assembling the Captcha script tag source
+     */
+    private function getCaptchaScript($pxConfig, $templateNamePostfix) {
+        $captchaTemplate = strtolower($this->pxConfig['captcha_provider']) . $templateNamePostfix;
+        return "{$pxConfig['captcha_script_host']}/{$captchaTemplate}.js";
     }
 
     /**

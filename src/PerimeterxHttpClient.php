@@ -49,30 +49,6 @@ class PerimeterxHttpClient
         return $rawBody;
     }
 
-    public function get_captcha_script($script_name, $timeout = 0, $connect_timeout = 0) {
-        $script = "/$script_name.js";
-
-        try {
-            $raw_response = $this->captcha_client->request("GET",$script,
-                [
-                    'timeout' => $timeout,
-                    'connect_timeout' => $connect_timeout
-                ]
-            );
-
-            if ($raw_response->getStatusCode() != 200) {
-                $this->logger->debug("Non 200 response code for captcha script:, {$e->getCode()}");
-                return '';
-            } else {
-                $rawBody = (string)$raw_response->getBody();
-                return $rawBody;
-            }
-        } catch  (\Exception $e) {
-            $this->logger->debug("Failed to get captcha script, {$e->getCode()}: {$e->getMessage()}");
-            return '';
-        }
-    }
-
     /**
      * This function static so custom clients can call it (when using custom_risk_handler)
      * @param $jsonArray
