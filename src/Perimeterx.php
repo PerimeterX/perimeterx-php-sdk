@@ -97,7 +97,6 @@ final class Perimeterx
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
                 'local_proxy' => false,
-                'captcha_provider' => 'reCaptcha',
                 'sensitive_routes' => [],
                 'ip_headers' => []
             ], $pxConfig);
@@ -208,14 +207,7 @@ final class Perimeterx
         ));
 
         $collectorUrl = 'https://collector-' . strtolower($this->pxConfig['app_id']) . '.perimeterx.net';
-
-        $templateNamePostfix = "";
-        /* generate return HTML */
-        if ($pxCtx->getCookieOrigin() == 'header') {
-            $templateNamePostfix = ".mobile";
-        }
-
-        $scriptBody = $this->getCaptchaScript($this->pxConfig, $templateNamePostfix);
+        $blockScript = $this->getCaptchaScript($this->pxConfig, $pxCtx);
 
         $templateInputs = array(
             'refId' => $block_uuid,
@@ -227,7 +219,7 @@ final class Perimeterx
             'cssRef' => $this->getCssRef(),
             'jsRef' => $this->getJsRef(),
             'hostUrl' => $collectorUrl,
-            'blockScript' => $scriptBody,
+            'blockScript' => $blockScript,
             'jsClientSrc' => "//client.perimeterx.net/{$this->pxConfig['app_id']}/main.min.js"
         );
 
@@ -267,9 +259,9 @@ final class Perimeterx
     /*
      * Method for assembling the Captcha script tag source
      */
-    private function getCaptchaScript($pxConfig, $templateNamePostfix) {
-        $captchaTemplate = strtolower($this->pxConfig['captcha_provider']) . $templateNamePostfix;
-        return "{$pxConfig['captcha_script_host']}/{$captchaTemplate}.js";
+    private function getCaptchaScript($pxConfig, $pxCtx) {
+        $isMobile = ($pxCtx->getCookieOrigin() == 'header') ? "1" : "0";
+        return "{$pxConfig['captcha_script_host']}/{$pxConfig['app_id']}/captcha.js?a={$pxCtx->getResponseBlockAction()}&u={$pxCtx->getUuid()}&v={$pxCtx->getVid()}&m=$isMobile";
     }
 
     /**

@@ -70,6 +70,7 @@ class PerimeterxCookieValidator
             $this->pxCtx->setUuid($cookie->getUuid());
             $this->pxCtx->setVid($cookie->getVid());
             $this->pxCtx->setBlockAction($cookie->getBlockAction());
+            $this->pxCtx->setResponseBlockAction($cookie->getBlockAction());
             $this->pxCtx->setCookieHmac($cookie->getHmac());
 
             if ($cookie->isExpired()) {

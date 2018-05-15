@@ -217,6 +217,11 @@ class PerimeterxContext
     protected $block_action;
 
     /**
+     * @var string block action from the response (cookie/risk)
+     */
+    protected $response_block_action;
+
+    /**
      * @var string block data
      */
     protected $block_data;
@@ -552,6 +557,13 @@ class PerimeterxContext
         return $this->block_action;
     }
 
+    /**
+     * @return string
+     */
+    public function getResponseBlockAction() {
+        return $this->response_block_action;
+    }
+
     public function setBlockAction($block_action)
     {
         switch ($block_action) {
@@ -570,6 +582,11 @@ class PerimeterxContext
             default:
                 $this->block_action = 'captcha';
         }
+    }
+
+    public function setResponseBlockAction($block_action)
+    {
+        $this->response_block_action = $block_action;
     }
 
     public function setBlockActionData($block_data = '')
