@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.9.0] - 2018-06-11
+### Added
+- Handle original token for mobile
+- Simulated_block property on Risk API call
+- Ratelimit support
+- Enrich Custom Parameters support
+- Captcha v2 support
+
+### Fixed
+- Replaced mcrypt with openssl
+
 ## [2.8.0] - 2017-12-04
 ### Changed
 - Enhanced module logs
