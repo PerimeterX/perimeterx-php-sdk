@@ -27,7 +27,6 @@ Table of Contents
   *   [Send Page Activities](#send-page-activities)
   *   [Additional Page Activity Handler](#additional-page-activity-handler)
   *   [Enrich Custom Params](#enrich-custom-params)
-  *   [Captcha Provider](#captcha-provider)
   *   [Logging](#logging)
   *   [Module Mode](#module-mode)
   *   [Debug Mode](#debug-mode)
@@ -480,21 +479,6 @@ $perimeterxConfig['enrich_custom_params'] = function ($customParamsArray)
     return $customParamsArray;
 };
 ```
-
-#### <a name="captcha-provider"></a> Captcha Provider
-Sets the type of which captcha provider to use.
-The default block page comes with support, reCaptcha and funCaptcha.
-
-**Values:** 'reCaptcha', 'funCaptcha'
-**Default:** 'reCaptcha'
-```php
-$perimeterxConfig = [
-    ..
-    'captcha_provider' => 'funCaptcha',
-    ..
-]
-```
-
 
 #### <a name="logging"></a> Logging
 

@@ -130,6 +130,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             $this->pxCtx->setScore($score);
             $this->pxCtx->setUuid($response->uuid);
             $this->pxCtx->setBlockAction($response->action);
+            $this->pxCtx->setResponseBlockAction($response->action);
             if ($response->action == 'j' && $response->action_data && $response->action_data->body) {
                 $this->pxCtx->setBlockActionData($response->action_data->body);
                 $this->pxCtx->setBlockReason('challenge');
