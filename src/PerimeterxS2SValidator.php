@@ -7,6 +7,18 @@ use GuzzleHttp\Exception\ConnectException;
 class PerimeterxS2SValidator extends PerimeterxRiskClient
 {
     const RISK_API_ENDPOINT = '/api/v2/risk';
+    private static $customParamsArray = [
+        'custom_param1' => '',
+        'custom_param2' => '',
+        'custom_param3' => '',
+        'custom_param4' => '',
+        'custom_param5' => '',
+        'custom_param6' => '',
+        'custom_param7' => '',
+        'custom_param8' => '',
+        'custom_param9' => '',
+        'custom_param10' => ''
+    ];
 
     private function sendRiskRequest()
     {
@@ -43,7 +55,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             $requestBody['uuid'] = $uuid;
         }
 
-        if ( $this->pxCtx->getS2SCallReason() ==  'cookie_decryption_failed') {
+        if ($this->pxCtx->getS2SCallReason() ==  'cookie_decryption_failed') {
           $this->pxConfig['logger']->info('attaching px_orig_cookie to request');
           $requestBody['additional']['px_cookie_orig'] = $this->pxCtx->getPxCookie();
         }
@@ -51,6 +63,35 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
         if (in_array($this->pxCtx->getS2SCallReason(), ['cookie_expired', 'cookie_validation_failed'])) {
             if ($this->pxCtx->getDecodedCookie()) {
                 $requestBody['additional']['px_cookie'] = $this->pxCtx->getDecodedCookie();
+            }
+        }
+
+        $original_uuid = $this->pxCtx->getOriginalTokenUuid();
+        if (isset($original_uuid)) {
+            $requestBody['additional']['original_uuid'] = $original_uuid;
+        }
+
+        $original_token_error = $this->pxCtx->getOriginalTokenError();
+        if (isset($original_token_error)) {
+            $requestBody['additional']['original_token_error'] = $original_token_error;
+        }
+
+        $original_token = $this->pxCtx->getOriginalToken();
+        if (isset($original_token)) {
+            $requestBody['additional']['original_token'] = $original_token;
+        }
+
+        $decoded_original_token = $this->pxCtx->getDecodedOriginalToken();
+        if (isset($decoded_original_token)) {
+            $requestBody['additional']['px_decoded_original_token'] = $decoded_original_token;
+        }
+
+        if (isset($this->pxConfig['enrich_custom_params'])) {
+            $riskCustomParams = $this->pxConfig['enrich_custom_params']($customParamsArray);
+            foreach ($riskCustomParams as $key => $value) {
+                if (preg_match('/custom_param\d+$/i', $key) && $value != '') {
+                    $requestBody['additional'][$key] = $value;
+                }
             }
         }
 
@@ -89,13 +130,16 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             $this->pxCtx->setScore($score);
             $this->pxCtx->setUuid($response->uuid);
             $this->pxCtx->setBlockAction($response->action);
+            $this->pxCtx->setResponseBlockAction($response->action);
             if ($response->action == 'j' && $response->action_data && $response->action_data->body) {
                 $this->pxCtx->setBlockActionData($response->action_data->body);
                 $this->pxCtx->setBlockReason('challenge');
+            } elseif ($response->action == 'r') {
+                $this->pxCtx->setBlockReason('exceeded_rate_limit');
             } elseif ($score >= $this->pxConfig['blocking_score']) {
                 $this->pxConfig['logger']->debug("Risk score is higher or equal to blocking score. score: $score blocking score: {$this->pxConfig['blocking_score']}");
                 $this->pxCtx->setBlockReason('s2s_high_score');
-            }else{
+            } else {
                 $this->pxConfig['logger']->debug("Risk score is lower than blocking score. score: $score blocking score: {$this->pxConfig['blocking_score']}");
                 $this->pxCtx->setPassReason('s2s');
             }

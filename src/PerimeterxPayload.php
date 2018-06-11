@@ -31,7 +31,7 @@ abstract class PerimeterxPayload {
         if ($pxCtx->getCookieOrigin() == "cookie") {
             return (isset($pxCtx->getPxCookies()['v3']) ? new CookieV3($pxCtx, $pxConfig) : new CookieV1($pxCtx, $pxConfig));
         } else {
-            return (isset($pxCtx->getPxCookies()['v3']) ? new TokenV3($pxCtx, $pxConfig) : new TokenV1($pxCtx, $pxConfig));
+            return (isset($pxCtx->getPxCookies()['v3']) ? new TokenV3($pxCtx, $pxConfig, $pxCtx->getPxCookie()) : new TokenV1($pxCtx, $pxConfig, $pxCtx->getPxCookie()));
         }
     }
 
@@ -142,7 +142,7 @@ abstract class PerimeterxPayload {
         $derivation = hash_pbkdf2($digest, $this->cookieSecret, $salt, $iterations, $ivlen + $keylen, true);
         $key = substr($derivation, 0, $keylen);
         $iv = substr($derivation, $keylen);
-        $payload = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $payload, MCRYPT_MODE_CBC, $iv);
+        $payload = openssl_decrypt($payload, "aes-256-cbc", $key, OPENSSL_RAW_DATA, $iv);
 
         return $this->unpad($payload);
     }
