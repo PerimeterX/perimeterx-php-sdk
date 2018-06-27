@@ -22,7 +22,7 @@ class PerimeterxDataEnrichmentTest extends PHPUnit_Framework_TestCase {
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('debug', "Cookie decryption failed, value: $pxCookie", 1),
+            'logger' => $this->getMockLogger('debug', "", 1),
         ];
 
         $time = (time() + 1000) * 1000;
@@ -46,7 +46,7 @@ class PerimeterxDataEnrichmentTest extends PHPUnit_Framework_TestCase {
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => $this->getMockLogger('debug', "Cookie decryption failed, value: $pxCookie", 1),
+            'logger' => $this->getMockLogger('debug', "", 1)
         ];
         
         $time = (time() + 1000) * 1000;
@@ -66,7 +66,7 @@ class PerimeterxDataEnrichmentTest extends PHPUnit_Framework_TestCase {
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => new PerimeterxLogger($this->pxConfig),
+            'logger' => $this->getMockLogger('debug', "", 1)
         ];
         
         $time = (time() + 1000) * 1000;
@@ -87,7 +87,7 @@ class PerimeterxDataEnrichmentTest extends PHPUnit_Framework_TestCase {
             'encryption_enabled' => false,
             'cookie_key' => self::COOKIE_KEY,
             'blocking_score' => 70,
-            'logger' => new PerimeterxLogger($this->pxConfig),
+            'logger' => $this->getMockLogger('debug', "", 1)
         ];
         
         $time = (time() + 1000) * 1000;

@@ -10,7 +10,7 @@ public static function processDataEnrichment($pxCtx, $pxConfig) {
     }
 
     $splittedCookie = explode(":", $pxde_cookie);
-    if(count(splittedCookie) < 1) {
+    if(count($splittedCookie) < 1) {
         return;
     }
 
