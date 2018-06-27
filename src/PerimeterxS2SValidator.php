@@ -132,7 +132,6 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             $this->pxCtx->setBlockAction($response->action);
             $this->pxCtx->setResponseBlockAction($response->action);
             if(isset($response->data_enrichment)) {
-                $this->pxConfig['logger']->debug("{$response->data_enrichment->timestamp}");
                 $this->pxCtx->setDataEnrichmentVerified(true);
                 $this->pxCtx->setDataEnrichment($response->data_enrichment);
             }

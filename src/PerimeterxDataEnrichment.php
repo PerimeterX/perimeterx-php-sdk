@@ -29,7 +29,7 @@ public static function processDataEnrichment($pxCtx, $pxConfig) {
         $pxConfig['logger']->error("error while decoding pxde");
         return;
     }
-    
+
     $pxde_obj = json_decode($decoded_pxde);
     if(!$pxde_obj) {
         $pxConfig['logger']->error("error while encoding pxde to json");
