@@ -26,6 +26,7 @@ Table of Contents
   *   [API Timeouts](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
   *   [Additional Page Activity Handler](#additional-page-activity-handler)
+  *   [Data-Enrichment](#data-enrichment)
   *   [Enrich Custom Params](#enrich-custom-params)
   *   [Logging](#logging)
   *   [Module Mode](#module-mode)
@@ -442,6 +443,33 @@ $px->pxVerify();
 $perimeterxConfig['additional_activity_handler'] = function ($activityType, $pxCtx, $details) use ($statsd)
 {
     $statsd->increment('perimeterx_activity.' . $activityType);
+};
+
+$px = Perimeterx::Instance($perimeterxConfig);
+$px->pxVerify();
+```
+
+#### <a name="data-enrichment"></a> Data-Enrichment
+User can use the additional activity handler to retrieve information for the request using the data-enrichment object.
+first, validate the data enrichment object is verified, then you can access it's properties. 
+
+
+**Default:** false
+
+```php
+/**
+ * @param string            $activityType
+ * @param PerimeterxContext $pxCtx
+ * @param array             $details
+ */
+$perimeterxConfig['additional_activity_handler'] = function ($activityType, $pxCtx, $details) use ($logger)
+{
+    if($pxCtx->getDataEnrichmentVerified()) {
+    	$pxde = $pxCtx->getDataEnrichment();
+        if($pxde->f_type == 'blacklist') {
+        	$logger->info('Filtered request with id: {$pxde->f_id} at: {$pxde->timestamp}');
+        }
+    }
 };
 
 $px = Perimeterx::Instance($perimeterxConfig);

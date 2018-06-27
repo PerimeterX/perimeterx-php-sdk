@@ -15,3 +15,4 @@ script:
   - phpunit tests/PerimeterxOriginalTokenValidatorTest
   - phpunit tests/PerimeterxConfigurationValidatorTest
   - phpunit tests/PerimeterxS2SValidatorTest
+  - phpunit tests/PerimeterxDataEnrichmentTest
