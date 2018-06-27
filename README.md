@@ -41,7 +41,6 @@ Table of Contents
 ----------------------------------------
 
 -   [v5.6 <= PHP <= v7.0.15](http://php.net/downloads.php)
--   [mcrypt](http://php.net/manual/en/book.mcrypt.php)
 
 
 
