@@ -126,7 +126,7 @@ final class Perimeterx
             $this->pxConfig['logger']->debug('Request context created successfully');
 
             $validator = new PerimeterxCookieValidator($pxCtx, $this->pxConfig);
-
+          
             $cookie_valid = $validator->verify();
             if($cookie_valid) {
                 PerimeterxDataEnrichment::processDataEnrichment($pxCtx, $this->pxConfig);

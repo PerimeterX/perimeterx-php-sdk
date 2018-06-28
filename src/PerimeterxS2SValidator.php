@@ -6,6 +6,7 @@ use GuzzleHttp\Exception\ConnectException;
 
 class PerimeterxS2SValidator extends PerimeterxRiskClient
 {
+
     const RISK_API_ENDPOINT = '/api/v3/risk';
     private static $customParamsArray = [
         'custom_param1' => '',
@@ -135,6 +136,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
                 $this->pxCtx->setDataEnrichmentVerified(true);
                 $this->pxCtx->setDataEnrichment($response->data_enrichment);
             }
+
             if ($response->action == 'j' && $response->action_data && $response->action_data->body) {
                 $this->pxCtx->setBlockActionData($response->action_data->body);
                 $this->pxCtx->setBlockReason('challenge');
