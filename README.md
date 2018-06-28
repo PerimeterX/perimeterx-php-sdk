@@ -1,11 +1,11 @@
 [![Build Status](https://travis-ci.org/PerimeterX/perimeterx-php-sdk.svg?branch=master)](https://travis-ci.org/PerimeterX/perimeterx-php-sdk)
 
-![image](http://media.marketwire.com/attachments/201604/34215_PerimeterX_logo.jpg)
+![image](https://s.perimeterx.net/logo.png)
 #
 [PerimeterX](http://www.perimeterx.com) PHP SDK
 =============================================================
 
-> Latest stable version: [v2.9.0](https://packagist.org/packages/perimeterx/php-sdk#2.9.0)
+> Latest stable version: [v2.10.0](https://packagist.org/packages/perimeterx/php-sdk#2.10.0)
 
 Table of Contents
 -----------------
