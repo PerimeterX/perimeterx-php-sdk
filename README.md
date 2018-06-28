@@ -1,11 +1,11 @@
 [![Build Status](https://travis-ci.org/PerimeterX/perimeterx-php-sdk.svg?branch=master)](https://travis-ci.org/PerimeterX/perimeterx-php-sdk)
 
-![image](http://media.marketwire.com/attachments/201604/34215_PerimeterX_logo.jpg)
+![image](https://s.perimeterx.net/logo.png)
 #
 [PerimeterX](http://www.perimeterx.com) PHP SDK
 =============================================================
 
-> Latest stable version: [v2.9.0](https://packagist.org/packages/perimeterx/php-sdk#2.9.0)
+> Latest stable version: [v2.10.0](https://packagist.org/packages/perimeterx/php-sdk#2.10.0)
 
 Table of Contents
 -----------------
@@ -26,6 +26,7 @@ Table of Contents
   *   [API Timeouts](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
   *   [Additional Page Activity Handler](#additional-page-activity-handler)
+  *   [Data-Enrichment](#data-enrichment)
   *   [Enrich Custom Params](#enrich-custom-params)
   *   [Logging](#logging)
   *   [Module Mode](#module-mode)
@@ -40,7 +41,6 @@ Table of Contents
 ----------------------------------------
 
 -   [v5.6 <= PHP <= v7.0.15](http://php.net/downloads.php)
--   [mcrypt](http://php.net/manual/en/book.mcrypt.php)
 
 
 
@@ -442,6 +442,33 @@ $px->pxVerify();
 $perimeterxConfig['additional_activity_handler'] = function ($activityType, $pxCtx, $details) use ($statsd)
 {
     $statsd->increment('perimeterx_activity.' . $activityType);
+};
+
+$px = Perimeterx::Instance($perimeterxConfig);
+$px->pxVerify();
+```
+
+#### <a name="data-enrichment"></a> Data-Enrichment
+User can use the additional activity handler to retrieve information for the request using the data-enrichment object.
+first, validate the data enrichment object is verified, then you can access it's properties. 
+
+
+**Default:** false
+
+```php
+/**
+ * @param string            $activityType
+ * @param PerimeterxContext $pxCtx
+ * @param array             $details
+ */
+$perimeterxConfig['additional_activity_handler'] = function ($activityType, $pxCtx, $details) use ($logger)
+{
+    if($pxCtx->getDataEnrichmentVerified()) {
+    	$pxde = $pxCtx->getDataEnrichment();
+        if($pxde->f_type == 'blacklist') {
+        	$logger->info('Filtered request with id: {$pxde->f_id} at: {$pxde->timestamp}');
+        }
+    }
 };
 
 $px = Perimeterx::Instance($perimeterxConfig);

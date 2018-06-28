@@ -51,6 +51,7 @@ class PerimeterxContext
         $this->full_url = $this->selfURL();
         $this->score = 0;
         $this->risk_rtt = 0;
+        $this->pxde_verified = false;
 
         $this->ip = $this->extractIP($pxConfig, $headers);
 
@@ -225,6 +226,21 @@ class PerimeterxContext
      * @var string block data
      */
     protected $block_data;
+
+    /**
+     * @var object - request data enrichment
+     */
+    protected $pxde;
+
+    /**
+     * @var string - data enrichment cookie
+     */
+    protected $data_enrichment_cookie;
+
+    /**
+     * @var bool - request data enrichment
+     */
+    protected $pxde_verified;
 
     /**
      * @return string
@@ -528,6 +544,9 @@ class PerimeterxContext
             if ($k == '1' || $k == '_px') {
                 $this->px_cookies['v1'] = $v;
             }
+            if ($k == '_pxde') {
+                $this->data_enrichment_cookie = $v;
+            }
         } else {
             $this->px_cookies['v3'] = $cookie;
         }
@@ -582,6 +601,26 @@ class PerimeterxContext
             default:
                 $this->block_action = 'captcha';
         }
+    }
+
+    public function setDataEnrichmentVerified($verified) {
+        $this->pxde_verified = $verified;
+    }
+
+    public function setDataEnrichment($data_enrichment) {
+        $this->pxde = $data_enrichment;
+    }
+
+    public function getDataEnrichmentVerified() {
+        return $this->pxde_verified;
+    }
+
+    public function getDataEnrichmentCookie() {
+        return $this->data_enrichment_cookie;
+    }
+
+    public function getDataEnrichment() {
+        return $this->pxde;
     }
 
     public function setResponseBlockAction($block_action)
