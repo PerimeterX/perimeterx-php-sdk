@@ -10,6 +10,7 @@ before_script:
   - composer update
 
 script:
+  - ./vendor/bin/phplint
   - phpunit tests/PerimeterxCookieValidatorTest
   - phpunit tests/PerimeterxCookieV3ValidatorTest
   - phpunit tests/PerimeterxOriginalTokenValidatorTest

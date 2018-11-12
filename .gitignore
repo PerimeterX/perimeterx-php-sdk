@@ -4,3 +4,4 @@
 tests/bootstrap.php
 composer.lock
 dev/
+build/
