@@ -67,6 +67,11 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             $requestBody['uuid'] = $uuid;
         }
 
+        $pxhd = $this->pxCtx->getPxhdCookie();
+        if (isset($pxhd)) {
+            $requestBody['pxhd'] = $pxhd;
+        }
+
         if ($this->pxCtx->getS2SCallReason() ==  'cookie_decryption_failed') {
           $this->pxConfig['logger']->info('attaching px_orig_cookie to request');
           $requestBody['additional']['px_cookie_orig'] = $this->pxCtx->getPxCookie();
@@ -137,7 +142,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
         $response = json_decode($this->sendRiskRequest());
         $this->pxCtx->setIsMadeS2SRiskApiCall(true);
 
-        if ($response->pxhd) {
+        if ($response->pxhd != null) {
             setcookie("_pxhd", $response->pxhd, time() + 31557600); // expires in 1 year
         }
         if (isset($response, $response->score, $response->action)) {
