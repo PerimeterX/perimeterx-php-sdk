@@ -142,7 +142,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
         $response = json_decode($this->sendRiskRequest());
         $this->pxCtx->setIsMadeS2SRiskApiCall(true);
 
-        if ($response->pxhd != null) {
+        if (isset($response->pxhd)) {
             setcookie("_pxhd", $response->pxhd, time() + 31557600); // expires in 1 year
         }
         if (isset($response, $response->score, $response->action)) {
