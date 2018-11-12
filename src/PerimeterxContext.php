@@ -561,7 +561,7 @@ class PerimeterxContext
             if ($k == '_pxde') {
                 $this->data_enrichment_cookie = $v;
             }
-            array_push($this->request_cookie_names,$k);
+            array_push($this->request_cookie_names, $k);
         } else {
             $this->px_cookies['v3'] = $cookie;
         }
