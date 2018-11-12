@@ -28,6 +28,9 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
         } else {
             $risk_mode = 'monitor';
         }
+
+        $vid_source = "none";
+
         $requestBody = [
             'request' => [
                 'ip' => $this->pxCtx->getIp(),
@@ -47,10 +50,17 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             ]
         ];
 
+        $pxvid = $this->pxCtx->getPxVidCookie();
         $vid = $this->pxCtx->getVid();
         if (isset($vid)) {
+            $vid_source = "risk_cookie";
             $requestBody['vid'] = $vid;
+        } else if (isset($pxvid)) {
+            $vid_source = "vid_cookie";
+            $requestBody['vid'] = $pxvid;
         }
+
+        $requestBody["additional"]["enforcer_vid_source"] = $vid_source;
 
         $uuid = $this->pxCtx->getUuid();
         if (isset($uuid)) {
@@ -126,6 +136,10 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
         $this->pxConfig['logger']->debug("Evaluating Risk API request, call reason: {$this->pxCtx->getS2SCallReason()}");
         $response = json_decode($this->sendRiskRequest());
         $this->pxCtx->setIsMadeS2SRiskApiCall(true);
+
+        if ($response->pxhd) {
+            setcookie("_pxhd", $response->pxhd, time() + 31557600); // expires in 1 year
+        }
         if (isset($response, $response->score, $response->action)) {
             $this->pxConfig['logger']->debug("Risk API response returned successfully, risk score: {$response->score}, round_trip_time: {$this->pxCtx->getRiskRtt()}");
             $score = $response->score;

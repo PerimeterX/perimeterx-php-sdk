@@ -67,6 +67,10 @@ class PerimeterxActivitiesClient
             $pxData['vid'] = $vid;
         }
 
+        if ($pxCtx->getPxhdCookie() != null) {
+            $pxData['pxhd'] = $pxCtx->getPxhdCookie();
+        }
+
         $activities = [$pxData];
         $headers = [
             'Authorization' => 'Bearer ' . $this->pxConfig['auth_token'],
@@ -88,6 +92,7 @@ class PerimeterxActivitiesClient
         $details['block_uuid'] = $pxCtx->getUuid();
         $details['block_score'] = $pxCtx->getScore();
         $details['block_reason'] = $pxCtx->getBlockReason();
+        $details['block_action'] = $pxCtx->getResponseBlockAction();
         $details['risk_rtt'] = $pxCtx->getRiskRtt();
         $details['simulated_block'] = $this->pxConfig['module_mode'] == Perimeterx::$MONITOR_MODE;
 
