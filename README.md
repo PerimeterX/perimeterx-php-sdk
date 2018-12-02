@@ -14,6 +14,7 @@ Table of Contents
   *   [Dependencies](#dependencies)
   *   [Installation](#installation)
   *   [Basic Usage Example](#basic-usage)
+-   [Upgrading](#upgrade)  
 -   [Configuration](#configuration)
   *   [Blocking Score](#blocking-score)
   *   [Custom Block Page](#custom-block-page)
@@ -73,6 +74,10 @@ $px = Perimeterx::Instance($perimeterxConfig);
 /* run verify at the beginning of a page request */
 $px->pxVerify();
 ```
+
+## <a name="upgrade"></a> Upgrading
+
+TBD
 
 ### <a name="configuration"></a> Configuration Options
 
