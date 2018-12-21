@@ -27,7 +27,7 @@ class PerimeterxActivitiesClient
     {
         $this->pxConfig = $pxConfig;
         $this->httpClient = $pxConfig['http_client'];
-        $this->pxUtils = new PerimeterxUtils(); 
+        $this->pxUtils = new PerimeterxUtils();
     }
 
     /**
