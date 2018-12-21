@@ -4,7 +4,6 @@ namespace Perimeterx;
 
 class PerimeterxUtils
 {
-
 	private $customParamsArray = [
         'custom_param1' => '',
         'custom_param2' => '',
