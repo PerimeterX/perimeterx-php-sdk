@@ -16,12 +16,18 @@ class PerimeterxActivitiesClient
     private $httpClient;
 
     /**
+     * @var PerimeterxUtils
+     */
+    protected $pxUtils;
+
+    /**
      * @param array $pxConfig - perimeterx configurations
      */
     public function __construct($pxConfig)
     {
         $this->pxConfig = $pxConfig;
         $this->httpClient = $pxConfig['http_client'];
+        $this->pxUtils = new PerimeterxUtils();
     }
 
     /**
@@ -69,6 +75,10 @@ class PerimeterxActivitiesClient
 
         if ($pxCtx->getPxhdCookie() != null) {
             $pxData['pxhd'] = $pxCtx->getPxhdCookie();
+        }
+
+        if (isset($this->pxConfig['enrich_custom_params'])) {
+            $this->pxUtils->handleCustomParams($this->pxConfig, $pxData['details']);
         }
 
         $activities = [$pxData];

@@ -21,6 +21,11 @@ abstract class PerimeterxRiskClient
     protected $httpClient;
 
     /**
+     * @var PerimeterxUtils
+     */
+    protected $pxUtils;
+
+    /**
      * @param $pxCtx PerimeterxContext - perimeterx context
      * @param $pxConfig array - perimeterx configurations
      */
@@ -29,6 +34,7 @@ abstract class PerimeterxRiskClient
         $this->pxCtx = $pxCtx;
         $this->pxConfig = $pxConfig;
         $this->httpClient = $pxConfig['http_client'];
+        $this->pxUtils = new PerimeterxUtils();
     }
 
     /**

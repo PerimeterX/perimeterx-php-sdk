@@ -8,18 +8,6 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
 {
 
     const RISK_API_ENDPOINT = '/api/v3/risk';
-    private static $customParamsArray = [
-        'custom_param1' => '',
-        'custom_param2' => '',
-        'custom_param3' => '',
-        'custom_param4' => '',
-        'custom_param5' => '',
-        'custom_param6' => '',
-        'custom_param7' => '',
-        'custom_param8' => '',
-        'custom_param9' => '',
-        'custom_param10' => ''
-    ];
 
     private function sendRiskRequest()
     {
@@ -104,12 +92,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
         }
 
         if (isset($this->pxConfig['enrich_custom_params'])) {
-            $riskCustomParams = $this->pxConfig['enrich_custom_params']($customParamsArray);
-            foreach ($riskCustomParams as $key => $value) {
-                if (preg_match('/custom_param\d+$/i', $key) && $value != '') {
-                    $requestBody['additional'][$key] = $value;
-                }
-            }
+            $this->pxUtils->handleCustomParams($this->pxConfig, $requestBody['additional']);
         }
 
         $headers = [
