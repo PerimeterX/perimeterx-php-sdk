@@ -38,7 +38,8 @@ class PerimeterxCookieValidator
         try {
             if (!isset($this->pxCookie)) {
                 $this->pxConfig['logger']->debug('Cookie is missing');
-                $this->pxCtx->setS2SCallReason('no_cookie');
+                $call_reason = ($this->pxCtx->getPxVidCookie() != null && $this->pxCtx->getPxhdCookie() != null) ? "no_cookie_w_vid" : "no_cookie";
+                $this->pxCtx->setS2SCallReason($call_reason);
                 return false;
             }
 

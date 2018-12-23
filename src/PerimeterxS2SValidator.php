@@ -8,18 +8,6 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
 {
 
     const RISK_API_ENDPOINT = '/api/v3/risk';
-    private static $customParamsArray = [
-        'custom_param1' => '',
-        'custom_param2' => '',
-        'custom_param3' => '',
-        'custom_param4' => '',
-        'custom_param5' => '',
-        'custom_param6' => '',
-        'custom_param7' => '',
-        'custom_param8' => '',
-        'custom_param9' => '',
-        'custom_param10' => ''
-    ];
 
     private function sendRiskRequest()
     {
@@ -28,6 +16,9 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
         } else {
             $risk_mode = 'monitor';
         }
+
+        $vid_source = "none";
+
         $requestBody = [
             'request' => [
                 'ip' => $this->pxCtx->getIp(),
@@ -47,14 +38,26 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             ]
         ];
 
+        $pxvid = $this->pxCtx->getPxVidCookie();
         $vid = $this->pxCtx->getVid();
         if (isset($vid)) {
+            $vid_source = "risk_cookie";
             $requestBody['vid'] = $vid;
+        } else if (isset($pxvid)) {
+            $vid_source = "vid_cookie";
+            $requestBody['vid'] = $pxvid;
         }
+
+        $requestBody["additional"]["enforcer_vid_source"] = $vid_source;
 
         $uuid = $this->pxCtx->getUuid();
         if (isset($uuid)) {
             $requestBody['uuid'] = $uuid;
+        }
+
+        $pxhd = $this->pxCtx->getPxhdCookie();
+        if (isset($pxhd)) {
+            $requestBody['pxhd'] = $pxhd;
         }
 
         if ($this->pxCtx->getS2SCallReason() ==  'cookie_decryption_failed') {
@@ -89,12 +92,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
         }
 
         if (isset($this->pxConfig['enrich_custom_params'])) {
-            $riskCustomParams = $this->pxConfig['enrich_custom_params']($customParamsArray);
-            foreach ($riskCustomParams as $key => $value) {
-                if (preg_match('/custom_param\d+$/i', $key) && $value != '') {
-                    $requestBody['additional'][$key] = $value;
-                }
-            }
+            $this->pxUtils->handleCustomParams($this->pxConfig, $requestBody['additional']);
         }
 
         $headers = [
@@ -126,6 +124,10 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
         $this->pxConfig['logger']->debug("Evaluating Risk API request, call reason: {$this->pxCtx->getS2SCallReason()}");
         $response = json_decode($this->sendRiskRequest());
         $this->pxCtx->setIsMadeS2SRiskApiCall(true);
+
+        if (isset($response->pxhd)) {
+            setcookie("_pxhd", $response->pxhd, time() + 31557600); // expires in 1 year
+        }
         if (isset($response, $response->score, $response->action)) {
             $this->pxConfig['logger']->debug("Risk API response returned successfully, risk score: {$response->score}, round_trip_time: {$this->pxCtx->getRiskRtt()}");
             $score = $response->score;
