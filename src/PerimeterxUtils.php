@@ -19,8 +19,8 @@ class PerimeterxUtils
 
 	public function handleCustomParams($pxConfig, &$array) {
 		if (isset($pxConfig['enrich_custom_params'])) {
-			$riskCustomParams = $pxConfig['enrich_custom_params']($customParamsArray);
-			foreach ($riskCustomParams as $key => $value) {
+			$customParams = $pxConfig['enrich_custom_params']($customParamsArray);
+			foreach ($customParams as $key => $value) {
 				if (preg_match('/custom_param\d+$/i', $key) && $value != '') {
 					$array[$key] = $value;
 				}
