@@ -581,6 +581,7 @@ class PerimeterxContext
                 $this->px_cookies[$k] = $v;
             }
             array_push($this->request_cookie_names, $k);
+
         } else {
             $this->px_cookies['v3'] = $cookie;
         }
