@@ -33,6 +33,7 @@ class PerimeterxContext
             $pxConfig['logger']->debug("Mobile SDK token detected");
             $this->explodeCookieToVersion(':', $headers[PerimeterxContext::$MOBILE_SDK_HEADER]);
         } else if (isset($_SERVER['HTTP_COOKIE'])) {
+            $this->request_cookie_names = [];
             foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
                 if (!empty($rawcookie) && strpos($rawcookie, '=') !== false) {
                     $this->explodeCookieToVersion('=', $rawcookie);
@@ -243,8 +244,14 @@ class PerimeterxContext
     protected $pxde_verified;
 
     /**
+     * @var array of cookie names
+     */
+    protected $request_cookie_names;
+
+    /**
      * @return string
      */
+
     public function getVid()
     {
         return $this->vid;
@@ -436,6 +443,22 @@ class PerimeterxContext
     }
 
     /**
+     * @return string - pxvid cookie if exists
+     */
+    public function getPxVidCookie()
+    {
+        return isset($this->px_cookies['_pxvid']) ? $this->px_cookies['_pxvid'] : null;
+    }
+
+    /**
+     * @return string - pxhd cookie if exists
+     */
+    public function getPxhdCookie()
+    {
+        return isset($this->px_cookies['_pxhd']) ? $this->px_cookies['_pxhd'] : null;
+    }
+
+    /**
      * @return array of px cookies found on the request
      */
     public function getPxCookies()
@@ -515,6 +538,13 @@ class PerimeterxContext
         $this->decoded_original_token = $token;
     }
 
+    /**
+     * @param array
+     */
+    public function getCookieNames() {
+        return $this->request_cookie_names;
+    }
+
     private function checkSensitiveRoutePrefix($sensitive_routes, $uri)
     {
         foreach ($sensitive_routes as $route) {
@@ -547,6 +577,11 @@ class PerimeterxContext
             if ($k == '_pxde') {
                 $this->data_enrichment_cookie = $v;
             }
+            if ($k == '_pxhd' || $k == '_pxvid') {
+                $this->px_cookies[$k] = $v;
+            }
+            array_push($this->request_cookie_names, $k);
+
         } else {
             $this->px_cookies['v3'] = $cookie;
         }
