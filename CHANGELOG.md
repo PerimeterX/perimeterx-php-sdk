@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.0.0] - 2018-12-25
+### Added
+- First-Party fallback for block templates
+- Support for PXHD cookies
+- Enrich Custom Parameters support for async activities
+
 ## [2.10.0] - 2018-06-28
 ### Added
 - Added data enrichment support
