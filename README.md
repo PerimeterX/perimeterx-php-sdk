@@ -77,7 +77,7 @@ $px->pxVerify();
 
 ## <a name="upgrade"></a> Upgrading
 
-TBD
+Contact [PerimeterX Support](support@perimeterx.com) for more details.
 
 ### <a name="configuration"></a> Configuration Options
 
