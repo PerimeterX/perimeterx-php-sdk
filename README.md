@@ -79,9 +79,9 @@ $px->pxVerify();
 
 Contact [PerimeterX Support](support@perimeterx.com) for more details.
 
-### <a name="configuration"></a> Configuration Options
+## <a name="configuration"></a> Configuration Options
 
-#### Configuring Required Parameters
+### Configuring Required Parameters
 
 Configuration options are set on the `$perimeterxConfig` variable.
 
