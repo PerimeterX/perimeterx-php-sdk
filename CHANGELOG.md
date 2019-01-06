@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.0.1] - 2019-01-06
+### Fixed
+- PXHD cookie path
+
 ## [3.0.0] - 2018-12-25
 ### Added
 - First-Party fallback for block templates
