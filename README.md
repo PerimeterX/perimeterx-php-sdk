@@ -77,7 +77,9 @@ $px->pxVerify();
 
 ## <a name="upgrade"></a> Upgrading
 
-Contact [PerimeterX Support](support@perimeterx.com) for more details.
+Download the new version from packagist.
+
+For more information contact [PerimeterX Support](support@perimeterx.com).
 
 ## <a name="configuration"></a> Configuration Options
 
