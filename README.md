@@ -5,7 +5,7 @@
 [PerimeterX](http://www.perimeterx.com) PHP SDK
 =============================================================
 
-> Latest stable version: [v3.0.2](https://packagist.org/packages/perimeterx/php-sdk#3.0.2)
+> Latest stable version: [v3.0.3](https://packagist.org/packages/perimeterx/php-sdk#3.0.3)
 
 Table of Contents
 -----------------
@@ -14,6 +14,7 @@ Table of Contents
   *   [Dependencies](#dependencies)
   *   [Installation](#installation)
   *   [Basic Usage Example](#basic-usage)
+-   [Upgrading](#upgrade)  
 -   [Configuration](#configuration)
   *   [Blocking Score](#blocking-score)
   *   [Custom Block Page](#custom-block-page)
@@ -74,9 +75,15 @@ $px = Perimeterx::Instance($perimeterxConfig);
 $px->pxVerify();
 ```
 
-### <a name="configuration"></a> Configuration Options
+## <a name="upgrade"></a> Upgrading
 
-#### Configuring Required Parameters
+Download the new version from packagist.
+
+For more information contact [PerimeterX Support](support@perimeterx.com).
+
+## <a name="configuration"></a> Configuration Options
+
+### Configuring Required Parameters
 
 Configuration options are set on the `$perimeterxConfig` variable.
 
