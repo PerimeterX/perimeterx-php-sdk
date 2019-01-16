@@ -77,7 +77,9 @@ $px->pxVerify();
 
 ## <a name="upgrade"></a> Upgrading
 
-Download the new version from packagist.
+To upgrade to the latest Enforcer version, download the newest version from packagist.
+
+Your Enforcer version is now upgraded to the latest version.
 
 For more information contact [PerimeterX Support](support@perimeterx.com).
 
