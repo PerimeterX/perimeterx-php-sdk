@@ -34,18 +34,23 @@ class PerimeterxHttpClient
     public function send($url, $method, $json, $headers, $timeout = 0, $connect_timeout = 0)
     {
 
-        $json = self::fixJsonBody($json);
-        $rawResponse = $this->client->request($method, $url,
-            [
-            'json' => $json,
-            'headers' => $headers,
-            'timeout' => $timeout,
-            'connect_timeout' => $connect_timeout
-            ]
-        );
+        try {
+            $json = self::fixJsonBody($json);
+            $rawResponse = $this->client->request($method, $url,
+                [
+                'json' => $json,
+                'headers' => $headers,
+                'timeout' => $timeout,
+                'connect_timeout' => $connect_timeout
+                ]
+            );
 
-        $rawBody = (string)$rawResponse->getBody();
-        return $rawBody;
+            $rawBody = (string)$rawResponse->getBody();
+            return $rawBody;
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            $this->logger->debug('Unexpected exception in HTTP client. Request will fail open. ' . $url . ' ' . $e->getCode() . ' ' . $e->getMessage());
+            return "";
+        }
     }
 
     /**
