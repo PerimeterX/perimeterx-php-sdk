@@ -6,7 +6,7 @@ use Perimeterx\PerimeterxCookieValidator;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 
-class PerimeterxCookieValidatorTest extends PHPUnit_Framework_TestCase
+class PerimeterxOriginalTokenValidatorTest extends PHPUnit_Framework_TestCase
 {
     // randomly generated fake values
     const COOKIE_KEY = '549Z5UsasvfmVS6kAR3r4ydPnQdnnW4Gcwk35hj5tatZ5B2dqjrQvMMyLAJN5de3';
