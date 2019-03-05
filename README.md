@@ -32,6 +32,7 @@ Table of Contents
   *   [Logging](#logging)
   *   [Module Mode](#module-mode)
   *   [Debug Mode](#debug-mode)
+  *   [Test Block Flow on Monitoring Mode](#bypass-monitor-header)
 -   [Contributing](#contributing)
   *   [Tests](#tests)
 
@@ -558,6 +559,25 @@ log for an high score cookie:
 [Mon Dec  4 14:03:50 2017] [PerimeterX - DEBUG][APP_ID] -Cookie V3 found, Evaluating
 [Mon Dec  4 14:03:50 2017] [PerimeterX - DEBUG][APP_ID] -Cookie evaluation ended successfully, risk score: 100
 [Mon Dec  4 14:03:51 2017] [PerimeterX - DEBUG][APP_ID] -Enforcing action: Captcha page is served
+```
+
+#### <a name=“bypass-monitor-header”></a> Test Block Flow on Monitoring Mode
+
+Allows you to test an enforcer’s blocking flow while you are still in Monitor Mode.
+
+When the header name is set(eg. `x-px-block`) and the value is set to `1`, when there is a block response (for example from using a User-Agent header with the value of `PhantomJS/1.0`) the Monitor Mode is bypassed and full block mode is applied. If one of the conditions is missing you will stay in Monitor Mode. This is done per request.
+To stay in Monitor Mode, set the header value to `0`.
+
+The Header name is configurable using the `bypass_monitor_header` property.
+
+**Default:** not set
+
+```php
+$perimeterxConfig = [
+    ..
+    'bypass_monitor_header' => 'x-px-block'
+    ..
+]
 ```
 
 <a name="contributing"></a> Contributing
