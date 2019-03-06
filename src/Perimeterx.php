@@ -96,7 +96,8 @@ final class Perimeterx
                 'api_connect_timeout' => 1,
                 'local_proxy' => false,
                 'sensitive_routes' => [],
-                'ip_headers' => []
+                'ip_headers' => [],
+                'bypass_monitor_header' => null
             ], $pxConfig);
 
             if (empty($this->pxConfig['logger'])) {
@@ -200,7 +201,8 @@ final class Perimeterx
             return 1;
         }
 
-        if ($this->pxConfig['module_mode'] != Perimeterx::$ACTIVE_MODE) {
+        $should_bypass_monitor = isset($this->pxConfig['bypass_monitor_header']) && $pxCtx->getHeaders()[$this->pxConfig['bypass_monitor_header']] == "1";
+        if ($this->pxConfig['module_mode'] != Perimeterx::$ACTIVE_MODE && !$should_bypass_monitor ) {
             return 1;
         }
 
