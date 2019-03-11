@@ -5,7 +5,7 @@
 [PerimeterX](http://www.perimeterx.com) PHP SDK
 =============================================================
 
-> Latest stable version: [v3.0.3](https://packagist.org/packages/perimeterx/php-sdk#3.0.3)
+> Latest stable version: [v3.1.0](https://packagist.org/packages/perimeterx/php-sdk#3.1.0)
 
 Table of Contents
 -----------------
@@ -32,6 +32,7 @@ Table of Contents
   *   [Logging](#logging)
   *   [Module Mode](#module-mode)
   *   [Debug Mode](#debug-mode)
+  *   [Test Block Flow on Monitoring Mode](#bypass-monitor-header)
 -   [Contributing](#contributing)
   *   [Tests](#tests)
 
@@ -560,22 +561,41 @@ log for an high score cookie:
 [Mon Dec  4 14:03:51 2017] [PerimeterX - DEBUG][APP_ID] -Enforcing action: Captcha page is served
 ```
 
+#### <a name=“bypass-monitor-header”></a> Test Block Flow on Monitoring Mode
+
+Allows you to test an enforcer’s blocking flow while you are still in Monitor Mode.
+
+When the header name is set(eg. `x-px-block`) and the value is set to `1`, when there is a block response (for example from using a User-Agent header with the value of `PhantomJS/1.0`) the Monitor Mode is bypassed and full block mode is applied. If one of the conditions is missing you will stay in Monitor Mode. This is done per request.
+To stay in Monitor Mode, set the header value to `0`.
+
+The Header name is configurable using the `bypass_monitor_header` property.
+
+**Default:** not set
+
+```php
+$perimeterxConfig = [
+    ..
+    'bypass_monitor_header' => 'x-px-block'
+    ..
+]
+```
+
 <a name="contributing"></a> Contributing
 ----------------------------------------
 
 The following steps are welcome when contributing to our project.
-###Fork/Clone
+### Fork/Clone
 First and foremost, [Create a fork](https://guides.github.com/activities/forking/) of the repository, and clone it locally.
 Create a branch on your fork, preferably using a self descriptive branch name.
 
-###Code/Run
+### Code/Run
 Help improve our project by implementing missing features, adding capabilites or fixing bugs.
 
 To run the code, simply follow the steps in the [installation guide](#installation). Grab the keys from the PerimeterX Portal, and try refreshing your page several times continously. If no default behaviours have been overriden, you should see the PerimeterX block page. Solve the CAPTCHA to clean yourself and start fresh again.
 
 Feel free to check out the [Example App](https://github.com/PerimeterX/perimeterx-php-sdk/blob/master/examples/integration-example.php), to have a feel of the project.
 
-###<a name="tests"></a>Test
+### <a name="tests"></a>Test
 > Tests for this project are written using PHPUnit.
 
 **Dont forget to test**. The project relies heavily on tests, thus ensuring each user has the same experience, and no new features break the code.
@@ -584,5 +604,7 @@ Before you create any pull request, make sure your project has passed all tests,
 To run any of the tests in the available suite, first open the ```bootstrap.php.dist``` file, and change the values according to the in-file insturctions. Then, rename the `bootstrap.php.dist` to `bootstrap.php`.
 Finally, run the `phpunit tests/PerimeterxCookieValidatorTest` command to run all tests, or `phpunit <testName>` to execute a specific test (e.g. ```phpunit PerimeterxCookieTest```)
 
-###Pull Request
+To run coverage tests, run `phpunit --coverage-html tests/coverage`. This will create a directory tests/coverage with an html coverage for inspection.
+
+### Pull Request
 After you have completed the process, create a pull request to the Upstream repository. Please provide a complete and thorough description, explaining the changes. Remember this code has to be read by our maintainers, so keep it simple, smart and accurate.
