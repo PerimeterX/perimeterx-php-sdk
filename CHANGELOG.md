@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.2.0] - 2019-08-13
+### Fixed
+- Better handling for getting px/px3 cookies
+- Refactor to enrich custom parameters function
+
 ## [3.1.0] - 2019-03-09
 ### Added
 - Support for testing blocking flow in monitor mode

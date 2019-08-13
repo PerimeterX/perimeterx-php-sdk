@@ -87,7 +87,7 @@ final class Perimeterx
                 'max_buffer_len' => 1,
                 'send_page_activities' => true,
                 'send_block_activities' => true,
-                'sdk_name' => 'PHP SDK v3.1.0',
+                'sdk_name' => 'PHP SDK v3.2.0',
                 'debug_mode' => false,
                 'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
                 'captcha_script_host' => 'https://captcha.px-cdn.net',
@@ -201,7 +201,7 @@ final class Perimeterx
             return 1;
         }
 
-        $should_bypass_monitor = isset($this->pxConfig['bypass_monitor_header']) && $pxCtx->getHeaders()[$this->pxConfig['bypass_monitor_header']] == "1";
+        $should_bypass_monitor = isset($this->pxConfig['bypass_monitor_header']) && isset($pxCtx->getHeaders()[$this->pxConfig['bypass_monitor_header']]) && $pxCtx->getHeaders()[$this->pxConfig['bypass_monitor_header']] == "1";
         if ($this->pxConfig['module_mode'] != Perimeterx::$ACTIVE_MODE && !$should_bypass_monitor ) {
             return 1;
         }
