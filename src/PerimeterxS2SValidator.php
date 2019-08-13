@@ -43,7 +43,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
         if (isset($vid)) {
             $vid_source = "risk_cookie";
             $requestBody['vid'] = $vid;
-        } else if (isset($pxvid)) {
+        } else if (isset($pxvid) && preg_match('/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/', $pxvid)) {
             $vid_source = "vid_cookie";
             $requestBody['vid'] = $pxvid;
         }
