@@ -12,9 +12,9 @@ class PerimeterxConfigurationValidatorTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->params = [
-            'app_id' => PX_APP_ID,
-            'cookie_key' => PX_COOKIE_KEY,
-            'auth_token' => PX_AUTH_TOKEN,
+            'app_id' => 'PX_APP_ID',
+            'cookie_key' => 'PX_COOKIE_KEY',
+            'auth_token' => 'PX_AUTH_TOKEN',
             'blocking_score' => 80,
             'captcha_enabled' => false
         ];
@@ -34,7 +34,7 @@ class PerimeterxConfigurationValidatorTest extends PHPUnit_Framework_TestCase
     {
         $this->px = Perimeterx::Instance($this->params);
         $pxConfig = $this->px->getPxConfig();
-        $this->assertEquals($pxConfig['perimeterx_server_host'], 'https://sapi-' . strtolower(PX_APP_ID) . '.perimeterx.net');
+        $this->assertEquals($pxConfig['perimeterx_server_host'], 'https://sapi-px_app_id.perimeterx.net');
     }
 
     public function testPxConfigurationCustomization()
