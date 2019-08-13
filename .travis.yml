@@ -7,7 +7,7 @@ php:
 before_script:
   - cp tests/bootstrap.php.dist tests/bootstrap.php
   - composer install --dev
-  - composer update
+
 
 script:
   - ./vendor/bin/phplint
