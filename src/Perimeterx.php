@@ -201,7 +201,7 @@ final class Perimeterx
             return 1;
         }
 
-        $should_bypass_monitor = isset($this->pxConfig['bypass_monitor_header']) && $pxCtx->getHeaders()[$this->pxConfig['bypass_monitor_header']] == "1";
+        $should_bypass_monitor = isset($this->pxConfig['bypass_monitor_header']) && isset($pxCtx->getHeaders()[$this->pxConfig['bypass_monitor_header']]) && $pxCtx->getHeaders()[$this->pxConfig['bypass_monitor_header']] == "1";
         if ($this->pxConfig['module_mode'] != Perimeterx::$ACTIVE_MODE && !$should_bypass_monitor ) {
             return 1;
         }

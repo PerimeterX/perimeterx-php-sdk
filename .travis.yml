@@ -6,14 +6,15 @@ php:
 
 before_script:
   - cp tests/bootstrap.php.dist tests/bootstrap.php
-  - composer install --dev
-  - composer update
+  - composer install
+
 
 script:
   - ./vendor/bin/phplint
-  - phpunit tests/PerimeterxCookieValidatorTest
-  - phpunit tests/PerimeterxCookieV3ValidatorTest
-  - phpunit tests/PerimeterxOriginalTokenValidatorTest
-  - phpunit tests/PerimeterxConfigurationValidatorTest
-  - phpunit tests/PerimeterxS2SValidatorTest
-  - phpunit tests/PerimeterxDataEnrichmentTest
+  - cd vendor
+  - ./phpunit/phpunit/phpunit ../tests/PerimeterxCookieValidatorTest
+  - ./phpunit/phpunit/phpunit ../tests/PerimeterxCookieV3ValidatorTest
+  - ./phpunit/phpunit/phpunit ../tests/PerimeterxOriginalTokenValidatorTest
+  - ./phpunit/phpunit/phpunit ../tests/PerimeterxConfigurationValidatorTest
+  - ./phpunit/phpunit/phpunit ../tests/PerimeterxS2SValidatorTest
+  - ./phpunit/phpunit/phpunit ../tests/PerimeterxDataEnrichmentTest
