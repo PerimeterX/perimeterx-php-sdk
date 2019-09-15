@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.2.1] - 2019-09-15
+### Fixed
+- Better handling of x-px-original-token validation
+
 ## [3.2.0] - 2019-08-13
 ### Fixed
 - Better handling for getting px/px3 cookies
