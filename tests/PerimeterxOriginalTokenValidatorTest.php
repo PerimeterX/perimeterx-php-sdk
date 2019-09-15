@@ -25,7 +25,7 @@ class PerimeterxOriginalTokenValidatorTest extends PHPUnit_Framework_TestCase
 
         $pxPayload = $this->encodeCookie($decodedToken);
 
-        $pxOriginalToken = $this->signCookie($pxPayload).":".$pxPayload;
+        $pxOriginalToken = "3:".$this->signCookie($pxPayload).":".$pxPayload;
         $pxCtx = $this->getPxContext($pxToken, $pxOriginalToken);
 
         $pxConfig = [
@@ -59,7 +59,7 @@ class PerimeterxOriginalTokenValidatorTest extends PHPUnit_Framework_TestCase
         $this->assertPxContext($pxCtx, null, null, null, "cookie_decryption_failed");
     }
 
-    public function testInvalidORiginalTokenExtraction() {
+    public function testInvalidOriginalTokenExtraction() {
         $pxToken = '2';
         $token_time = (time() + 1000) * 1000;
         $token_uuid = self::COOKIE_UUID;
@@ -70,7 +70,7 @@ class PerimeterxOriginalTokenValidatorTest extends PHPUnit_Framework_TestCase
 
         $pxPayload = $this->encodeCookie($decodedToken);
 
-        $pxOriginalToken = $this->signCookie($pxPayload.'111111').":".$pxPayload;
+        $pxOriginalToken = "3:".$this->signCookie($pxPayload.'111111').":".$pxPayload;
 
         $pxCtx = $this->getPxContext($pxToken, $pxOriginalToken);
         $pxConfig = [
@@ -83,7 +83,61 @@ class PerimeterxOriginalTokenValidatorTest extends PHPUnit_Framework_TestCase
         $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
 
         $this->assertFalse($v->verify());
-        $this->assertPxContext($pxCtx, $decodedToken, $token_uuid, $token_vid, "cookie_validation_failed");
+        $this->assertPxContext($pxCtx, null, null, null, "cookie_validation_failed");
+    }
+
+    public function testInvalidOriginalTokenKey() {
+        $pxToken = '2';
+        $token_time = (time() + 1000) * 1000;
+        $token_uuid = self::COOKIE_UUID;
+        $token_vid = self::COOKIE_VID;
+        $token_score = 0;
+
+        $decodedToken = $this->createCookie($token_time, $token_vid, $token_uuid, $token_score);
+
+        $pxPayload = $this->encodeCookie($decodedToken);
+
+        $pxOriginalToken = "3:3:".$this->signCookie($pxPayload).":".$pxPayload;
+
+        $pxCtx = $this->getPxContext($pxToken, $pxOriginalToken);
+        $pxConfig = [
+            'encryption_enabled' => false,
+            'cookie_key' => self::COOKIE_KEY,
+            'blocking_score' => 70,
+            'logger' => $this->getMockLogger('debug', 'Original token found, evaluating', 1)
+        ];
+
+        $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
+
+        $this->assertFalse($v->verify());
+        $this->assertPxContext($pxCtx, null, null, null, "cookie_decryption_failed");
+    }
+
+    public function testOrigitalTokenWithoutKey() {
+        $pxToken = '2';
+        $token_time = (time() + 1000) * 1000;
+        $token_uuid = self::COOKIE_UUID;
+        $token_vid = self::COOKIE_VID;
+        $token_score = 0;
+
+        $decodedToken = $this->createCookie($token_time, $token_vid, $token_uuid, $token_score);
+
+        $pxPayload = $this->encodeCookie($decodedToken);
+
+        $pxOriginalToken = $this->signCookie($pxPayload).":".$pxPayload;
+
+        $pxCtx = $this->getPxContext($pxToken, $pxOriginalToken);
+        $pxConfig = [
+            'encryption_enabled' => false,
+            'cookie_key' => self::COOKIE_KEY,
+            'blocking_score' => 70,
+            'logger' => $this->getMockLogger('debug', 'Original token found, evaluating', 1)
+        ];
+
+        $v = new PerimeterxCookieValidator($pxCtx, $pxConfig);
+
+        $this->assertFalse($v->verify());
+        $this->assertPxContext($pxCtx, null, null, null, "cookie_decryption_failed");
     }
 
     // private functions
@@ -120,9 +174,16 @@ class PerimeterxOriginalTokenValidatorTest extends PHPUnit_Framework_TestCase
      * @return void
      */
     private function assertPxContext($pxCtx, $decoded_token, $uuid, $vid, $original_token_error) {
-        $this->assertEquals($uuid, $pxCtx->getOriginalTokenUuid());
-        $this->assertEquals($decoded_token, $pxCtx->getDecodedOriginalToken());
-        $this->assertEquals($vid, $pxCtx->getVid());
+        if (!is_null($uuid)) {
+            $this->assertEquals($uuid, $pxCtx->getOriginalTokenUuid());
+        }
+        if (!is_null($vid)) {
+            $this->assertEquals($vid, $pxCtx->getVid());
+        }
+        if (!is_null($decoded_token)) {
+            $this->assertEquals($decoded_token, $pxCtx->getDecodedOriginalToken());
+        }
+
         $this->assertEquals($original_token_error, $pxCtx->getOriginalTokenError());
     }
 

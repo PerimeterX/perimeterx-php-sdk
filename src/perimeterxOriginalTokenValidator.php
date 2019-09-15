@@ -21,7 +21,13 @@ class PerimeterxOriginalTokenValidator
 
     public function __construct($pxCtx, $pxConfig)
     {
-        $this->pxToken = $pxCtx->getOriginalToken();
+        $delimiter = ":";
+        $pxOrigToken = $pxCtx->getOriginalToken();
+        if (strpos($pxOrigToken, $delimiter)) {
+            list($key, $token) = explode($delimiter, $pxOrigToken, 2);
+            $this->pxToken = $token;
+        }
+
         $this->pxConfig = $pxConfig;
         $this->pxCtx = $pxCtx;
     }
