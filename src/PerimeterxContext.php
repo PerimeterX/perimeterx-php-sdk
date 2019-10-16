@@ -561,7 +561,12 @@ class PerimeterxContext
         $l = strtolower($_SERVER["SERVER_PROTOCOL"]);
         $protocol = substr($l, 0, strpos($l, "/")) . $s;
         $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
-        return $protocol . "://" . $_SERVER['HTTP_HOST'] . $port . $this->uri;
+        $host = $_SERVER['HTTP_HOST'];
+        if (strpos($host, $port)) {
+            return $protocol . "://" . $host . $this->uri;
+        } else {
+            return $protocol . "://" . $host . $port . $this->uri;
+        }
     }
 
     private function explodeCookieToVersion($delimiter, $cookie)

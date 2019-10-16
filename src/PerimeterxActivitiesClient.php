@@ -57,6 +57,7 @@ class PerimeterxActivitiesClient
         }
 
         $details['cookie_origin'] = $pxCtx->getCookieOrigin();
+        $details['http_method'] = $pxCtx->getHttpMethod();
 
         $details['module_version'] = $this->pxConfig['sdk_name'];
         $pxData = [];
@@ -122,7 +123,6 @@ class PerimeterxActivitiesClient
         $details['client_uuid'] = $pxCtx->getUuid();
         $details['module_version'] = $this->pxConfig['sdk_name'];
         $details['http_version'] = $pxCtx->getHttpVersion();
-        $details['http_method'] = $pxCtx->getHttpMethod();
         $details['pass_reason'] = $pxCtx->getPassReason();
         $details['risk_rtt'] = $pxCtx->getRiskRtt();
 
