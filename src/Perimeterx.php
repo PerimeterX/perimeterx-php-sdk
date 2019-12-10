@@ -78,6 +78,7 @@ final class Perimeterx
                 'app_id' => null,
                 'cookie_key' => null,
                 'auth_token' => null,
+                'guzzleHandler' => null,
                 'module_enabled' => true,
                 'captcha_enabled' => true,
                 'challenge_enabled' => true,
