@@ -307,11 +307,8 @@ final class Perimeterx
             }
 
             $pxCtx = new PerimeterxContext($this->pxConfig);
-            $cookie = PerimeterxCookie::pxCookieFactory($pxCtx, $this->pxConfig);
-            if ($cookie->isValid()) {
-                $pxCtx->setVid($cookie->getVid());
-                $pxCtx->setUuid($cookie->getUuid());
-            }
+            $validator = new PerimeterxCookieValidator($pxCtx, $this->pxConfig);
+            $validator->verify();
 
             $client = new PerimeterxResetClient($pxCtx, $this->pxConfig);
             $client->sendResetRequest();
