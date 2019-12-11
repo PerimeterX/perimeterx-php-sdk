@@ -32,6 +32,7 @@ Table of Contents
   *   [Logging](#logging)
   *   [Module Mode](#module-mode)
   *   [Debug Mode](#debug-mode)
+  *   [Guzzle Client Handler](#guzzle-client-handler)
   *   [Test Block Flow on Monitoring Mode](#bypass-monitor-header)
 -   [Contributing](#contributing)
   *   [Tests](#tests)
@@ -559,6 +560,27 @@ log for an high score cookie:
 [Mon Dec  4 14:03:50 2017] [PerimeterX - DEBUG][APP_ID] -Cookie V3 found, Evaluating
 [Mon Dec  4 14:03:50 2017] [PerimeterX - DEBUG][APP_ID] -Cookie evaluation ended successfully, risk score: 100
 [Mon Dec  4 14:03:51 2017] [PerimeterX - DEBUG][APP_ID] -Enforcing action: Captcha page is served
+```
+
+#### <a name="guzzle-client-handler"></a> Guzzle Client Handler
+
+Allows to set a handler to the Guzzle client.
+
+**Default:** false
+
+```php
+
+$container = [];
+$history = Middleware::history($container);
+$handler = HandlerStack::create();
+$handler->push($history);
+
+
+$perimeterxConfig = [
+    ..
+    'guzzleHandler' => $handler
+    ..
+]
 ```
 
 #### <a name=“bypass-monitor-header”></a> Test Block Flow on Monitoring Mode
