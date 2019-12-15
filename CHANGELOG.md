@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.3.0] - 2019-12-15
+### Added
+- Support for setting an handler for Guzzle.
+- Support for custom block url.
+
+### Fixed
+- http_method not sent on async activities (page_requested/block).
+- refactor to `pxReset` method.
+
 ## [3.2.1] - 2019-09-15
 ### Fixed
 - Better handling of x-px-original-token validation

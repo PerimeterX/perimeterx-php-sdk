@@ -5,7 +5,7 @@
 [PerimeterX](http://www.perimeterx.com) PHP SDK
 =============================================================
 
-> Latest stable version: [v3.2.1](https://packagist.org/packages/perimeterx/php-sdk#3.2.1)
+> Latest stable version: [v3.3.0](https://packagist.org/packages/perimeterx/php-sdk#3.3.0)
 
 Table of Contents
 -----------------
@@ -32,6 +32,8 @@ Table of Contents
   *   [Logging](#logging)
   *   [Module Mode](#module-mode)
   *   [Debug Mode](#debug-mode)
+  *   [Guzzle Client Handler](#guzzle-client-handler)
+  *   [Custom Block URL](#custom-block-url)
   *   [Test Block Flow on Monitoring Mode](#bypass-monitor-header)
 -   [Contributing](#contributing)
   *   [Tests](#tests)
@@ -559,6 +561,43 @@ log for an high score cookie:
 [Mon Dec  4 14:03:50 2017] [PerimeterX - DEBUG][APP_ID] -Cookie V3 found, Evaluating
 [Mon Dec  4 14:03:50 2017] [PerimeterX - DEBUG][APP_ID] -Cookie evaluation ended successfully, risk score: 100
 [Mon Dec  4 14:03:51 2017] [PerimeterX - DEBUG][APP_ID] -Enforcing action: Captcha page is served
+```
+
+#### <a name="guzzle-client-handler"></a> Guzzle Client Handler
+
+Allows setting a handler to the Guzzle client object.
+
+**Default:** false
+
+```php
+
+$container = [];
+$history = Middleware::history($container);
+$handler = HandlerStack::create();
+$handler->push($history);
+
+
+$perimeterxConfig = [
+    ..
+    'guzzle_handler' => $handler
+    ..
+]
+```
+
+#### <a name="custom-block-url"></a> Custom Block URL
+
+You can customize the block page to meet branding and message requirements by specifying the URL of the block page HTML file.
+The enforcer will redirect to the block page defined in the `custom_block_url` variable. The defined block page will display a 307 (Temporary Redirect) HTTP Response Code.
+
+**Default:** not set
+
+```php
+
+$perimeterxConfig = [
+    ..
+    'custom_block_url' => '/block.html'
+    ..
+]
 ```
 
 #### <a name=“bypass-monitor-header”></a> Test Block Flow on Monitoring Mode

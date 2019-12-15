@@ -78,6 +78,7 @@ final class Perimeterx
                 'app_id' => null,
                 'cookie_key' => null,
                 'auth_token' => null,
+                'guzzle_handler' => null,
                 'module_enabled' => true,
                 'captcha_enabled' => true,
                 'challenge_enabled' => true,
@@ -87,7 +88,7 @@ final class Perimeterx
                 'max_buffer_len' => 1,
                 'send_page_activities' => true,
                 'send_block_activities' => true,
-                'sdk_name' => 'PHP SDK v3.2.1',
+                'sdk_name' => 'PHP SDK v3.3.0',
                 'debug_mode' => false,
                 'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
                 'captcha_script_host' => 'https://captcha.px-cdn.net',
@@ -97,7 +98,8 @@ final class Perimeterx
                 'local_proxy' => false,
                 'sensitive_routes' => [],
                 'ip_headers' => [],
-                'bypass_monitor_header' => null
+                'bypass_monitor_header' => null,
+                'custom_block_url' => null
             ], $pxConfig);
 
             if (empty($this->pxConfig['logger'])) {
@@ -239,8 +241,15 @@ final class Perimeterx
             $this->pxConfig['logger']->debug("Enforcing action: Rate limit page is served");
         } else {
             /* set return html to default block page */
-            $html = $mustache->render('block_template', $templateInputs);
-            $this->pxConfig['logger']->debug("Enforcing action: {$pxCtx->getBlockAction()} page is served");
+            if (isset($this->pxConfig['custom_block_url'])) {
+                $url = base64_encode($pxCtx->getUri());
+                $page_url = $this->pxConfig['custom_block_url'].'?vid='.$templateInputs['vid'].'&uuid='.$templateInputs['uuid'].'&url='.$url;
+                header('Location: '.$page_url, true, 307);
+                die();
+            } else {
+                $html = $mustache->render('block_template', $templateInputs);
+                $this->pxConfig['logger']->debug("Enforcing action: {$pxCtx->getBlockAction()} page is served");
+            }
         }
 
         if ($pxCtx->getCookieOrigin() == 'cookie') {
@@ -306,11 +315,8 @@ final class Perimeterx
             }
 
             $pxCtx = new PerimeterxContext($this->pxConfig);
-            $cookie = PerimeterxCookie::pxCookieFactory($pxCtx, $this->pxConfig);
-            if ($cookie->isValid()) {
-                $pxCtx->setVid($cookie->getVid());
-                $pxCtx->setUuid($cookie->getUuid());
-            }
+            $validator = new PerimeterxCookieValidator($pxCtx, $this->pxConfig);
+            $validator->verify();
 
             $client = new PerimeterxResetClient($pxCtx, $this->pxConfig);
             $client->sendResetRequest();

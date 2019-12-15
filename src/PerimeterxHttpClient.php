@@ -23,7 +23,11 @@ class PerimeterxHttpClient
      */
     public function __construct($config)
     {
-        $this->client = new Client(['base_uri' => $config['perimeterx_server_host']]);
+        if (isset($config['guzzle_handler'])) {
+            $this->client = new Client(['base_uri' => $config['perimeterx_server_host'], 'handler' => $config['guzzle_handler']]);
+        } else {
+            $this->client = new Client(['base_uri' => $config['perimeterx_server_host']]);
+        }
         $this->logger = $config['logger'];
     }
 
