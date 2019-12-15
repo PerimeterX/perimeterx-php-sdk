@@ -98,7 +98,8 @@ final class Perimeterx
                 'local_proxy' => false,
                 'sensitive_routes' => [],
                 'ip_headers' => [],
-                'bypass_monitor_header' => null
+                'bypass_monitor_header' => null,
+                'custom_block_url' => null
             ], $pxConfig);
 
             if (empty($this->pxConfig['logger'])) {
@@ -240,8 +241,15 @@ final class Perimeterx
             $this->pxConfig['logger']->debug("Enforcing action: Rate limit page is served");
         } else {
             /* set return html to default block page */
-            $html = $mustache->render('block_template', $templateInputs);
-            $this->pxConfig['logger']->debug("Enforcing action: {$pxCtx->getBlockAction()} page is served");
+            if (isset($this->pxConfig['custom_block_url'])) {
+                $url = base64_encode($pxCtx->getUri());
+                $page_url = $this->pxConfig['custom_block_url'].'?vid='.$templateInputs['vid'].'&uuid='.$templateInputs['uuid'].'&url='.$url;
+                header('Location: '.$page_url, true, 307);
+                die();
+            } else {
+                $html = $mustache->render('block_template', $templateInputs);
+                $this->pxConfig['logger']->debug("Enforcing action: {$pxCtx->getBlockAction()} page is served");
+            }
         }
 
         if ($pxCtx->getCookieOrigin() == 'cookie') {
