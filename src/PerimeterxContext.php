@@ -562,7 +562,7 @@ class PerimeterxContext
         $protocol = substr($l, 0, strpos($l, "/")) . $s;
         $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
         $host = $_SERVER['HTTP_HOST'];
-        if (strpos($host, $port)) {
+        if (!empty($port) && strpos($host, $port)) {
             return $protocol . "://" . $host . $this->uri;
         } else {
             return $protocol . "://" . $host . $port . $this->uri;
