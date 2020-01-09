@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.3.1] - 2020-01-09
+### Fixed
+- Emprty $port check before using strpos
+
 ## [3.3.0] - 2019-12-15
 ### Added
 - Support for setting an handler for Guzzle.
