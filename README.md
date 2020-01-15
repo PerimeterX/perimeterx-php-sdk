@@ -25,6 +25,7 @@ Table of Contents
   *   [Filter Sensitive Headers](#sensitive-headers)
   *   [Sensitive Route](#sensitive-routes)
   *   [API Timeouts](#api-timeout)
+  *   [Activities API Timeouts](#activities-api-timeout)
   *   [Send Page Activities](#send-page-activities)
   *   [Additional Page Activity Handler](#additional-page-activity-handler)
   *   [Data-Enrichment](#data-enrichment)
@@ -376,6 +377,36 @@ The API Connection Timeout, in seconds (float), to wait for the connection to th
 $perimeterxConfig = [
   ..
     'api_connect_timeout' => 2
+    ..
+]
+```
+
+#### <a name="activities-api-timeout"></a>Activities API Timeouts
+
+> Note: Controls the timeouts for PerimeterX activities requests.
+
+The activities API Timeout, in seconds (float), to wait for the PerimeterX server API response.
+
+
+**Default:** 1
+
+```php
+$perimeterxConfig = [
+  ..
+    'activities_timeout' => 2
+    ..
+]
+```
+
+The activities API Connection Timeout, in seconds (float), to wait for the connection to the PerimeterX server API.
+
+
+**Default:** 1
+
+```php
+$perimeterxConfig = [
+  ..
+    'activities_connect_timeout' => 2
     ..
 ]
 ```

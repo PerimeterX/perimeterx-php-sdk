@@ -95,6 +95,8 @@ final class Perimeterx
                 'module_mode' => Perimeterx::$MONITOR_MODE,
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
+                'activities_timeout' => 1,
+                'activities_connect_timeout' => 1,
                 'local_proxy' => false,
                 'sensitive_routes' => [],
                 'ip_headers' => [],

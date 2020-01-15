@@ -87,7 +87,7 @@ class PerimeterxActivitiesClient
             'Authorization' => 'Bearer ' . $this->pxConfig['auth_token'],
             'Content-Type' => 'application/json'
         ];
-        $this->httpClient->send('/api/v1/collector/s2s', 'POST', $activities, $headers);
+        $this->httpClient->send('/api/v1/collector/s2s', 'POST', $activities, $headers, $this->pxConfig['activities_timeout'], $this->pxConfig['activities_connect_timeout']);
     }
 
     /**
