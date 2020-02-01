@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.5.0] - 2020-02-02
+### Added
+- Support for `defer_activities`.
+
 ## [3.4.0] - 2020-01-15
 ### Added
 - support for `activities_timeout` and `activities_connect_timeout`.
