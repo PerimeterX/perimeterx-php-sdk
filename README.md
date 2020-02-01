@@ -35,6 +35,7 @@ Table of Contents
   *   [Debug Mode](#debug-mode)
   *   [Guzzle Client Handler](#guzzle-client-handler)
   *   [Custom Block URL](#custom-block-url)
+  *   [Defer Activities Sending](#defer-activities)
   *   [Test Block Flow on Monitoring Mode](#bypass-monitor-header)
 -   [Contributing](#contributing)
   *   [Tests](#tests)
@@ -630,6 +631,21 @@ $perimeterxConfig = [
     ..
 ]
 ```
+
+#### <a name="defer-activities"></a> Defer Activities Sending
+
+Specifies if sending page activities should be deferred until shutdown or not.
+
+**Default:** true
+
+```php
+$perimeterxConfig = [
+    ..
+    'defer_activities' => false
+    ..
+]
+
+
 
 #### <a name=“bypass-monitor-header”></a> Test Block Flow on Monitoring Mode
 
