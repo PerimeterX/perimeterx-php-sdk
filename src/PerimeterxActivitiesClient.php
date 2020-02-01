@@ -107,7 +107,11 @@ class PerimeterxActivitiesClient
         $details['risk_rtt'] = $pxCtx->getRiskRtt();
         $details['simulated_block'] = $this->pxConfig['module_mode'] == Perimeterx::$MONITOR_MODE;
 
-        $this->sendToPerimeterx("block", $pxCtx, $details);
+        if ($this->pxConfig['defer_activities']) {
+            register_shutdown_function([$this, 'sendToPerimeterx'], "block", $pxCtx, $details);
+        } else {
+            $this->sendToPerimeterx("block", $pxCtx, $details);
+        }
     }
 
     /**
@@ -133,6 +137,11 @@ class PerimeterxActivitiesClient
         if ($pxCtx->getCookieHmac()) {
             $details['px_cookie_hmac'] = $pxCtx->getCookieHmac();
         }
-        $this->sendToPerimeterx('page_requested', $pxCtx, $details);
+
+        if ($this->pxConfig['defer_activities']) {
+            register_shutdown_function([$this, 'sendToPerimeterx'], "page_requested", $pxCtx, $details);
+        } else {
+            $this->sendToPerimeterx('page_requested', $pxCtx, $details);
+        }
     }
 }

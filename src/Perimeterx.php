@@ -101,7 +101,8 @@ final class Perimeterx
                 'sensitive_routes' => [],
                 'ip_headers' => [],
                 'bypass_monitor_header' => null,
-                'custom_block_url' => null
+                'custom_block_url' => null,
+                'defer_activities' => true
             ], $pxConfig);
 
             if (empty($this->pxConfig['logger'])) {
