@@ -14,12 +14,12 @@ Table of Contents
   *   [Dependencies](#dependencies)
   *   [Installation](#installation)
   *   [Basic Usage Example](#basic-usage)
--   [Upgrading](#upgrade)  
+-   [Upgrading](#upgrade)
 -   [Configuration](#configuration)
   *   [Blocking Score](#blocking-score)
+  *   [Extracting Recomended Action](#block-action)
   *   [Custom Block Page](#custom-block-page)
   *   [Custom Block Action](#custom-block)
-     * [Extracting Recomended Action](#block-action)
   *   [Extracting Real IP Address](#real-ip)
   *   [Custom URI](#custom-uri)
   *   [Filter Sensitive Headers](#sensitive-headers)
@@ -492,7 +492,7 @@ $px->pxVerify();
 
 #### <a name="data-enrichment"></a> Data-Enrichment
 User can use the additional activity handler to retrieve information for the request using the data-enrichment object.
-first, validate the data enrichment object is verified, then you can access it's properties. 
+first, validate the data enrichment object is verified, then you can access it's properties.
 
 
 **Default:** false
