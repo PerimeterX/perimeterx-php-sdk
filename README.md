@@ -1,11 +1,11 @@
 [![Build Status](https://travis-ci.org/PerimeterX/perimeterx-php-sdk.svg?branch=master)](https://travis-ci.org/PerimeterX/perimeterx-php-sdk)
 
-![image](https://s.perimeterx.net/logo.png)
+![image](https://storage.googleapis.com/perimeterx-logos/primary_logo_red.png)
 #
 [PerimeterX](http://www.perimeterx.com) PHP SDK
 =============================================================
 
-> Latest stable version: [v3.4.0](https://packagist.org/packages/perimeterx/php-sdk#3.4.0)
+> Latest stable version: [v3.5.0](https://packagist.org/packages/perimeterx/php-sdk#3.5.0)
 
 Table of Contents
 -----------------
@@ -14,12 +14,12 @@ Table of Contents
   *   [Dependencies](#dependencies)
   *   [Installation](#installation)
   *   [Basic Usage Example](#basic-usage)
--   [Upgrading](#upgrade)  
+-   [Upgrading](#upgrade)
 -   [Configuration](#configuration)
   *   [Blocking Score](#blocking-score)
+  *   [Extracting Recomended Action](#block-action)
   *   [Custom Block Page](#custom-block-page)
   *   [Custom Block Action](#custom-block)
-     * [Extracting Recomended Action](#block-action)
   *   [Extracting Real IP Address](#real-ip)
   *   [Custom URI](#custom-uri)
   *   [Filter Sensitive Headers](#sensitive-headers)
@@ -35,6 +35,7 @@ Table of Contents
   *   [Debug Mode](#debug-mode)
   *   [Guzzle Client Handler](#guzzle-client-handler)
   *   [Custom Block URL](#custom-block-url)
+  *   [Defer Activities Sending](#defer-activities)
   *   [Test Block Flow on Monitoring Mode](#bypass-monitor-header)
 -   [Contributing](#contributing)
   *   [Tests](#tests)
@@ -491,7 +492,7 @@ $px->pxVerify();
 
 #### <a name="data-enrichment"></a> Data-Enrichment
 User can use the additional activity handler to retrieve information for the request using the data-enrichment object.
-first, validate the data enrichment object is verified, then you can access it's properties. 
+first, validate the data enrichment object is verified, then you can access it's properties.
 
 
 **Default:** false
@@ -630,6 +631,21 @@ $perimeterxConfig = [
     ..
 ]
 ```
+
+#### <a name="defer-activities"></a> Defer Activities Sending
+
+Specifies if sending page activities should be deferred until shutdown or not.
+
+**Default:** true
+
+```php
+$perimeterxConfig = [
+    ..
+    'defer_activities' => false
+    ..
+]
+
+
 
 #### <a name=“bypass-monitor-header”></a> Test Block Flow on Monitoring Mode
 

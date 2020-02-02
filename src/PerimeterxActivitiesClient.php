@@ -50,12 +50,20 @@ class PerimeterxActivitiesClient
      * @param PerimeterxContext $pxCtx
      * @param $details
      */
-    public function sendToPerimeterx($activityType, $pxCtx, $details = [])
+    public function prepareActivitiesRequest($activityType, $pxCtx, $details = [])
     {
         if (isset($this->pxConfig['additional_activity_handler'])) {
             $this->pxConfig['additional_activity_handler']($activityType, $pxCtx, $details);
         }
 
+        if ($this->pxConfig['defer_activities']) {
+            register_shutdown_function([$this, 'sendToPerimeterx'], $activityType, $pxCtx, $details);
+        } else {
+            $this->sendToPerimeterx($activityType, $pxCtx, $details);
+        }
+    }
+
+    public function sendToPerimeterx($activityType, $pxCtx, $details) {
         $details['cookie_origin'] = $pxCtx->getCookieOrigin();
         $details['http_method'] = $pxCtx->getHttpMethod();
 
@@ -107,7 +115,7 @@ class PerimeterxActivitiesClient
         $details['risk_rtt'] = $pxCtx->getRiskRtt();
         $details['simulated_block'] = $this->pxConfig['module_mode'] == Perimeterx::$MONITOR_MODE;
 
-        $this->sendToPerimeterx("block", $pxCtx, $details);
+        $this->prepareActivitiesRequest("block", $pxCtx, $details);
     }
 
     /**
@@ -133,6 +141,7 @@ class PerimeterxActivitiesClient
         if ($pxCtx->getCookieHmac()) {
             $details['px_cookie_hmac'] = $pxCtx->getCookieHmac();
         }
-        $this->sendToPerimeterx('page_requested', $pxCtx, $details);
+
+        $this->prepareActivitiesRequest('page_requested', $pxCtx, $details);
     }
 }
