@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/PerimeterX/perimeterx-php-sdk.svg?branch=master)](https://travis-ci.org/PerimeterX/perimeterx-php-sdk)
 
-![image](https://storage.googleapis.com/perimeterx-logos/primary_logo_red.png)
+![image](https://storage.googleapis.com/perimeterx-logos/primary_logo_red_cropped.png)
 #
 [PerimeterX](http://www.perimeterx.com) PHP SDK
 =============================================================
