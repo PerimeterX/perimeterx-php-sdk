@@ -88,7 +88,7 @@ final class Perimeterx
                 'max_buffer_len' => 1,
                 'send_page_activities' => true,
                 'send_block_activities' => true,
-                'sdk_name' => 'PHP SDK v3.5.0',
+                'sdk_name' => 'PHP SDK v3.5.1',
                 'debug_mode' => false,
                 'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
                 'captcha_script_host' => 'https://captcha.px-cdn.net',

@@ -137,7 +137,7 @@ abstract class PerimeterxPayload {
         list($salt, $iterations, $payload) = $payloadParts;
         $iterations = intval($iterations);
 
-        if ($iterations < 1 || $iterations > 5000) {
+        if ($iterations < 500 || $iterations > 5000) {
             return null;
         }
 

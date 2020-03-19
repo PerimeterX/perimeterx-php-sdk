@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.5.1] - 2020-03-19
+### Fixed
+- Validation for cookie iterations count.
+
 ## [3.5.0] - 2020-02-02
 ### Added
 - Support for `defer_activities`.
