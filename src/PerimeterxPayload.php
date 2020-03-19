@@ -136,6 +136,11 @@ abstract class PerimeterxPayload {
 
         list($salt, $iterations, $payload) = $payloadParts;
         $iterations = intval($iterations);
+
+        if ($iterations < 1 || $iterations >= 5000) {
+            return null;
+        }
+
         $salt = base64_decode($salt);
         $payload = base64_decode($payload);
 

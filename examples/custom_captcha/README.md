@@ -79,4 +79,4 @@ function getQueryString(name, url) {
 <a name="pxsnippet"></a>
 ### PerimeterX Snippet
 
-Add your [application snippet](https://console.perimeterx.com/#/app/applicationsmgmt) to the block page.
+Add your [application snippet](https://console.perimeterx.com/botDefender/admin?page=applicationsmgmt) to the block page.
