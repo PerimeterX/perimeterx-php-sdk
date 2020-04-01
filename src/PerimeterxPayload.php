@@ -148,6 +148,9 @@ abstract class PerimeterxPayload {
         $key = substr($derivation, 0, $keylen);
         $iv = substr($derivation, $keylen);
         $payload = openssl_decrypt($payload, "aes-256-cbc", $key, OPENSSL_RAW_DATA, $iv);
+        if (!$payload) {
+            return null;
+        }
 
         return $this->unpad($payload);
     }

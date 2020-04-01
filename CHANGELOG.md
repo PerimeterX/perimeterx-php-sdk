@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.5.2] - 2020-04-01
+### Fixed
+- Added check for false value for `openssl_decrypt`
+
 ## [3.5.1] - 2020-03-19
 ### Fixed
 - Validation for cookie iterations count.
