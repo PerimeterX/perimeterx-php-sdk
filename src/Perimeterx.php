@@ -59,7 +59,7 @@ final class Perimeterx
 
     private function __construct(array $pxConfig = [])
     {
-        
+
         if (!isset($pxConfig['app_id'])) {
             throw new PerimeterxException(PerimeterxException::$APP_ID_MISSING);
         }
@@ -88,7 +88,7 @@ final class Perimeterx
                 'max_buffer_len' => 1,
                 'send_page_activities' => true,
                 'send_block_activities' => true,
-                'sdk_name' => 'PHP SDK v3.5.1',
+                'sdk_name' => 'PHP SDK v3.5.2',
                 'debug_mode' => false,
                 'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
                 'captcha_script_host' => 'https://captcha.px-cdn.net',
@@ -132,11 +132,11 @@ final class Perimeterx
             $this->pxConfig['logger']->debug('Request context created successfully');
 
             $validator = new PerimeterxCookieValidator($pxCtx, $this->pxConfig);
-          
+
             $cookie_valid = $validator->verify();
             if($cookie_valid) {
                 PerimeterxDataEnrichment::processDataEnrichment($pxCtx, $this->pxConfig);
-            } 
+            }
             else {
                 $s2sValidator = new PerimeterxS2SValidator($pxCtx, $this->pxConfig);
                 $s2sValidator->verify();
