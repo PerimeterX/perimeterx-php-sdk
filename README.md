@@ -1,57 +1,57 @@
 [![Build Status](https://travis-ci.org/PerimeterX/perimeterx-php-sdk.svg?branch=master)](https://travis-ci.org/PerimeterX/perimeterx-php-sdk)
 
 ![image](https://storage.googleapis.com/perimeterx-logos/primary_logo_red_cropped.png)
+
 #
-[PerimeterX](http://www.perimeterx.com) PHP SDK
-=============================================================
 
-> Latest stable version: [v3.5.2](https://packagist.org/packages/perimeterx/php-sdk#3.5.2)
+# [PerimeterX](http://www.perimeterx.com) PHP SDK
 
-Table of Contents
------------------
+> Latest stable version: [v3.5.3](https://packagist.org/packages/perimeterx/php-sdk#3.5.3)
+
+## Table of Contents
 
 -   [Usage](#usage)
-  *   [Dependencies](#dependencies)
-  *   [Installation](#installation)
-  *   [Basic Usage Example](#basic-usage)
+
+*   [Dependencies](#dependencies)
+*   [Installation](#installation)
+*   [Basic Usage Example](#basic-usage)
+
 -   [Upgrading](#upgrade)
 -   [Configuration](#configuration)
-  *   [Blocking Score](#blocking-score)
-  *   [Extracting Recomended Action](#block-action)
-  *   [Custom Block Page](#custom-block-page)
-  *   [Custom Block Action](#custom-block)
-  *   [Extracting Real IP Address](#real-ip)
-  *   [Custom URI](#custom-uri)
-  *   [Filter Sensitive Headers](#sensitive-headers)
-  *   [Sensitive Route](#sensitive-routes)
-  *   [API Timeouts](#api-timeout)
-  *   [Activities API Timeouts](#activities-api-timeout)
-  *   [Send Page Activities](#send-page-activities)
-  *   [Additional Page Activity Handler](#additional-page-activity-handler)
-  *   [Data-Enrichment](#data-enrichment)
-  *   [Enrich Custom Params](#enrich-custom-params)
-  *   [Logging](#logging)
-  *   [Module Mode](#module-mode)
-  *   [Debug Mode](#debug-mode)
-  *   [Guzzle Client Handler](#guzzle-client-handler)
-  *   [Custom Block URL](#custom-block-url)
-  *   [Defer Activities Sending](#defer-activities)
-  *   [Test Block Flow on Monitoring Mode](#bypass-monitor-header)
--   [Contributing](#contributing)
-  *   [Tests](#tests)
 
+*   [Blocking Score](#blocking-score)
+*   [Extracting Recomended Action](#block-action)
+*   [Custom Block Page](#custom-block-page)
+*   [Custom Block Action](#custom-block)
+*   [Extracting Real IP Address](#real-ip)
+*   [Custom URI](#custom-uri)
+*   [Filter Sensitive Headers](#sensitive-headers)
+*   [Sensitive Route](#sensitive-routes)
+*   [API Timeouts](#api-timeout)
+*   [Activities API Timeouts](#activities-api-timeout)
+*   [Send Page Activities](#send-page-activities)
+*   [Additional Page Activity Handler](#additional-page-activity-handler)
+*   [Data-Enrichment](#data-enrichment)
+*   [Enrich Custom Params](#enrich-custom-params)
+*   [Logging](#logging)
+*   [Module Mode](#module-mode)
+*   [Debug Mode](#debug-mode)
+*   [Guzzle Client Handler](#guzzle-client-handler)
+*   [Custom Block URL](#custom-block-url)
+*   [Defer Activities Sending](#defer-activities)
+*   [Test Block Flow on Monitoring Mode](#bypass-monitor-header)
+
+-   [Contributing](#contributing)
+
+*   [Tests](#tests)
 
 <a name="Usage"></a>
 
-<a name="dependencies"></a> Dependencies
-----------------------------------------
+## <a name="dependencies"></a> Dependencies
 
 -   [v5.6 <= PHP <= v7.0.15](http://php.net/downloads.php)
 
-
-
-<a name="installation"></a> Installation
-----------------------------------------
+## <a name="installation"></a> Installation
 
 Installation can be done using Composer.
 
@@ -62,6 +62,7 @@ $ composer require perimeterx/php-sdk
 It can also be done by downloading the sources for this repository, and running `composer install`.
 
 ### <a name="basic-usage"></a> Basic Usage Example
+
 ```php
 use Perimeterx\Perimeterx;
 
@@ -94,10 +95,10 @@ Configuration options are set on the `$perimeterxConfig` variable.
 
 #### Required parameters:
 
-- app_id
-- cookie_key
-- auth_token
-- module_mode
+-   app_id
+-   cookie_key
+-   auth_token
+-   module_mode
 
 All parameters are obtainable via the PerimeterX Portal. (Applications and Policies pages)
 
@@ -114,6 +115,7 @@ $perimeterxConfig = [
 ```
 
 #### <a name="custom-block"></a> Custom Blocking Actions
+
 In order to customize the action performed on a valid block value, use the 'custom_block_handler' option, and provide a user-defined function.
 
 The custom handler should contain the action to be taken, when a visitor receives a score higher than the 'blocking_score' value.
@@ -165,13 +167,15 @@ $px->pxVerify();
 ```
 
 ## <a name="custom-block-page"></a> Customizing Default Block Pages
-**Custom logo insertion**
-Adding a custom logo to the blocking page is by providing the pxConfig a key ```custom_logo``` , the logo will be displayed at the top div of the the block page
-The logo's ```max-heigh``` property would be 150px and width would be set to ```auto```
 
-The key ```custom_logo```  expects a valid URL address such as ```https://s.perimeterx.net/logo.png```
+**Custom logo insertion**
+Adding a custom logo to the blocking page is by providing the pxConfig a key `custom_logo` , the logo will be displayed at the top div of the the block page
+The logo's `max-heigh` property would be 150px and width would be set to `auto`
+
+The key `custom_logo` expects a valid URL address such as `https://s.perimeterx.net/logo.png`
 
 Example below:
+
 ```php
 $perimeterxConfig = [
     'app_id' => 'APP_ID',
@@ -184,12 +188,13 @@ $perimeterxConfig = [
 
 ** Custom JS/CSS **
 
-The block page can be modified with a custom CSS by adding to the ```pxConfig``` the key ```css_ref``` and providing a valid URL to the css
-In addition there is also the option to add a custom JS file by adding ```js_ref``` key to the ```pxConfig``` and providing the JS file that will be loaded with the block page, this key also expects a valid URL
+The block page can be modified with a custom CSS by adding to the `pxConfig` the key `css_ref` and providing a valid URL to the css
+In addition there is also the option to add a custom JS file by adding `js_ref` key to the `pxConfig` and providing the JS file that will be loaded with the block page, this key also expects a valid URL
 
 On both cases if the URL is not a valid format an exception will be thrown
 
 Example below:
+
 ```php
 $perimeterxConfig = [
     'app_id' => 'APP_ID',
@@ -204,6 +209,7 @@ $perimeterxConfig = [
 Side notes: Custom logo/js/css can be added together
 
 **No Blocking, Monitor Only**
+
 ```php
 /**
  * @param \Perimeterx\PerimeterxContext $pxCtx
@@ -220,8 +226,8 @@ $px = Perimeterx::Instance($perimeterxConfig);
 $px->pxVerify();
 ```
 
-
 <a name="block-action"></a>**Extracting Recomended Action**
+
 ```php
 /**
  * @param \Perimeterx\PerimeterxContext $pxCtx
@@ -255,8 +261,8 @@ $perimeterxConfig['custom_block_handler'] = function ($pxCtx) {
 
 **Possible Values:**
 
-- `Perimeterx::$ACTIVE_MODE` - Module blocks users crossing the predefined block threshold. Server-to-server requests are sent synchronously.
-- `Perimeterx::$MONITOR_MODE` - Module does not block users crossing the predefined block threshold. The pxCustomBlockHandler function will be eval'd in case one is supplied, upon crossing the defined block threshold.
+-   `Perimeterx::$ACTIVE_MODE` - Module blocks users crossing the predefined block threshold. Server-to-server requests are sent synchronously.
+-   `Perimeterx::$MONITOR_MODE` - Module does not block users crossing the predefined block threshold. The pxCustomBlockHandler function will be eval'd in case one is supplied, upon crossing the defined block threshold.
 
 ```php
 $perimeterxConfig = [
@@ -358,7 +364,6 @@ $perimeterxConfig = [
 
 The API Timeout, in seconds (float), to wait for the PerimeterX server API response.
 
-
 **Default:** 1
 
 ```php
@@ -370,7 +375,6 @@ $perimeterxConfig = [
 ```
 
 The API Connection Timeout, in seconds (float), to wait for the connection to the PerimeterX server API.
-
 
 **Default:** 1
 
@@ -388,7 +392,6 @@ $perimeterxConfig = [
 
 The activities API Timeout, in seconds (float), to wait for the PerimeterX server API response.
 
-
 **Default:** 1
 
 ```php
@@ -400,7 +403,6 @@ $perimeterxConfig = [
 ```
 
 The activities API Connection Timeout, in seconds (float), to wait for the connection to the PerimeterX server API.
-
 
 **Default:** 1
 
@@ -491,9 +493,9 @@ $px->pxVerify();
 ```
 
 #### <a name="data-enrichment"></a> Data-Enrichment
+
 User can use the additional activity handler to retrieve information for the request using the data-enrichment object.
 first, validate the data enrichment object is verified, then you can access it's properties.
-
 
 **Default:** false
 
@@ -518,6 +520,7 @@ $px->pxVerify();
 ```
 
 #### <a name="enrich-custom-params"></a> Enrich Custom Params
+
 With the `enrich_custom_params` function you can add up to 10 custom parameters to be sent back to PerimeterX servers.
 When set, the function is called before seting the payload on every request to PerimetrX servers. The parameters should be passed according to the correct order (1-10).
 
@@ -537,6 +540,7 @@ $px->pxVerify();
 ```
 
 ###### Enrich Custom Params Usage Examples
+
 ```php
 /**
  * @param array             $customParamsArray
@@ -638,7 +642,7 @@ Specifies if sending page activities should be deferred until shutdown or not.
 
 **Default:** true
 
-```php
+````php
 $perimeterxConfig = [
     ..
     'defer_activities' => false
@@ -664,17 +668,19 @@ $perimeterxConfig = [
     'bypass_monitor_header' => 'x-px-block'
     ..
 ]
-```
+````
 
-<a name="contributing"></a> Contributing
-----------------------------------------
+## <a name="contributing"></a> Contributing
 
 The following steps are welcome when contributing to our project.
+
 ### Fork/Clone
+
 First and foremost, [Create a fork](https://guides.github.com/activities/forking/) of the repository, and clone it locally.
 Create a branch on your fork, preferably using a self descriptive branch name.
 
 ### Code/Run
+
 Help improve our project by implementing missing features, adding capabilites or fixing bugs.
 
 To run the code, simply follow the steps in the [installation guide](#installation). Grab the keys from the PerimeterX Portal, and try refreshing your page several times continously. If no default behaviours have been overriden, you should see the PerimeterX block page. Solve the CAPTCHA to clean yourself and start fresh again.
@@ -682,15 +688,17 @@ To run the code, simply follow the steps in the [installation guide](#installati
 Feel free to check out the [Example App](https://github.com/PerimeterX/perimeterx-php-sdk/blob/master/examples/integration-example.php), to have a feel of the project.
 
 ### <a name="tests"></a>Test
+
 > Tests for this project are written using PHPUnit.
 
 **Dont forget to test**. The project relies heavily on tests, thus ensuring each user has the same experience, and no new features break the code.
 Before you create any pull request, make sure your project has passed all tests, and if any new features require it, write your own.
 
-To run any of the tests in the available suite, first open the ```bootstrap.php.dist``` file, and change the values according to the in-file insturctions. Then, rename the `bootstrap.php.dist` to `bootstrap.php`.
-Finally, run the `phpunit tests/PerimeterxCookieValidatorTest` command to run all tests, or `phpunit <testName>` to execute a specific test (e.g. ```phpunit PerimeterxCookieTest```)
+To run any of the tests in the available suite, first open the `bootstrap.php.dist` file, and change the values according to the in-file insturctions. Then, rename the `bootstrap.php.dist` to `bootstrap.php`.
+Finally, run the `phpunit tests/PerimeterxCookieValidatorTest` command to run all tests, or `phpunit <testName>` to execute a specific test (e.g. `phpunit PerimeterxCookieTest`)
 
 To run coverage tests, run `phpunit --coverage-html tests/coverage`. This will create a directory tests/coverage with an html coverage for inspection.
 
 ### Pull Request
+
 After you have completed the process, create a pull request to the Upstream repository. Please provide a complete and thorough description, explaining the changes. Remember this code has to be read by our maintainers, so keep it simple, smart and accurate.
