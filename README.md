@@ -2,6 +2,7 @@
 
 ![image](https://storage.googleapis.com/perimeterx-logos/primary_logo_red_cropped.png)
 
+
 #
 
 # [PerimeterX](http://www.perimeterx.com) PHP SDK
