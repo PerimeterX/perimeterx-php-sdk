@@ -121,6 +121,7 @@ final class Perimeterx
     public function pxVerify()
     {
         $this->pxConfig['logger']->warning("HERRRRRREEEE!!!!!!!!!!!!!!!!");
+        console.log("Message here");
 
         $pxCtx = null;
         $this->pxConfig['logger']->debug('Starting request verification');
