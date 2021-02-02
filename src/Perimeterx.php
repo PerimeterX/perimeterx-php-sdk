@@ -120,8 +120,11 @@ final class Perimeterx
 
     public function pxVerify()
     {
+        $this->pxConfig['logger']->warning("HERRRRRREEEE!!!!!!!!!!!!!!!!");
+
         $pxCtx = null;
         $this->pxConfig['logger']->debug('Starting request verification');
+        
         try {
             if (!$this->pxConfig['module_enabled']) {
                 $this->pxConfig['logger']->debug('Request will not be verified, module is disabled');
