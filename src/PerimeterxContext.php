@@ -557,7 +557,7 @@ class PerimeterxContext
 
     private function selfURL()
     {
-        $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
+        $s = empty($_SERVER["HTTPS"]) ? '' : (($_SERVER["HTTPS"] == "on") ? "s" : "");
         $l = strtolower($_SERVER["SERVER_PROTOCOL"]);
         $protocol = substr($l, 0, strpos($l, "/")) . $s;
         $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
