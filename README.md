@@ -6,7 +6,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) PHP SDK
 
-> Latest stable version: [v3.5.3](https://packagist.org/packages/perimeterx/php-sdk#3.5.3)
+> Latest stable version: [v3.5.4](https://packagist.org/packages/perimeterx/php-sdk#3.5.4)
 
 ## Table of Contents
 
