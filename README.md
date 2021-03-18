@@ -41,6 +41,7 @@
 *   [Defer Activities Sending](#defer-activities)
 *   [Test Block Flow on Monitoring Mode](#bypass-monitor-header)
 
+-   [Additional Information](#additional-information)
 -   [Contributing](#contributing)
 
 *   [Tests](#tests)
@@ -669,6 +670,10 @@ $perimeterxConfig = [
     ..
 ]
 ````
+
+## <a name=“additional-information”></a> Additional Information
+### URI Delimiters
+PerimeterX processes URI paths with general- and sub-delimiters according to RFC 3986. General delimiters (e.g., `?`, `#`) are used to separate parts of the URI. Sub-delimiters (e.g., `$`, `&`) are not used to split the URI as they are considered valid characters in the URI path.
 
 ## <a name="contributing"></a> Contributing
 
