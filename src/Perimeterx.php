@@ -144,7 +144,7 @@ final class Perimeterx
             return $this->handleVerification($pxCtx);
         } catch (\RuntimeException $e) {
             if (!empty($pxCtx)) {
-                $pxCtx->setPassReason('error');
+                $pxCtx->setS2SError("unknown_error", "Error {$e->getCode()}: {$e->getMessage()}");
                 $this->pxActivitiesClient->sendPageRequestedActivity($pxCtx);
             }
             $this->pxConfig['logger']->error('Uncaught exception while verifying perimeterx score ' . $e->getCode() . ' ' . $e->getMessage());

@@ -172,7 +172,6 @@ class PerimeterxContext
      */
     protected $score;
 
-
     /**
      * @var string user's visitor id.
      */
@@ -189,7 +188,27 @@ class PerimeterxContext
     protected $pass_reason;
 
     /**
-     * @var string pass reason - describes why a page_requested activity sent
+     * @var string s2s_error_reason - describes why an s2s_error was encountered
+     */
+    protected $s2s_error_reason;
+
+    /**
+     * @var string s2s_error_message - more specific information about the s2s_error that was encountered
+     */
+    protected $s2s_error_message;
+
+    /**
+     * @var int s2s_error_http_status - the status code returned by the risk API response
+     */
+    protected $s2s_error_http_status;
+
+    /**
+     * @var string s2s_error_http_message - the HTTP message of the risk API response
+     */
+    protected $s2s_error_http_message;
+
+    /**
+     * @var string risk_rtt - the round-trip time in milliseconds of the Risk API request
      */
     protected $risk_rtt;
 
@@ -207,11 +226,6 @@ class PerimeterxContext
      * @var bool true if request was sent to S2S risk api
      */
     protected $is_made_s2s_api_call;
-
-    /**
-     * @var string S2S api call HTTP error message
-     */
-    protected $s2s_http_error_msg;
 
     /**
      * @var string block action
@@ -336,22 +350,6 @@ class PerimeterxContext
     public function getIsMadeS2SRiskApiCall()
     {
         return $this->is_made_s2s_api_call;
-    }
-
-    /**
-     * @param string $s2s_http_error_msg
-     */
-    public function setS2SHttpErrorMsg($s2s_http_error_msg)
-    {
-        $this->s2s_http_error_msg = $s2s_http_error_msg;
-    }
-
-    /**
-     * @return string
-     */
-    public function getS2SHttpErrorMsg()
-    {
-        return $this->s2s_http_error_msg;
     }
 
     /**
@@ -713,6 +711,82 @@ class PerimeterxContext
     public function getPassReason()
     {
         return $this->pass_reason;
+    }
+
+    /**
+     * @param string, @param string, @param int, @param string
+     */
+    public function setS2SError($s2s_error_reason, $s2s_error_message, $s2s_error_http_status = null, $s2s_error_http_message = null)
+    {
+        $this->setPassReason("s2s_error");
+        $this->setS2SErrorReason($s2s_error_reason);
+        $this->setS2SErrorMessage($s2s_error_message);
+        if (isset($s2s_error_http_status)) {
+            $this->setS2SErrorHttpStatus($s2s_error_http_status);
+        }
+        if (isset($s2s_error_http_message)) {
+            $this->setS2SErrorHttpMessage($s2s_error_http_message);
+        }
+    }
+
+    /**
+     * @param string
+     */
+    public function setS2SErrorReason($s2s_error_reason)
+    {
+        $this->s2s_error_reason = $s2s_error_reason;
+    }
+
+    /**
+     * @return string
+     */
+    public function getS2SErrorReason() {
+        return $this->s2s_error_reason;
+    }
+
+    /**
+     * @param string
+     */
+    public function setS2SErrorMessage($s2s_error_message)
+    {
+        $this->s2s_error_message = $s2s_error_message;
+    }
+
+    /**
+     * @return string
+     */
+    public function getS2SErrorMessage() {
+        return $this->s2s_error_message;
+    }
+
+    /**
+     * @param int
+     */
+    public function setS2SErrorHttpStatus($s2s_error_http_status)
+    {
+        $this->s2s_error_http_status = $s2s_error_http_status;
+    }
+
+    /**
+     * @return int
+     */
+    public function getS2SErrorHttpStatus() {
+        return $this->s2s_error_http_status;
+    }
+
+    /**
+     * @param string
+     */
+    public function setS2SErrorHttpMessage($s2s_error_http_message)
+    {
+        $this->s2s_error_http_message = $s2s_error_http_message;
+    }
+
+    /**
+     * @return string
+     */
+    public function getS2SErrorHttpMessage() {
+        return $this->s2s_error_http_message;
     }
 
     /**

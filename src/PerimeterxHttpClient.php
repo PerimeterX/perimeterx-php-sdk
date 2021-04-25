@@ -35,9 +35,8 @@ class PerimeterxHttpClient
      * @inheritdoc
      * @return string
      */
-    public function send($url, $method, $json, $headers, $timeout = 0, $connect_timeout = 0)
+    public function send($pxCtx, $url, $method, $json, $headers, $timeout = 0, $connect_timeout = 0)
     {
-
         try {
             $json = self::fixJsonBody($json);
             $rawResponse = $this->client->request($method, $url,
@@ -49,11 +48,17 @@ class PerimeterxHttpClient
                 ]
             );
 
+            if (isset($pxCtx)) {
+                // just in case
+                $pxCtx->setS2SErrorHttpStatus($rawResponse->getStatusCode());
+                $pxCtx->setS2SErrorHttpMessage($rawResponse->getReasonPhrase());
+            }
+
             $rawBody = (string)$rawResponse->getBody();
             return $rawBody;
         } catch (\GuzzleHttp\Exception\RequestException $e) {
             $this->logger->debug('Unexpected exception in HTTP client. Request will fail open. ' . $url . ' ' . $e->getCode() . ' ' . $e->getMessage());
-            return "";
+            return json_encode(['error_msg' => $e->getMessage(), 'error_code' => $e->getCode()]);
         }
     }
 
