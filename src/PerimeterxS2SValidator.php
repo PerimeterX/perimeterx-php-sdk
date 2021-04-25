@@ -114,6 +114,8 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             $this->pxConfig['logger']->debug("Risk API timed out, round_trip_time: {$this->pxCtx->getRiskRtt()}");
             return json_encode(['error_msg' => $e->getMessage()]);
         } catch (\Exception $e) {
+            $this->pxCtx->setRiskRtt($this->getTimeInMilliseconds() - $startRiskRtt);
+            $this->pxCtx->setPassReason('s2s_error');
             $this->pxConfig['logger']->error("Unexpected exception in Risk API call: {$e->getMessage()}");
             return false;
         }
@@ -122,7 +124,8 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
     public function verify()
     {
         $this->pxConfig['logger']->debug("Evaluating Risk API request, call reason: {$this->pxCtx->getS2SCallReason()}");
-        $response = json_decode($this->sendRiskRequest());
+        $response_str = $this->sendRiskRequest();
+        $response = json_decode($response_str);
         $this->pxCtx->setIsMadeS2SRiskApiCall(true);
 
         if (isset($response->pxhd)) {
@@ -152,6 +155,9 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
                 $this->pxConfig['logger']->debug("Risk score is lower than blocking score. score: $score blocking score: {$this->pxConfig['blocking_score']}");
                 $this->pxCtx->setPassReason('s2s');
             }
+        } else {
+            $this->pxConfig['logger']->error("Received invalid Risk API response \"$response_str\", passing due to s2s_error");
+            $this->pxCtx->setPassReason("s2s_error");
         }
         if (isset($response, $response->error_msg)) {
             $this->pxCtx->setS2SHttpErrorMsg($response->error_msg);
