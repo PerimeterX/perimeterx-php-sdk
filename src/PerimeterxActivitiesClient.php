@@ -132,6 +132,12 @@ class PerimeterxActivitiesClient
         $details['module_version'] = $this->pxConfig['sdk_name'];
         $details['http_version'] = $pxCtx->getHttpVersion();
         $details['pass_reason'] = $pxCtx->getPassReason();
+        if ($details['pass_reason'] === "s2s_error") {
+            $details['s2s_error_reason'] = $pxCtx->getS2SErrorReason();
+            $details['s2s_error_message'] = $pxCtx->getS2SErrorMessage();
+            $details['s2s_error_http_status'] = $pxCtx->getS2SErrorHttpStatus();
+            $details['s2s_error_http_message'] = $pxCtx->getS2SErrorHttpMessage();
+        }
         $details['risk_rtt'] = $pxCtx->getRiskRtt();
 
         if ($pxCtx->getDecodedCookie()) {
