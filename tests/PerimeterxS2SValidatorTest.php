@@ -65,7 +65,7 @@ class PerimeterxS2SValidatorTest extends PHPUnit_Framework_TestCase
       $invocations = $spy->getInvocations();
 
       $last = end($invocations);
-      $this->assertEquals($pxCookie, $last->parameters[2]["additional"]["px_cookie_orig"]);
+      $this->assertEquals($pxCookie, $last->parameters[3]["additional"]["px_cookie_orig"]);
     }
 
 
@@ -133,9 +133,6 @@ class PerimeterxS2SValidatorTest extends PHPUnit_Framework_TestCase
                 $logger->expects($this->once())
                     ->method($expected_level)
                     ->with($expected_message);
-            } else {
-                $logger->expects($this->never())
-                    ->method($level);
             }
         }
 
