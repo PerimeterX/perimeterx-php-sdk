@@ -43,7 +43,7 @@ class PerimeterxS2SValidatorTest extends PHPUnit_Framework_TestCase
         $invocations = $spy->getInvocations();
 
         $last = end($invocations);
-        $this->assertEquals($pxCookie, $last->parameters[3]["additional"]["px_cookie_orig"]);
+        $this->assertEquals($pxCookie, $last->parameters[2]["additional"]["px_cookie_orig"]);
     }
 
     public function testS2SErrorHttpClientThrowsException() {
@@ -65,7 +65,7 @@ class PerimeterxS2SValidatorTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider providerS2SErrorData
+     * @dataProvider provideS2SErrorData
      */
 
     public function testS2SError($httpClientReturnValue, $s2sErrorReason, $s2sErrorMessage, $httpStatus, $httpMessage) {
@@ -89,7 +89,7 @@ class PerimeterxS2SValidatorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($httpMessage, $pxCtx->getS2SErrorHttpMessage());
     }
 
-    public function providerS2SErrorData() {
+    public function provideS2SErrorData() {
         $errorMessage = "Error message!!!";
         $errorCode = 7;
         return array(
@@ -102,7 +102,7 @@ class PerimeterxS2SValidatorTest extends PHPUnit_Framework_TestCase
             array(json_encode([]), "server_error", "", 501, "Some Other Error"),
             array(json_encode([]), "server_error", "", 599, "Some Other Error"),
             array(json_encode([]), "unknown_error", "", 600, "Some Other Error"),
-            array(json_encode(['status' => 0, 'action' => $errorMessage]), "unknown_error", $errorMessage, 200, 'OK'),
+            array(json_encode(['status' => 0, 'action' => $errorMessage]), "invalid_response", $errorMessage, 200, 'OK'),
             array(json_encode(['status' => -1, 'message' => $errorMessage]), "request_failed_on_server", $errorMessage, 200, 'OK'),
             array(json_encode(['random_key' => 'random_value']), "unknown_error", '"random_key":"random_value"', null, null)
         );

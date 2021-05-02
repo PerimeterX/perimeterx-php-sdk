@@ -28,7 +28,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             if ($this->pxConfig['module_mode'] != Perimeterx::$ACTIVE_MODE and isset($this->pxConfig['custom_risk_handler'])) {
                 $response = $this->pxConfig['custom_risk_handler']($this->pxConfig['perimeterx_server_host'] . self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers);
             } else {
-                $response = $this->httpClient->send($this->pxCtx, self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout']);
+                $response = $this->httpClient->send(self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout'], $this->pxCtx);
             }
             $this->pxCtx->setRiskRtt($this->getTimeInMilliseconds() - $startRiskRtt);
             return $response;
@@ -179,7 +179,9 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
 
         $http_status = $this->pxCtx->getS2SErrorHttpStatus();
         if (isset($http_status)) {
-            if (400 <= $http_status && $http_status < 500) {
+            if ($http_status == 200) {
+                $s2s_error_reason = "invalid_response";
+            } elseif (400 <= $http_status && $http_status < 500) {
                 $s2s_error_reason = "bad_request";
             } elseif (500 <= $http_status && $http_status < 600) {
                 $s2s_error_reason = "server_error";
