@@ -95,7 +95,7 @@ class PerimeterxActivitiesClient
             'Authorization' => 'Bearer ' . $this->pxConfig['auth_token'],
             'Content-Type' => 'application/json'
         ];
-        $this->httpClient->send(null, '/api/v1/collector/s2s', 'POST', $activities, $headers, $this->pxConfig['activities_timeout'], $this->pxConfig['activities_connect_timeout']);
+        $this->httpClient->send('/api/v1/collector/s2s', 'POST', $activities, $headers, $this->pxConfig['activities_timeout'], $this->pxConfig['activities_connect_timeout']);
     }
 
     /**
@@ -132,13 +132,11 @@ class PerimeterxActivitiesClient
         $details['module_version'] = $this->pxConfig['sdk_name'];
         $details['http_version'] = $pxCtx->getHttpVersion();
         $details['pass_reason'] = $pxCtx->getPassReason();
-        if ($details['pass_reason'] === "s2s_error") {
-            $details['s2s_error_reason'] = $pxCtx->getS2SErrorReason();
-            $details['s2s_error_message'] = $pxCtx->getS2SErrorMessage();
-            $details['s2s_error_http_status'] = $pxCtx->getS2SErrorHttpStatus();
-            $details['s2s_error_http_message'] = $pxCtx->getS2SErrorHttpMessage();
-        }
         $details['risk_rtt'] = $pxCtx->getRiskRtt();
+
+        if ($pxCtx->getPassReason() === "s2s_error") {
+            $this->setS2SErrorInfo($details, $pxCtx);
+        }
 
         if ($pxCtx->getDecodedCookie()) {
             $details['px_cookie'] = $pxCtx->getDecodedCookie();
@@ -149,5 +147,12 @@ class PerimeterxActivitiesClient
         }
 
         $this->prepareActivitiesRequest('page_requested', $pxCtx, $details);
+    }
+
+    private function setS2SErrorInfo(&$details, &$pxCtx) {
+        $details['s2s_error_reason'] = $pxCtx->getS2SErrorReason();
+        $details['s2s_error_message'] = $pxCtx->getS2SErrorMessage();
+        $details['s2s_error_http_status'] = $pxCtx->getS2SErrorHttpStatus();
+        $details['s2s_error_http_message'] = $pxCtx->getS2SErrorHttpMessage();
     }
 }
