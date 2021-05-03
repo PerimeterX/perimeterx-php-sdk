@@ -1,0 +1,23 @@
+{
+    "version": "3.5.4",
+    "supported_features": [
+        "block_activity",
+        "block_page_captcha",
+        "block_page_js_challenge",
+        "block_page_rate_limiter",
+        "cookie_v3",
+        "css_ref",
+        "custom_logo",
+        "custom_parameters",
+        "debug_mode",
+        "js_ref",
+        "module_enable_disable",
+        "monitor_mode",
+        "page_requested",
+        "pxvid",
+        "risk_api",
+        "sensitive_headers",
+        "sensitive_routes",
+        "additional_page_activity_handler"
+    ]
+}
