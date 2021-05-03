@@ -134,10 +134,6 @@ class PerimeterxActivitiesClient
         $details['pass_reason'] = $pxCtx->getPassReason();
         $details['risk_rtt'] = $pxCtx->getRiskRtt();
 
-        if ($pxCtx->getPassReason() === "s2s_error") {
-            $this->setS2SErrorInfo($details, $pxCtx);
-        }
-
         if ($pxCtx->getDecodedCookie()) {
             $details['px_cookie'] = $pxCtx->getDecodedCookie();
         }
@@ -147,12 +143,5 @@ class PerimeterxActivitiesClient
         }
 
         $this->prepareActivitiesRequest('page_requested', $pxCtx, $details);
-    }
-
-    private function setS2SErrorInfo(&$details, &$pxCtx) {
-        $details['s2s_error_reason'] = $pxCtx->getS2SErrorReason();
-        $details['s2s_error_message'] = $pxCtx->getS2SErrorMessage();
-        $details['s2s_error_http_status'] = $pxCtx->getS2SErrorHttpStatus();
-        $details['s2s_error_http_message'] = $pxCtx->getS2SErrorHttpMessage();
     }
 }
