@@ -6,11 +6,51 @@ use GuzzleHttp\Exception\ConnectException;
 
 class PerimeterxS2SValidator extends PerimeterxRiskClient
 {
-
     const RISK_API_ENDPOINT = '/api/v3/risk';
 
-    private function sendRiskRequest()
-    {
+    public function verify() {
+        $this->pxConfig['logger']->debug("Evaluating Risk API request, call reason: {$this->pxCtx->getS2SCallReason()}");
+        $response = json_decode($this->sendRiskRequest());
+        $this->pxCtx->setIsMadeS2SRiskApiCall(true);
+
+        if (isset($response, $response->score, $response->action)) {
+            $this->handle_valid_risk_response($response);
+        } else {
+            $this->handle_s2s_error($response);
+        }
+    }
+
+    private function sendRiskRequest() {
+        $headers = $this->prepareRiskRequestHeaders();
+        $requestBody = $this->prepareRiskRequestBody();
+        $startRiskRtt = $this->getTimeInMilliseconds();
+        try {
+            if ($this->pxConfig['module_mode'] != Perimeterx::$ACTIVE_MODE and isset($this->pxConfig['custom_risk_handler'])) {
+                $response = $this->pxConfig['custom_risk_handler']($this->pxConfig['perimeterx_server_host'] . self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers);
+            } else {
+                $response = $this->httpClient->send(self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout'], $this->pxCtx);
+            }
+            $this->pxCtx->setRiskRtt($this->getTimeInMilliseconds() - $startRiskRtt);
+            return $response;
+        } catch ( ConnectException $e) {
+            $this->pxCtx->setRiskRtt($this->getTimeInMilliseconds() - $startRiskRtt);
+            $this->pxCtx->setPassReason('s2s_timeout');
+            $this->pxConfig['logger']->debug("Risk API timed out, round_trip_time: {$this->pxCtx->getRiskRtt()}");
+            return json_encode(['error_msg' => $e->getMessage(), 'error_code' => $e->getCode()]);
+        } catch (\Exception $e) {
+            $this->pxCtx->setRiskRtt($this->getTimeInMilliseconds() - $startRiskRtt);
+            return json_encode(['error_msg' => $e->getMessage(), 'error_code' => $e->getCode()]);
+        }
+    }
+
+    private function prepareRiskRequestHeaders() {
+        return [
+            'Authorization' => 'Bearer ' . $this->pxConfig['auth_token'],
+            'Content-Type' => 'application/json'
+        ];
+    }
+
+    private function prepareRiskRequestBody() {
         if ($this->pxConfig['module_mode'] == Perimeterx::$ACTIVE_MODE) {
             $risk_mode = 'active_blocking';
         } else {
@@ -94,67 +134,65 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
         if (isset($this->pxConfig['enrich_custom_params'])) {
             $this->pxUtils->handleCustomParams($this->pxConfig, $requestBody['additional']);
         }
-
-        $headers = [
-            'Authorization' => 'Bearer ' . $this->pxConfig['auth_token'],
-            'Content-Type' => 'application/json'
-        ];
-        $startRiskRtt = $this->getTimeInMilliseconds();
-        try {
-            if ($this->pxConfig['module_mode'] != Perimeterx::$ACTIVE_MODE and isset($this->pxConfig['custom_risk_handler'])) {
-                $response = $this->pxConfig['custom_risk_handler']($this->pxConfig['perimeterx_server_host'] . self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers);
-            } else {
-                $response = $this->httpClient->send(self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout']);
-            }
-            $this->pxCtx->setRiskRtt($this->getTimeInMilliseconds() - $startRiskRtt);
-            return $response;
-        } catch ( ConnectException $e) {
-            $this->pxCtx->setRiskRtt($this->getTimeInMilliseconds() - $startRiskRtt);
-            $this->pxCtx->setPassReason('s2s_timeout');
-            $this->pxConfig['logger']->debug("Risk API timed out, round_trip_time: {$this->pxCtx->getRiskRtt()}");
-            return json_encode(['error_msg' => $e->getMessage()]);
-        } catch (\Exception $e) {
-            $this->pxConfig['logger']->error("Unexpected exception in Risk API call: {$e->getMessage()}");
-            return false;
-        }
+        return $requestBody;
     }
 
-    public function verify()
+    private function handle_valid_risk_response($response) 
     {
-        $this->pxConfig['logger']->debug("Evaluating Risk API request, call reason: {$this->pxCtx->getS2SCallReason()}");
-        $response = json_decode($this->sendRiskRequest());
-        $this->pxCtx->setIsMadeS2SRiskApiCall(true);
-
+        $this->pxConfig['logger']->debug("Risk API response returned successfully, risk score: {$response->score}, round_trip_time: {$this->pxCtx->getRiskRtt()}");
+        $score = $response->score;
+        $this->pxCtx->setScore($score);
+        $this->pxCtx->setUuid($response->uuid);
+        $this->pxCtx->setBlockAction($response->action);
+        $this->pxCtx->setResponseBlockAction($response->action);
         if (isset($response->pxhd)) {
             setrawcookie("_pxhd", $response->pxhd, time() + 31557600, "/"); // expires in 1 year
         }
-        if (isset($response, $response->score, $response->action)) {
-            $this->pxConfig['logger']->debug("Risk API response returned successfully, risk score: {$response->score}, round_trip_time: {$this->pxCtx->getRiskRtt()}");
-            $score = $response->score;
-            $this->pxCtx->setScore($score);
-            $this->pxCtx->setUuid($response->uuid);
-            $this->pxCtx->setBlockAction($response->action);
-            $this->pxCtx->setResponseBlockAction($response->action);
-            if(isset($response->data_enrichment)) {
-                $this->pxCtx->setDataEnrichmentVerified(true);
-                $this->pxCtx->setDataEnrichment($response->data_enrichment);
-            }
+        if(isset($response->data_enrichment)) {
+            $this->pxCtx->setDataEnrichmentVerified(true);
+            $this->pxCtx->setDataEnrichment($response->data_enrichment);
+        }
 
-            if ($response->action == 'j' && $response->action_data && $response->action_data->body) {
-                $this->pxCtx->setBlockActionData($response->action_data->body);
-                $this->pxCtx->setBlockReason('challenge');
-            } elseif ($response->action == 'r') {
-                $this->pxCtx->setBlockReason('exceeded_rate_limit');
-            } elseif ($score >= $this->pxConfig['blocking_score']) {
-                $this->pxConfig['logger']->debug("Risk score is higher or equal to blocking score. score: $score blocking score: {$this->pxConfig['blocking_score']}");
-                $this->pxCtx->setBlockReason('s2s_high_score');
-            } else {
-                $this->pxConfig['logger']->debug("Risk score is lower than blocking score. score: $score blocking score: {$this->pxConfig['blocking_score']}");
-                $this->pxCtx->setPassReason('s2s');
+        if ($response->action == 'j' && $response->action_data && $response->action_data->body) {
+            $this->pxCtx->setBlockActionData($response->action_data->body);
+            $this->pxCtx->setBlockReason('challenge');
+        } elseif ($response->action == 'r') {
+            $this->pxCtx->setBlockReason('exceeded_rate_limit');
+        } elseif ($score >= $this->pxConfig['blocking_score']) {
+            $this->pxConfig['logger']->debug("Risk score is higher or equal to blocking score. score: $score blocking score: {$this->pxConfig['blocking_score']}");
+            $this->pxCtx->setBlockReason('s2s_high_score');
+        } else {
+            $this->pxConfig['logger']->debug("Risk score is lower than blocking score. score: $score blocking score: {$this->pxConfig['blocking_score']}");
+            $this->pxCtx->setPassReason('s2s');
+        }
+    }
+
+    private function handle_s2s_error($response)
+    {
+        if (!empty($this->pxCtx->getPassReason())) {
+            return;
+        }
+
+        $response_str = json_encode($response);
+        $s2s_error_reason = "unknown_error";
+        $s2s_error_message = "Response: \"$response_str\"";
+
+        $http_status = $this->pxCtx->getS2SErrorHttpStatus();
+        if (isset($http_status)) {
+            if ($http_status == 200) {
+                $s2s_error_reason = "invalid_response";
+            } elseif (400 <= $http_status && $http_status < 500) {
+                $s2s_error_reason = "bad_request";
+            } elseif (500 <= $http_status && $http_status < 600) {
+                $s2s_error_reason = "server_error";
             }
         }
-        if (isset($response, $response->error_msg)) {
-            $this->pxCtx->setS2SHttpErrorMsg($response->error_msg);
+
+        if (isset($response, $response->status) && $response->status !== 0) {
+            $s2s_error_reason = "request_failed_on_server";
         }
+
+        $this->pxConfig['logger']->error("s2s_error: $s2s_error_reason - $s2s_error_message");
+        $this->pxCtx->setS2SError($s2s_error_reason, $s2s_error_message);
     }
 }
