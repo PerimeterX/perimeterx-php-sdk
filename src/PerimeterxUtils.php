@@ -4,6 +4,8 @@ namespace Perimeterx;
 
 class PerimeterxUtils
 {
+	protected static $inputStreamName = "php://input";
+
 	private $customParamsArray = [
 		'custom_param1' => '',
 		'custom_param2' => '',
@@ -26,5 +28,24 @@ class PerimeterxUtils
 				}
 			}
 		}
+	}
+
+	public static function getPostRequestBody() {
+		return file_get_contents(static::$inputStreamName);
+	}
+
+	public static function getNestedArrayProperty($array, $propertyNameArray) {
+		if (!is_array($propertyNameArray)) {
+			return null;
+		}
+		$value = $array;
+		foreach ($propertyNameArray as $propertyName) {
+			if (is_array($value) && array_key_exists($propertyName, $value)) {
+				$value = $value[$propertyName];
+			} else {
+				return null;
+			}
+		}
+		return $value;
 	}
 }
