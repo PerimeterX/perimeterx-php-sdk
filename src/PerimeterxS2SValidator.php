@@ -51,14 +51,6 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
     }
 
     private function prepareRiskRequestBody() {
-        if ($this->pxConfig['module_mode'] == Perimeterx::$ACTIVE_MODE) {
-            $risk_mode = 'active_blocking';
-        } else {
-            $risk_mode = 'monitor';
-        }
-
-        $vid_source = "none";
-
         $requestBody = [
             'request' => [
                 'ip' => $this->pxCtx->getIp(),
@@ -71,7 +63,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
                 'module_version' => $this->pxConfig['sdk_name'],
                 'http_method' => $this->pxCtx->getHttpMethod(),
                 'http_version' => $this->pxCtx->getHttpVersion(),
-                'risk_mode' => $risk_mode,
+                'risk_mode' => $this->pxConfig['module_mode'] == Perimeterx::$ACTIVE_MODE ? 'active_blocking' : 'monitor',
                 'px_cookie_hmac' => $this->pxCtx->getCookieHmac(),
                 'cookie_origin' => $this->pxCtx->getCookieOrigin(),
                 'request_cookie_names' => $this->pxCtx->getCookieNames()
@@ -80,6 +72,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
 
         $pxvid = $this->pxCtx->getPxVidCookie();
         $vid = $this->pxCtx->getVid();
+        $vid_source = "none";
         if (isset($vid)) {
             $vid_source = "risk_cookie";
             $requestBody['vid'] = $vid;
@@ -133,6 +126,15 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
 
         if (isset($this->pxConfig['enrich_custom_params'])) {
             $this->pxUtils->handleCustomParams($this->pxConfig, $requestBody['additional']);
+        }
+
+        $additionalFields = $this->pxCtx->getAdditionalFields();
+        if (isset($additionalFields)) {
+            foreach ($additionalFields as $key => $val) {
+                if (!isset($requestBody['additional'][$key])) {
+                    $requestBody['additional'][$key] = $val;
+                }
+            }
         }
         return $requestBody;
     }
