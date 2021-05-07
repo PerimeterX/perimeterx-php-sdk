@@ -12,9 +12,4 @@ before_script:
 script:
   - ./vendor/bin/phplint
   - cd vendor
-  - ./phpunit/phpunit/phpunit ../tests/PerimeterxCookieValidatorTest
-  - ./phpunit/phpunit/phpunit ../tests/PerimeterxCookieV3ValidatorTest
-  - ./phpunit/phpunit/phpunit ../tests/PerimeterxOriginalTokenValidatorTest
-  - ./phpunit/phpunit/phpunit ../tests/PerimeterxConfigurationValidatorTest
-  - ./phpunit/phpunit/phpunit ../tests/PerimeterxS2SValidatorTest
-  - ./phpunit/phpunit/phpunit ../tests/PerimeterxDataEnrichmentTest
+  - ./phpunit/phpunit/phpunit ../tests/
