@@ -76,8 +76,9 @@ class PerimeterxActivitiesClient
         $pxData['px_app_id'] = $this->pxConfig['app_id'];
         $pxData['url'] = $pxCtx->getFullUrl();
         $pxData['details'] = $details;
-        $vid = $pxCtx->getVid();
+        $this->addAdditionalFieldsToDetails($pxData['details'], $pxCtx->getAdditionalFields());
 
+        $vid = $pxCtx->getVid();
         if (isset($vid)) {
             $pxData['vid'] = $vid;
         }
@@ -154,5 +155,16 @@ class PerimeterxActivitiesClient
         $details['s2s_error_message'] = $pxCtx->getS2SErrorMessage();
         $details['s2s_error_http_status'] = $pxCtx->getS2SErrorHttpStatus();
         $details['s2s_error_http_message'] = $pxCtx->getS2SErrorHttpMessage();
+    }
+
+    private function addAdditionalFieldsToDetails(&$details, &$additionalFields) {
+        if (!is_iterable($additionalFields)) {
+            return;
+        }
+        foreach ($additionalFields as $key => $value) {
+            if (!isset($details[$key])) {
+                $details[$key] = $value;
+            }
+        }
     }
 }

@@ -9,8 +9,9 @@ class PerimeterxContext
 
     /**
      * @param $pxConfig array - perimeterx configurations
+     * @param $additionalFields array - array
      */
-    public function __construct($pxConfig)
+    public function __construct($pxConfig, $additionalFields = null)
     {
         $this->cookie_origin = "cookie";
 
@@ -64,6 +65,7 @@ class PerimeterxContext
         }
         $this->http_method = $_SERVER['REQUEST_METHOD'];
         $this->sensitive_route = $this->checkSensitiveRoutePrefix($pxConfig['sensitive_routes'], $this->uri);
+        $this->additionalFields = $additionalFields;
     }
 
     private function extractIP($pxConfig, $headers)
@@ -261,6 +263,11 @@ class PerimeterxContext
      * @var array of cookie names
      */
     protected $request_cookie_names;
+
+    /**
+     * @var array - additional fields to add to acivities
+     */
+    protected $additionalFields;
 
     /**
      * @return string
@@ -803,5 +810,12 @@ class PerimeterxContext
     public function getRiskRtt()
     {
         return $this->risk_rtt;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAdditionalFields() {
+        return $this->additionalFields;
     }
 }

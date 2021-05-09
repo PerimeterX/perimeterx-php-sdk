@@ -18,6 +18,7 @@
         "risk_api",
         "sensitive_headers",
         "sensitive_routes",
-        "additional_page_activity_handler"
+        "additional_page_activity_handler",
+        "login_credentials_extraction"
     ]
 }
