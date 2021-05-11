@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.6.0] - 2021-05-11
+
+### Added
+
+-   Support for login credentials extraction feature
+-   New s2s_error pass reason in activities
+-   Detailed s2s_error information
+
 ## [3.5.4] - 2021-03-11
 
 ### Fixed
