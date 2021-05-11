@@ -6,7 +6,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) PHP SDK
 
-> Latest stable version: [v3.5.4](https://packagist.org/packages/perimeterx/php-sdk#3.5.4)
+> Latest stable version: [v3.6.0](https://packagist.org/packages/perimeterx/php-sdk#3.6.0)
 
 ## Table of Contents
 
@@ -33,6 +33,7 @@
 *   [Additional Page Activity Handler](#additional-page-activity-handler)
 *   [Data-Enrichment](#data-enrichment)
 *   [Enrich Custom Params](#enrich-custom-params)
+*   [Login Credentials Extraction](#login-credentials-extraction)
 *   [Logging](#logging)
 *   [Module Mode](#module-mode)
 *   [Debug Mode](#debug-mode)
@@ -553,6 +554,32 @@ $perimeterxConfig['enrich_custom_params'] = function ($customParamsArray)
     return $customParamsArray;
 };
 ```
+
+### <a name="login-credentials-extraction"></a> Login Credentials Extraction
+
+This feature extracts credentials (hashed username and password) from requests and sends them to PerimeterX as additional info in the risk api call. The feature can be toggled on and off, and may be set for any number of unique paths. The settings are adjusted by modifying the `px_enable_login_creds_extraction` and `px_login_creds_extraction` properties on the `$perimeterxConfig` array.
+
+**Default:**
+
+px_enable_login_creds_extraction: false
+
+px_login_creds_extraction: []
+
+```php
+$perimeterxConfig['px_enable_login_creds_extraction'] = true;
+$perimeterxConfig['px_login_creds_extraction'] = [
+    [
+        "path" => "/login",           // login path
+        "method" => "POST",           // supported methods: POST
+        "sentThrough" => "body",      // supported sentThroughs: body, header, query-param
+        "contentType" => "json",      // supported contentTypes: json, form
+        "encoding" => "clear-text",   // supported encodings: clear-text, url-encode
+        "passField" => "password",    // name of the password field in the request
+        "userField" => "username"     // name of the username field in the request
+    ], [ ... ], ...
+]
+```
+
 
 #### <a name="logging"></a> Logging
 

@@ -9,8 +9,9 @@ class PerimeterxContext
 
     /**
      * @param $pxConfig array - perimeterx configurations
+     * @param $additionalFields array - array
      */
-    public function __construct($pxConfig)
+    public function __construct($pxConfig, $additionalFields = null)
     {
         $this->cookie_origin = "cookie";
 
@@ -64,6 +65,7 @@ class PerimeterxContext
         }
         $this->http_method = $_SERVER['REQUEST_METHOD'];
         $this->sensitive_route = $this->checkSensitiveRoutePrefix($pxConfig['sensitive_routes'], $this->uri);
+        $this->additionalFields = $additionalFields;
     }
 
     private function extractIP($pxConfig, $headers)
@@ -172,7 +174,6 @@ class PerimeterxContext
      */
     protected $score;
 
-
     /**
      * @var string user's visitor id.
      */
@@ -189,7 +190,27 @@ class PerimeterxContext
     protected $pass_reason;
 
     /**
-     * @var string pass reason - describes why a page_requested activity sent
+     * @var string s2s_error_reason - describes why an s2s_error was encountered
+     */
+    protected $s2s_error_reason;
+
+    /**
+     * @var string s2s_error_message - more specific information about the s2s_error that was encountered
+     */
+    protected $s2s_error_message;
+
+    /**
+     * @var int s2s_error_http_status - the status code returned by the risk API response
+     */
+    protected $s2s_error_http_status;
+
+    /**
+     * @var string s2s_error_http_message - the HTTP message of the risk API response
+     */
+    protected $s2s_error_http_message;
+
+    /**
+     * @var string risk_rtt - the round-trip time in milliseconds of the Risk API request
      */
     protected $risk_rtt;
 
@@ -207,11 +228,6 @@ class PerimeterxContext
      * @var bool true if request was sent to S2S risk api
      */
     protected $is_made_s2s_api_call;
-
-    /**
-     * @var string S2S api call HTTP error message
-     */
-    protected $s2s_http_error_msg;
 
     /**
      * @var string block action
@@ -247,6 +263,11 @@ class PerimeterxContext
      * @var array of cookie names
      */
     protected $request_cookie_names;
+
+    /**
+     * @var array - additional fields to add to acivities
+     */
+    protected $additionalFields;
 
     /**
      * @return string
@@ -336,22 +357,6 @@ class PerimeterxContext
     public function getIsMadeS2SRiskApiCall()
     {
         return $this->is_made_s2s_api_call;
-    }
-
-    /**
-     * @param string $s2s_http_error_msg
-     */
-    public function setS2SHttpErrorMsg($s2s_http_error_msg)
-    {
-        $this->s2s_http_error_msg = $s2s_http_error_msg;
-    }
-
-    /**
-     * @return string
-     */
-    public function getS2SHttpErrorMsg()
-    {
-        return $this->s2s_http_error_msg;
     }
 
     /**
@@ -716,6 +721,82 @@ class PerimeterxContext
     }
 
     /**
+     * @param string, @param string, @param int, @param string
+     */
+    public function setS2SError($s2s_error_reason, $s2s_error_message, $s2s_error_http_status = null, $s2s_error_http_message = null)
+    {
+        $this->setPassReason("s2s_error");
+        $this->setS2SErrorReason($s2s_error_reason);
+        $this->setS2SErrorMessage($s2s_error_message);
+        if (isset($s2s_error_http_status)) {
+            $this->setS2SErrorHttpStatus($s2s_error_http_status);
+        }
+        if (isset($s2s_error_http_message)) {
+            $this->setS2SErrorHttpMessage($s2s_error_http_message);
+        }
+    }
+
+    /**
+     * @param string
+     */
+    public function setS2SErrorReason($s2s_error_reason)
+    {
+        $this->s2s_error_reason = $s2s_error_reason;
+    }
+
+    /**
+     * @return string
+     */
+    public function getS2SErrorReason() {
+        return $this->s2s_error_reason;
+    }
+
+    /**
+     * @param string
+     */
+    public function setS2SErrorMessage($s2s_error_message)
+    {
+        $this->s2s_error_message = $s2s_error_message;
+    }
+
+    /**
+     * @return string
+     */
+    public function getS2SErrorMessage() {
+        return $this->s2s_error_message;
+    }
+
+    /**
+     * @param int
+     */
+    public function setS2SErrorHttpStatus($s2s_error_http_status)
+    {
+        $this->s2s_error_http_status = $s2s_error_http_status;
+    }
+
+    /**
+     * @return int
+     */
+    public function getS2SErrorHttpStatus() {
+        return $this->s2s_error_http_status;
+    }
+
+    /**
+     * @param string
+     */
+    public function setS2SErrorHttpMessage($s2s_error_http_message)
+    {
+        $this->s2s_error_http_message = $s2s_error_http_message;
+    }
+
+    /**
+     * @return string
+     */
+    public function getS2SErrorHttpMessage() {
+        return $this->s2s_error_http_message;
+    }
+
+    /**
      * @param int
      */
     public function setRiskRtt($risk_rtt)
@@ -729,5 +810,12 @@ class PerimeterxContext
     public function getRiskRtt()
     {
         return $this->risk_rtt;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAdditionalFields() {
+        return $this->additionalFields;
     }
 }

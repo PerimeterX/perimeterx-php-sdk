@@ -45,6 +45,11 @@ final class Perimeterx
     public static $ACTIVE_MODE = 2;
 
     /**
+     * @var PerimeterxFieldExtractorManager
+     */
+    private $pxFieldExtractorManager;
+
+    /**
      * Call this method to get singleton
      * @param array
      * @return Perimeterx
@@ -88,7 +93,7 @@ final class Perimeterx
                 'max_buffer_len' => 1,
                 'send_page_activities' => true,
                 'send_block_activities' => true,
-                'sdk_name' => 'PHP SDK v3.5.4',
+                'sdk_name' => 'PHP SDK v3.6.0',
                 'debug_mode' => false,
                 'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
                 'captcha_script_host' => 'https://captcha.px-cdn.net',
@@ -112,6 +117,7 @@ final class Perimeterx
             $httpClient = new PerimeterxHttpClient($this->pxConfig);
             $this->pxConfig['http_client'] = $httpClient;
             $this->pxActivitiesClient = new PerimeterxActivitiesClient($this->pxConfig);
+            $this->pxFieldExtractorManager = $this->createFieldExtractorManager();
         } catch (\Exception $e) {
             throw new PerimeterxException('Uncaught exception ' . $e->getCode() . ' ' . $e->getMessage());
         }
@@ -127,8 +133,12 @@ final class Perimeterx
                 $this->pxConfig['logger']->debug('Request will not be verified, module is disabled');
                 return 1;
             }
+            
+            if (!is_null($this->pxFieldExtractorManager)) {
+                $extractedCredentials = $this->pxFieldExtractorManager->extractFields();
+            }
 
-            $pxCtx = new PerimeterxContext($this->pxConfig);
+            $pxCtx = new PerimeterxContext($this->pxConfig, $extractedCredentials);
             $this->pxConfig['logger']->debug('Request context created successfully');
 
             $validator = new PerimeterxCookieValidator($pxCtx, $this->pxConfig);
@@ -144,7 +154,7 @@ final class Perimeterx
             return $this->handleVerification($pxCtx);
         } catch (\RuntimeException $e) {
             if (!empty($pxCtx)) {
-                $pxCtx->setPassReason('error');
+                $pxCtx->setS2SError("unknown_error", "Error {$e->getCode()}: {$e->getMessage()}");
                 $this->pxActivitiesClient->sendPageRequestedActivity($pxCtx);
             }
             $this->pxConfig['logger']->error('Uncaught exception while verifying perimeterx score ' . $e->getCode() . ' ' . $e->getMessage());
@@ -323,7 +333,7 @@ final class Perimeterx
 
             $client = new PerimeterxResetClient($pxCtx, $this->pxConfig);
             $client->sendResetRequest();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->pxConfig['logger']->error('Uncaught exception while resetting perimeterx score' . $e->getCode() . ' ' . $e->getMessage());
         }
         return 1;
@@ -336,4 +346,16 @@ final class Perimeterx
     {
         return $this->pxConfig;
     }
+
+    /**
+     * @return PerimeterxFieldExtractorManager
+     */
+
+     private function createFieldExtractorManager() {
+        if (empty($this->pxConfig['px_enable_login_creds_extraction']) || empty($this->pxConfig['px_login_creds_extraction'])) {
+            return null;
+        }
+        $extractorMap = PerimeterxFieldExtractorManager::createExtractorMap($this->pxConfig['px_login_creds_extraction']);
+        return new PerimeterxFieldExtractorManager($extractorMap, $this->pxConfig['logger']);
+     }
 }

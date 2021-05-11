@@ -76,8 +76,9 @@ class PerimeterxActivitiesClient
         $pxData['px_app_id'] = $this->pxConfig['app_id'];
         $pxData['url'] = $pxCtx->getFullUrl();
         $pxData['details'] = $details;
-        $vid = $pxCtx->getVid();
+        $this->addAdditionalFieldsToDetails($pxData['details'], $pxCtx->getAdditionalFields());
 
+        $vid = $pxCtx->getVid();
         if (isset($vid)) {
             $pxData['vid'] = $vid;
         }
@@ -134,6 +135,10 @@ class PerimeterxActivitiesClient
         $details['pass_reason'] = $pxCtx->getPassReason();
         $details['risk_rtt'] = $pxCtx->getRiskRtt();
 
+        if ($pxCtx->getPassReason() === "s2s_error") {
+            $this->setS2SErrorInfo($details, $pxCtx);
+        }
+
         if ($pxCtx->getDecodedCookie()) {
             $details['px_cookie'] = $pxCtx->getDecodedCookie();
         }
@@ -143,5 +148,23 @@ class PerimeterxActivitiesClient
         }
 
         $this->prepareActivitiesRequest('page_requested', $pxCtx, $details);
+    }
+
+    private function setS2SErrorInfo(&$details, &$pxCtx) {
+        $details['s2s_error_reason'] = $pxCtx->getS2SErrorReason();
+        $details['s2s_error_message'] = $pxCtx->getS2SErrorMessage();
+        $details['s2s_error_http_status'] = $pxCtx->getS2SErrorHttpStatus();
+        $details['s2s_error_http_message'] = $pxCtx->getS2SErrorHttpMessage();
+    }
+
+    private function addAdditionalFieldsToDetails(&$details, &$additionalFields) {
+        if (!is_iterable($additionalFields)) {
+            return;
+        }
+        foreach ($additionalFields as $key => $value) {
+            if (!isset($details[$key])) {
+                $details[$key] = $value;
+            }
+        }
     }
 }
