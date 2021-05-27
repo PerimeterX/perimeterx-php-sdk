@@ -158,6 +158,12 @@ class PerimeterxActivitiesClient
     }
 
     private function addAdditionalFieldsToDetails(&$details, &$additionalFields) {
+        if (!function_exists('is_iterable')) {
+            function is_iterable($var)
+            {
+                return is_array($var) || $var instanceof \Traversable;
+            }
+        }
         if (!is_iterable($additionalFields)) {
             return;
         }
