@@ -108,7 +108,8 @@ final class Perimeterx
                 'bypass_monitor_header' => null,
                 'custom_block_url' => null,
                 'defer_activities' => true,
-                'enable_json_response' => false
+                'enable_json_response' => false,
+                'return_response' => false
             ], $pxConfig);
 
             if (empty($this->pxConfig['logger'])) {
@@ -286,9 +287,15 @@ final class Perimeterx
                     'hostUr' => $templateInputs['hostUrl'],
                     'blockScript' => $templateInputs['blockScript']
                 );
+                if ($this->pxConfig['return_response']) {
+                    reutrn $result;
+                }
                 echo json_encode($result);
             } else {
                 header("Content-Type: text/html");
+                if ($this->pxConfig['return_response']) {
+                    reutrn $html;
+                }
                 echo $html;
             }
         } else {
@@ -301,6 +308,9 @@ final class Perimeterx
                 'page' => base64_encode($html),
                 'collectorUrl' => $collectorUrl
             );
+            if ($this->pxConfig['return_response']) {
+                reutrn $result;
+            }
             echo json_encode($result);
         }
         die();
