@@ -107,7 +107,8 @@ final class Perimeterx
                 'ip_headers' => [],
                 'bypass_monitor_header' => null,
                 'custom_block_url' => null,
-                'defer_activities' => true
+                'defer_activities' => true,
+                'enable_json_response' => false
             ], $pxConfig);
 
             if (empty($this->pxConfig['logger'])) {
@@ -127,6 +128,7 @@ final class Perimeterx
     public function pxVerify()
     {
         $pxCtx = null;
+        $extractedCredentials = null;
         $this->pxConfig['logger']->debug('Starting request verification');
         try {
             if (!$this->pxConfig['module_enabled']) {
@@ -221,6 +223,9 @@ final class Perimeterx
             return 1;
         }
 
+        $accept_header = isset($_SERVER['HTTP_ACCEPT']) ? $_SERVER['HTTP_ACCEPT'] : $_SERVER['HTTP_CONTENT_TYPE'];
+        $is_json_response = $pxCtx->getCookieOrigin() == 'cookie' && strpos($accept_header,'application/json') !== false && $this->pxConfig['enable_json_response'];
+
         $block_uuid = $pxCtx->getUuid();
         $mustache = new \Mustache_Engine(array(
             'loader' => new \Mustache_Loader_FilesystemLoader(dirname(__FILE__) . '/templates'),
@@ -260,14 +265,32 @@ final class Perimeterx
                 header('Location: '.$page_url, true, 307);
                 die();
             } else {
-                $html = $mustache->render('block_template', $templateInputs);
-                $this->pxConfig['logger']->debug("Enforcing action: {$pxCtx->getBlockAction()} page is served");
+                if ($is_json_response == false) {
+                    $html = $mustache->render('block_template', $templateInputs);
+                    $this->pxConfig['logger']->debug("Enforcing action: {$pxCtx->getBlockAction()} page is served");
+                } else {
+                    $this->pxConfig['logger']->debug("Enforcing action: advanced blocking response is served");
+                }
             }
         }
 
         if ($pxCtx->getCookieOrigin() == 'cookie') {
-            header("Content-Type: text/html");
-            echo $html;
+            if($is_json_response) {
+                header("Content-Type: application/json");
+                $result = array(
+                    'appId' => $this->pxConfig['app_id'],
+                    'jsClientSrc' => $templateInputs['jsClientSrc'],
+                    'firstPartyEnabled' => false,
+                    'vid' => $templateInputs['vid'],
+                    'uuid' => $templateInputs['uuid'],
+                    'hostUr' => $templateInputs['hostUrl'],
+                    'blockScript' => $templateInputs['blockScript']
+                );
+                echo json_encode($result);
+            } else {
+                header("Content-Type: text/html");
+                echo $html;
+            }
         } else {
             header("Content-Type: application/json");
             $result = array(
