@@ -288,13 +288,13 @@ final class Perimeterx
                     'blockScript' => $templateInputs['blockScript']
                 );
                 if ($this->pxConfig['return_response']) {
-                    reutrn $result;
+                    return $result;
                 }
                 echo json_encode($result);
             } else {
                 header("Content-Type: text/html");
                 if ($this->pxConfig['return_response']) {
-                    reutrn $html;
+                    return $html;
                 }
                 echo $html;
             }
@@ -309,7 +309,7 @@ final class Perimeterx
                 'collectorUrl' => $collectorUrl
             );
             if ($this->pxConfig['return_response']) {
-                reutrn $result;
+                return $result;
             }
             echo json_encode($result);
         }
