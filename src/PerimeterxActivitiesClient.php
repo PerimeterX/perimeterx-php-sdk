@@ -76,7 +76,9 @@ class PerimeterxActivitiesClient
         $pxData['px_app_id'] = $this->pxConfig['app_id'];
         $pxData['url'] = $pxCtx->getFullUrl();
         $pxData['details'] = $details;
-        $this->addAdditionalFieldsToDetails($pxData['details'], $pxCtx->getAdditionalFields());
+
+        $additionalFields = $pxCtx->getAdditionalFields();
+        $this->addAdditionalFieldsToDetails($pxData['details'], $additionalFields);
 
         $vid = $pxCtx->getVid();
         if (isset($vid)) {
