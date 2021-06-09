@@ -194,7 +194,7 @@ final class Perimeterx
 
     /**
      * @param PerimeterxContext $pxCtx
-     * @return bool - a true value when user is scored ok/blocking is disabled
+     * @return mixed object|boolean as the verification result
      */
     private function handleVerification($pxCtx)
     {

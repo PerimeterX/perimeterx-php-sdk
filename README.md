@@ -40,8 +40,11 @@
 *   [Guzzle Client Handler](#guzzle-client-handler)
 *   [Custom Block URL](#custom-block-url)
 *   [Defer Activities Sending](#defer-activities)
+*   [Advanced Blocking Response Flag](#enable-abr)
+*   [Return Response Flag](#return-response)
 *   [Test Block Flow on Monitoring Mode](#bypass-monitor-header)
 
+-   [Advanced Blocking Response](#advanced-blocking-response)
 -   [Additional Information](#additional-information)
 -   [Contributing](#contributing)
 
@@ -580,7 +583,6 @@ $perimeterxConfig['px_login_creds_extraction'] = [
 ]
 ```
 
-
 #### <a name="logging"></a> Logging
 
 Log messages via an implementation of `\Psr\Log\LoggerInterface` (see [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) for full interface specification). By default, an instance of `\Perimeterx\PerimeterxLogger` is used which will log all message via PHP's `error_log` function.
@@ -664,6 +666,34 @@ $perimeterxConfig = [
 ]
 ```
 
+#### <a name="enable-abr"></a> Advanced Blocking Response Flag
+
+Enables/disables the Advanced Blocking Response functionality.
+
+**Default:** false
+
+```php
+$perimeterxConfig = [
+    ..
+    'enable_json_response' => true
+    ..
+]
+```
+
+#### <a name="return-response"></a> Return Response Flag
+
+Enables/disables the ability to return the response back (useful for frameworks like Symfony) instead of running `die()`.
+
+**Default:** false
+
+```php
+$perimeterxConfig = [
+    ..
+    'return_response' => true
+    ..
+]
+```
+
 #### <a name="defer-activities"></a> Defer Activities Sending
 
 Specifies if sending page activities should be deferred until shutdown or not.
@@ -698,8 +728,44 @@ $perimeterxConfig = [
 ]
 ````
 
+## <a name="advanced-blocking-response"></a> Advanced Blocking Response
+
+In special cases, (such as XHR post requests) a full Captcha page render might not be an option. In such cases, using the Advanced Blocking Response returns a JSON object continaing all the information needed to render your own Captcha challenge implementation, be it a popup modal, a section on the page, etc. The Advanced Blocking Response occurs when a request contains the _Accept_ header with the value of `application/json`. A sample JSON response appears as follows:
+
+```javascript
+{
+    "appId": String,
+    "jsClientSrc": String,
+    "firstPartyEnabled": Boolean,
+    "vid": String,
+    "uuid": String,
+    "hostUrl": String,
+    "blockScript": String
+}
+```
+
+Once you have the JSON response object, you can pass it to your implementation (with query strings or any other solution) and render the Captcha challenge.
+
+In addition, you can add the `_pxOnCaptchaSuccess` callback function on the window object of your Captcha page to react according to the Captcha status. For example when using a modal, you can use this callback to close the modal once the Captcha is successfullt solved. <br/> An example of using the `_pxOnCaptchaSuccess` callback is as follows:
+
+```javascript
+window._pxOnCaptchaSuccess = function (isValid) {
+    if (isValid) {
+        alert('yay');
+    } else {
+        alert('nay');
+    }
+};
+```
+
+To enable Advanced Blocking Response see the [Advanced Blocking Response Flag](#enable-abr) section.
+
+For details on how to create a custom Captcha page, refer to the [documentation](https://docs.perimeterx.com/pxconsole/docs/customize-challenge-page)
+
 ## <a name=“additional-information”></a> Additional Information
+
 ### URI Delimiters
+
 PerimeterX processes URI paths with general- and sub-delimiters according to RFC 3986. General delimiters (e.g., `?`, `#`) are used to separate parts of the URI. Sub-delimiters (e.g., `$`, `&`) are not used to split the URI as they are considered valid characters in the URI path.
 
 ## <a name="contributing"></a> Contributing
