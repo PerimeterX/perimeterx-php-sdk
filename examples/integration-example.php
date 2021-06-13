@@ -8,7 +8,7 @@ $perimeterxConfig = [
     'cookie_key' => 'COOKIE_SECRET',
     'auth_token' => 'AUTH_TOKEN',
     'blocking_score' => 70,
-    'module_mode' => Perimeterx::$MONITOR_MODE,
+    'px_module_mode' => Perimeterx::$MONITOR_MODE,
     /*
      * 'custom_user_ip' => function ($pxCtx)
      * {

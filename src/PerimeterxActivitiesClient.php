@@ -116,7 +116,7 @@ class PerimeterxActivitiesClient
         $details['block_reason'] = $pxCtx->getBlockReason();
         $details['block_action'] = $pxCtx->getResponseBlockAction();
         $details['risk_rtt'] = $pxCtx->getRiskRtt();
-        $details['simulated_block'] = $this->pxConfig['module_mode'] == Perimeterx::$MONITOR_MODE;
+        $details['simulated_block'] = $this->pxConfig['px_module_mode'] == Perimeterx::$MONITOR_MODE;
 
         $this->prepareActivitiesRequest("block", $pxCtx, $details);
     }

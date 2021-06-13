@@ -13,7 +13,7 @@ $pxConfig = [
     'app_id' => '',
     'cookie_key' => '',
     'auth_token' => '',
-    'module_mode' => Perimeterx::$ACTIVE_MODE,
+    'px_module_mode' => Perimeterx::$ACTIVE_MODE,
     'blocking_score' => 40
 ];
 

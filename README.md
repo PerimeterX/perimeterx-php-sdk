@@ -76,7 +76,7 @@ $perimeterxConfig = [
     'cookie_key' => 'COOKIE_SECRET',
     'auth_token' => 'AUTH_TOKEN',
     'blocking_score' => 60,
-    'module_mode' => Perimeterx::$ACTIVE_MODE
+    'px_module_mode' => Perimeterx::$ACTIVE_MODE
 ];
 
 /* Obtain PerimeterX SDK instance */
@@ -272,7 +272,7 @@ $perimeterxConfig['custom_block_handler'] = function ($pxCtx) {
 ```php
 $perimeterxConfig = [
 	..
-    'module_mode' => Perimeterx::$ACTIVE_MODE
+    'px_module_mode' => Perimeterx::$ACTIVE_MODE
     ..
 ]
 ```

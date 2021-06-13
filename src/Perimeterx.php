@@ -98,7 +98,7 @@ final class Perimeterx
                 'debug_mode' => false,
                 'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
                 'captcha_script_host' => 'https://captcha.px-cdn.net',
-                'module_mode' => Perimeterx::$MONITOR_MODE,
+                'px_module_mode' => Perimeterx::$MONITOR_MODE,
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
                 'activities_timeout' => 1,
@@ -222,7 +222,7 @@ final class Perimeterx
 
         $headers = array_change_key_case($pxCtx->getHeaders(), CASE_LOWER);
         $should_bypass_monitor = isset($this->pxConfig['bypass_monitor_header']) && isset($headers[strtolower($this->pxConfig['bypass_monitor_header'])]) && $headers[strtolower($this->pxConfig['bypass_monitor_header'])] == "1";
-        if ($this->pxConfig['module_mode'] != Perimeterx::$ACTIVE_MODE && !$should_bypass_monitor ) {
+        if ($this->pxConfig['px_module_mode'] != Perimeterx::$ACTIVE_MODE && !$should_bypass_monitor ) {
             return 1;
         }
 

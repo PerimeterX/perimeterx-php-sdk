@@ -25,7 +25,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
         $requestBody = $this->prepareRiskRequestBody();
         $startRiskRtt = $this->getTimeInMilliseconds();
         try {
-            if ($this->pxConfig['module_mode'] != Perimeterx::$ACTIVE_MODE and isset($this->pxConfig['custom_risk_handler'])) {
+            if ($this->pxConfig['px_module_mode'] != Perimeterx::$ACTIVE_MODE and isset($this->pxConfig['custom_risk_handler'])) {
                 $response = $this->pxConfig['custom_risk_handler']($this->pxConfig['perimeterx_server_host'] . self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers);
             } else {
                 $response = $this->httpClient->send(self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout'], $this->pxCtx);
@@ -63,7 +63,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
                 'module_version' => $this->pxConfig['sdk_name'],
                 'http_method' => $this->pxCtx->getHttpMethod(),
                 'http_version' => $this->pxCtx->getHttpVersion(),
-                'risk_mode' => $this->pxConfig['module_mode'] == Perimeterx::$ACTIVE_MODE ? 'active_blocking' : 'monitor',
+                'risk_mode' => $this->pxConfig['px_module_mode'] == Perimeterx::$ACTIVE_MODE ? 'active_blocking' : 'monitor',
                 'px_cookie_hmac' => $this->pxCtx->getCookieHmac(),
                 'cookie_origin' => $this->pxCtx->getCookieOrigin(),
                 'request_cookie_names' => $this->pxCtx->getCookieNames()
