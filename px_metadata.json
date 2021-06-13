@@ -1,6 +1,7 @@
 {
-    "version": "3.6.0",
+    "version": "3.7.0",
     "supported_features": [
+        "advanced_blocking_response",
         "block_activity",
         "block_page_captcha",
         "block_page_js_challenge",
@@ -16,6 +17,7 @@
         "page_requested",
         "pxvid",
         "risk_api",
+        "return_response",
         "sensitive_headers",
         "sensitive_routes",
         "additional_page_activity_handler",

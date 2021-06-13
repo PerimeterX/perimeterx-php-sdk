@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
+## [3.7.0] - 2021-06-13
+
+### Added
+
+-   Support for advanced blocking response
+-   Support for return response
+
+### Fixed
+
+-   Minor bugs (lowercase headers, nonexistent `is_iterable` function in PHP <7.0)
 
 ## [3.6.0] - 2021-05-11
 
