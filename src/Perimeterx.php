@@ -286,7 +286,7 @@ final class Perimeterx
                     'firstPartyEnabled' => false,
                     'vid' => $templateInputs['vid'],
                     'uuid' => $templateInputs['uuid'],
-                    'hostUr' => $templateInputs['hostUrl'],
+                    'hostUrl' => $templateInputs['hostUrl'],
                     'blockScript' => $templateInputs['blockScript']
                 );
                 if ($this->pxConfig['return_response']) {
