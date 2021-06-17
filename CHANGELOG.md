@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
+
+## [3.7.1] - 2021-06-16
+
+### Fixed
+
+-   hostUrl typo in `handleVerification()`
+
 ## [3.7.0] - 2021-06-13
 
 ### Added
