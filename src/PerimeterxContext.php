@@ -13,8 +13,7 @@ class PerimeterxContext
      */
     public function __construct($pxConfig, $additionalFields = null)
     {
-        $this->cookie_origin = "cookie";
-
+        $this->cookie_origin = "";
         $this->start_time = microtime(true);
         if (function_exists('getallheaders')) {
             $this->headers = getallheaders();
@@ -429,6 +428,14 @@ class PerimeterxContext
     public function getCookieOrigin()
     {
         return $this->cookie_origin;
+    }
+
+    /**
+     * @param string
+     */
+    public function setCookieOrigin($cookieOrigin)
+    {
+        $this->cookie_origin = $cookieOrigin;
     }
 
     /**

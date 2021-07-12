@@ -64,9 +64,14 @@ class PerimeterxActivitiesClient
     }
 
     public function sendToPerimeterx($activityType, $pxCtx, $details) {
-        $details['cookie_origin'] = $pxCtx->getCookieOrigin();
+        $cookieOrigin = $pxCtx->getCookieOrigin();
+        if ($cookieOrigin && $cookieOrigin != '') {
+            $details['cookie_origin'] = $cookieOrigin;
+        }
         $details['http_method'] = $pxCtx->getHttpMethod();
-
+        $details['http_version'] = $pxCtx->getHttpVersion();
+        $details['client_uuid'] = $pxCtx->getUuid();
+        $details['risk_rtt'] = $pxCtx->getRiskRtt();
         $details['module_version'] = $this->pxConfig['sdk_name'];
         $pxData = [];
         $pxData['type'] = $activityType;
@@ -111,11 +116,9 @@ class PerimeterxActivitiesClient
         }
 
         $details = [];
-        $details['block_uuid'] = $pxCtx->getUuid();
         $details['block_score'] = $pxCtx->getScore();
         $details['block_reason'] = $pxCtx->getBlockReason();
         $details['block_action'] = $pxCtx->getResponseBlockAction();
-        $details['risk_rtt'] = $pxCtx->getRiskRtt();
         $details['simulated_block'] = $this->pxConfig['module_mode'] == Perimeterx::$MONITOR_MODE;
 
         $this->prepareActivitiesRequest("block", $pxCtx, $details);
@@ -131,11 +134,7 @@ class PerimeterxActivitiesClient
         }
 
         $details = [];
-        $details['client_uuid'] = $pxCtx->getUuid();
-        $details['module_version'] = $this->pxConfig['sdk_name'];
-        $details['http_version'] = $pxCtx->getHttpVersion();
         $details['pass_reason'] = $pxCtx->getPassReason();
-        $details['risk_rtt'] = $pxCtx->getRiskRtt();
 
         if ($pxCtx->getPassReason() === "s2s_error") {
             $this->setS2SErrorInfo($details, $pxCtx);
