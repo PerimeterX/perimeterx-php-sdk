@@ -64,15 +64,19 @@ class PerimeterxActivitiesClient
     }
 
     public function sendToPerimeterx($activityType, $pxCtx, $details) {
-        $cookieOrigin = $pxCtx->getCookieOrigin();
-        if ($cookieOrigin && $cookieOrigin != '') {
-            $details['cookie_origin'] = $cookieOrigin;
-        }
         $details['http_method'] = $pxCtx->getHttpMethod();
         $details['http_version'] = $pxCtx->getHttpVersion();
         $details['client_uuid'] = $pxCtx->getUuid();
-        $details['risk_rtt'] = $pxCtx->getRiskRtt();
         $details['module_version'] = $this->pxConfig['sdk_name'];
+        $cookieOrigin = $pxCtx->getCookieOrigin();
+        if ($cookieOrigin != '') {
+            $details['cookie_origin'] = $cookieOrigin;
+        }
+        $riskRtt = $pxCtx->getRiskRtt();
+        if ($riskRtt != 0) {
+            $details['risk_rtt'] = $riskRtt;
+        }
+
         $pxData = [];
         $pxData['type'] = $activityType;
         $pxData['headers'] = $this->filterSensitiveHeaders($pxCtx);
