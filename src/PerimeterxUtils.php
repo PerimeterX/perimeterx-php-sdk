@@ -4,6 +4,8 @@ namespace Perimeterx;
 
 class PerimeterxUtils
 {
+	const SECONDS_IN_YEAR = 31557600;
+	const ILLEGAL_COOKIE_CHARS = [",", ";", " ", "\t", "\r", "\n", "\013", "\014"];
 	protected static $inputStreamName = "php://input";
 
 	private $customParamsArray = [
@@ -28,6 +30,10 @@ class PerimeterxUtils
 				}
 			}
 		}
+	}
+
+	public static function sanitizeCookie($cookieValue) {
+		return str_replace(self::ILLEGAL_COOKIE_CHARS, array_map("rawurlencode", self::ILLEGAL_COOKIE_CHARS), $cookieValue);
 	}
 
 	public static function getPostRequestBody() {
