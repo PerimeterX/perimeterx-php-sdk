@@ -46,6 +46,9 @@ class PerimeterxS2SValidatorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($pxCookie, $last->parameters[2]["additional"]["px_cookie_orig"]);
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testRiskResponseUnencodedPxhdCookie() {
         $pxhdCookie = "\this cookie has bad \values like \013 and \014 that p\roper cookies should\n't have";
 
