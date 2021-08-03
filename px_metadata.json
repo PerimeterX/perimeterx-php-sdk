@@ -1,6 +1,7 @@
 {
-    "version": "3.7.1",
+    "version": "3.7.2",
     "supported_features": [
+        "additional_page_activity_handler",
         "advanced_blocking_response",
         "block_activity",
         "block_page_captcha",
@@ -10,17 +11,17 @@
         "css_ref",
         "custom_logo",
         "custom_parameters",
-        "debug_mode",
         "js_ref",
-        "module_enable_disable",
-        "monitor_mode",
-        "page_requested",
-        "pxvid",
+        "logger",
+        "login_credentials_extraction",
+        "module_enable",
+        "module_mode",
+        "page_requested_activity",
+        "pxde",
         "risk_api",
         "return_response",
         "sensitive_headers",
         "sensitive_routes",
-        "additional_page_activity_handler",
-        "login_credentials_extraction"
+        "vid_extraction"
     ]
 }
