@@ -148,7 +148,7 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
         $this->pxCtx->setBlockAction($response->action);
         $this->pxCtx->setResponseBlockAction($response->action);
         if (isset($response->pxhd)) {
-            setrawcookie("_pxhd", $response->pxhd, time() + 31557600, "/"); // expires in 1 year
+            setrawcookie("_pxhd", PerimeterxUtils::sanitizeCookie($response->pxhd), time() + PerimeterxUtils::SECONDS_IN_YEAR, "/");
         }
         if(isset($response->data_enrichment)) {
             $this->pxCtx->setDataEnrichmentVerified(true);
