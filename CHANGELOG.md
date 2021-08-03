@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   sanitize PXHD before setting cookie
+-   cookieOrigin value set when appropriate
+-   tweaked async activities to match spec
 
 ## [3.7.1] - 2021-06-16
 
