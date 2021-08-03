@@ -46,6 +46,30 @@ class PerimeterxS2SValidatorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($pxCookie, $last->parameters[2]["additional"]["px_cookie_orig"]);
     }
 
+    /**
+     * @runInSeparateProcess
+     */
+    public function testRiskResponseUnencodedPxhdCookie() {
+        $pxhdCookie = "\this cookie has bad \values like \013 and \014 that p\roper cookies should\n't have";
+
+        $http_client = $this->createMock(PerimeterxHttpClient::class);
+        $http_client->method('send')
+            ->willReturn(json_encode([
+                "status" => 0,
+                "score" => 0,
+                "action" => 'c',
+                "uuid" => "uuid",
+                "pxhd" => $pxhdCookie
+            ]));
+
+        $pxCtx = $this->getPxContext();
+        $pxConfig = $this->getPxConfig($this->getMockLogger(), $http_client);
+
+        $validator = new PerimeterxS2SValidator($pxCtx, $pxConfig);
+        // asserts that it does not throw an exception/warning
+        $this->assertNull($validator->verify());
+    }
+
     public function testS2SErrorHttpClientThrowsException() {
         $exception_message = "Exception message!";
         $http_client = $this->createMock(PerimeterxHttpClient::class);
