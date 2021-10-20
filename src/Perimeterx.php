@@ -110,7 +110,8 @@ final class Perimeterx
                 'custom_block_url' => null,
                 'defer_activities' => true,
                 'enable_json_response' => false,
-                'return_response' => false
+                'return_response' => false,
+                'px_compromised_credentials_header' => 'px-compromised-credentials'
             ], $pxConfig);
 
             if (empty($this->pxConfig['logger'])) {
@@ -193,6 +194,17 @@ final class Perimeterx
         return $this->pxConfig['challenge_enabled'] && $pxCtx->getBlockAction() == 'challenge';
     }
 
+    private function setCompromisedCredentialsHeaderIfNeeded($pxCtx)
+    {
+        $dataEnrichment = $pxCtx->getDataEnrichment();
+        if (isset($dataEnrichment) && isset($dataEnrichment->breached_account) && $dataEnrichment->breached_account) {
+            $headerName = $this->pxConfig['px_compromised_credentials_header'];
+            $headerValue = strval($dataEnrichment->breached_account);
+            $_REQUEST[$headerName] = $headerValue;
+            $this->pxConfig['logger']->debug("Setting compromised credentials header '" . $headerName . "' to " . $headerValue);
+        }
+    }
+
     /**
      * @param PerimeterxContext $pxCtx
      * @return mixed object|boolean as the verification result
@@ -202,6 +214,7 @@ final class Perimeterx
         $score = $pxCtx->getScore();
         /* score is ok - PASS traffic */
         if (!isset($score) or $score < $this->pxConfig['blocking_score']) {
+            $this->setCompromisedCredentialsHeaderIfNeeded($pxCtx);
             $this->pxActivitiesClient->sendPageRequestedActivity($pxCtx);
             return 1;
         }
