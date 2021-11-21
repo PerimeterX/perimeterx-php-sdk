@@ -387,10 +387,10 @@ final class Perimeterx
      */
 
      private function createFieldExtractorManager() {
-        if (empty($this->pxConfig['px_enable_login_creds_extraction']) || empty($this->pxConfig['px_login_creds_extraction'])) {
+        if (empty($this->pxConfig['px_enable_login_credentials_extraction']) || empty($this->pxConfig['px_login_credentials_extraction'])) {
             return null;
         }
-        $extractorMap = PerimeterxFieldExtractorManager::createExtractorMap($this->pxConfig['px_login_creds_extraction']);
+        $extractorMap = PerimeterxFieldExtractorManager::createExtractorMap($this->pxConfig['px_login_credentials_extraction']);
         return new PerimeterxFieldExtractorManager($extractorMap, $this->pxConfig['logger']);
      }
 }
