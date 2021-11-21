@@ -6,7 +6,7 @@ use Psr\Log\LoggerInterface;
 
 class PerimeterxFieldExtractorManager {
 
-    private static $USERNAME_FIELD = "user";
+    public static $USERNAME_FIELD = "user";
     private static $PASSWORD_FIELD = "pass";
 
     private $extractorMap;

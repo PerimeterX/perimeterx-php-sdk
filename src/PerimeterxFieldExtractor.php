@@ -35,10 +35,20 @@ class PerimeterxFieldExtractor {
             return null;
         }
 
-        return array_map(function($value) {
-            return hash(PerimeterxFieldExtractor::$HASH_ALGO, $value);
-        }, $extractedCredentials);
+
+        $keys = array_keys($extractedCredentials);
+        return array_combine(
+        $keys, 
+        array_map(function($value, $key){ 
+            if ($key == PerimeterxFieldExtractorManager::$USERNAME_FIELD) {
+                $value = strtolower($value);
+            }
+            return hash(PerimeterxFieldExtractor::$HASH_ALGO, $value);    
+        }, $extractedCredentials, $keys)
+        );
     }
+
+
 
     private function getContainer() {
         switch ($this->sentThrough) {
