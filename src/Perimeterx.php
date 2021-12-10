@@ -290,7 +290,7 @@ final class Perimeterx
             }
         }
 
-        if ($pxCtx->getCookieOrigin() == 'cookie') {
+        if ($pxCtx->getCookieOrigin() != 'header') {
             if($is_json_response) {
                 header("Content-Type: application/json");
                 $result = array(

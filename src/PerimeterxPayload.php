@@ -28,7 +28,7 @@ abstract class PerimeterxPayload {
      * Factory method for creating PX payload object according to the version found on the request
      */
     public static function pxPayloadFactory($pxCtx, $pxConfig) {
-        if ($pxCtx->getCookieOrigin() == "cookie") {
+        if ($pxCtx->getCookieOrigin() != "header") {
             return (isset($pxCtx->getPxCookies()['v3']) ? new CookieV3($pxCtx, $pxConfig) : new CookieV1($pxCtx, $pxConfig));
         } else {
             return (isset($pxCtx->getPxCookies()['v3']) ? new TokenV3($pxCtx, $pxConfig, $pxCtx->getPxCookie()) : new TokenV1($pxCtx, $pxConfig, $pxCtx->getPxCookie()));
