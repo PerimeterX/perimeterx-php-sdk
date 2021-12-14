@@ -562,13 +562,18 @@ $perimeterxConfig['enrich_custom_params'] = function ($customParamsArray)
 
 This feature extracts credentials (hashed username and password) from requests and sends them to PerimeterX as additional info in the risk api call. The feature can be toggled on and off, and may be set for any number of unique paths. The settings are adjusted by modifying the `px_enable_login_creds_extraction` and `px_login_creds_extraction` properties on the `$perimeterxConfig` array.
 
+If credentials are found to be compromised, the field `px-compromised-credentials` will be added to the `$_REQUEST` object with the value `"1"`. You may configure the name of this field with the `px_compromised_credentials_header` configuration.
+
 **Default:**
 
 px_enable_login_creds_extraction: false
 
 px_login_creds_extraction: []
 
+px_compromised_credentials_header: "px-compromised-credentials"
+
 ```php
+$perimeterxConfig['px_compromised_credentials_header'] = 'px-comp-creds';
 $perimeterxConfig['px_enable_login_creds_extraction'] = true;
 $perimeterxConfig['px_login_creds_extraction'] = [
     [
