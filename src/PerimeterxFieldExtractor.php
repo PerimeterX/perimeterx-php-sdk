@@ -11,26 +11,28 @@ class PerimeterxFieldExtractor {
     private $contentType;
     private $encoding;
     private $extractionFields;
+    private $callbackName;
 
     /**
-     * @param string, @param string, @param string, @param array
+     * @param string $sentThrough
+     * @param string $contentType
+     * @param string $encoding
+     * @param array $desiredFields
+     * @param string $callbackName
      */
-    public function __construct($sentThrough, $contentType, $encoding, $desiredFields) {
+    public function __construct($sentThrough, $contentType, $encoding, $desiredFields, $callbackName) {
         $this->sentThrough = $sentThrough;
         $this->contentType = $contentType;
         $this->encoding = $encoding;
         $this->extractionFields = $desiredFields;
+        $this->callbackName = $callbackName;
     }
 
     /**
      * @return array
      */
     public function extractFields() {
-        $container = $this->getContainer();
-        if (empty($container)) {
-            return null;
-        }
-        $extractedCredentials = $this->getFieldsFrom($container, $this->extractionFields);
+        $extractedCredentials = $this->getCredentials();
         if (empty($extractedCredentials)) {
             return null;
         }
@@ -38,6 +40,17 @@ class PerimeterxFieldExtractor {
         return array_map(function($value) {
             return hash(PerimeterxFieldExtractor::$HASH_ALGO, $value);
         }, $extractedCredentials);
+    }
+
+    private function getCredentials() {
+        if (!empty($this->callbackName) && function_exists($this->callbackName)) {
+            return call_user_func($this->callbackName);
+        }
+        $container = $this->getContainer();
+        if (empty($container)) {
+            return null;
+        }
+        return $this->getFieldsFrom($container, $this->extractionFields);
     }
 
     private function getContainer() {
