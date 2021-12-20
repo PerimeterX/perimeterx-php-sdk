@@ -6,7 +6,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) PHP SDK
 
-> Latest stable version: [v3.7.3](https://packagist.org/packages/perimeterx/php-sdk#3.7.3)
+> Latest stable version: [v3.7.4](https://packagist.org/packages/perimeterx/php-sdk#3.7.4)
 
 ## Table of Contents
 
@@ -577,15 +577,40 @@ $perimeterxConfig['px_compromised_credentials_header'] = 'px-comp-creds';
 $perimeterxConfig['px_enable_login_creds_extraction'] = true;
 $perimeterxConfig['px_login_creds_extraction'] = [
     [
-        "path" => "/login",           // login path
-        "method" => "POST",           // supported methods: POST
-        "sentThrough" => "body",      // supported sentThroughs: body, header, query-param
-        "contentType" => "json",      // supported contentTypes: json, form
-        "encoding" => "clear-text",   // supported encodings: clear-text, url-encode
-        "passField" => "password",    // name of the password field in the request
-        "userField" => "username"     // name of the username field in the request
+        "path" => "/login",             // login path
+        "method" => "POST",             // supported methods: POST
+        "sentThrough" => "body",        // supported sentThroughs: body, header, query-param
+        "contentType" => "json",        // supported contentTypes: json, form
+        "encoding" => "clear-text",     // supported encodings: clear-text, url-encode
+        "passField" => "password",      // name of the password field in the request
+        "userField" => "username"       // name of the username field in the request
     ], [ ... ], ...
 ]
+```
+
+It is also possible to define a custom callback to extract the username and password. The function should return an associative
+array with the keys `user` and `pass`. If extraction is unsuccessful, the function should return `null`.
+
+```php
+$perimeterxConfig['px_enable_login_creds_extraction'] = true;
+$perimeterxConfig['px_login_creds_extraction'] = [
+    [
+        "path" => "/login",                 // login path
+        "method" => "POST",                 // supported methods: POST
+        "callbackName" => "extractCreds"    // name of custom extraction callback
+    ], ...
+];
+
+function extractCreds() {
+    // custom implementation resulting in $username and $password
+    if (empty($username) || empty($password)) {
+        return null;
+    }
+    return [
+        "user" => $username,
+        "pass" => $password
+    ];
+}
 ```
 
 #### <a name="logging"></a> Logging
