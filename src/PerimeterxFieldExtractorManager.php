@@ -52,7 +52,7 @@ class PerimeterxFieldExtractorManager {
                 array(
                     $extractConfig["userField"] => PerimeterxFieldExtractorManager::$USERNAME_FIELD,
                     $extractConfig["passField"] => PerimeterxFieldExtractorManager::$PASSWORD_FIELD
-                ));
+                ), $extractConfig["callbackName"]);
         }
         return $extractorMap;
     }
