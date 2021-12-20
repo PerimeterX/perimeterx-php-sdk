@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.7.4] - 2021-12-20
+
+## Added
+
+-   Option to extract login credentials via custom callback function
+
 ## [3.7.3] - 2021-12-14
 
 ### Fixed
