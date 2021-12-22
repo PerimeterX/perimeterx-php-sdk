@@ -43,7 +43,7 @@ class PerimeterxFieldExtractor {
     }
 
     private function getCredentials() {
-        if (!empty($this->callbackName) && function_exists($this->callbackName)) {
+        if (!empty($this->callbackName) && is_callable($this->callbackName)) {
             return call_user_func($this->callbackName);
         }
         $container = $this->getContainer();
