@@ -42,8 +42,16 @@ class PerimeterxFieldExtractorManager {
     public static function createExtractorMap(array &$extractConfigs) {
         $extractorMap = array();
         foreach ($extractConfigs as $extractConfig) {
-            if (!isset($extractConfig["path"], $extractConfig["method"], $extractConfig["sentThrough"], $extractConfig["contentType"], 
-                       $extractConfig["encoding"], $extractConfig["passField"], $extractConfig["userField"])) {
+            if (!isset($extractConfig["path"], $extractConfig["method"])) {
+                continue;
+            }
+            if (!isset($extractConfig["callbackName"]) &&
+                !isset(
+                    $extractConfig["sentThrough"],
+                    $extractConfig["encoding"],
+                    $extractConfig["contentType"],
+                    $extractConfig["userField"],
+                    $extractConfig["passField"])) {
                 continue;
             }
             $extractorKey = self::generateMapKey($extractConfig["path"], $extractConfig["method"]);
