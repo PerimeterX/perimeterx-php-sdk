@@ -70,6 +70,10 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             ]
         ];
 
+        if (strpos($this->pxCtx->getUri(), "graphql") !== false) {
+            $this->handleGraphqlRequest($requestBody);
+        }
+
         $pxvid = $this->pxCtx->getPxVidCookie();
         $vid = $this->pxCtx->getVid();
         $vid_source = "none";
@@ -137,6 +141,22 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             }
         }
         return $requestBody;
+    }
+
+    private function handleGraphqlRequest(&$riskBody) {
+        try {
+            $this->pxConfig['logger']->debug("GraphQL endpoint identified");
+            $graphqlFields = GraphqlExtractor::ExtractGraphqlFields();
+            if (!is_null($graphqlFields)) {
+                $this->pxConfig['logger']->debug('Adding graphql fields to risk request');
+                $riskBody['additional']['graphql_operation_type'] = $graphqlFields->getOperationType();
+                $riskBody['additional']['graphql_operation_name'] = $graphqlFields->getOperationName();
+            } else {
+                $this->pxConfig['logger']->debug("Unable to extract graphql fields");
+            }
+        } catch (\Exception $e) {
+            $this->pxConfig['logger']->error('Exception while handling graphql body: ' . $e->getMessage());
+        }
     }
 
     private function handle_valid_risk_response($response) 
