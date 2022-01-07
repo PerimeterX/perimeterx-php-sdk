@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
--   Sending graphql operation type and name on risk_api activity
+-   Sending graphql operation type and name on activities
 
 ## [3.7.5] - 2021-12-22
 
