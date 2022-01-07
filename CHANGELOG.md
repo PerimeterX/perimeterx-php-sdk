@@ -5,15 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.7.6] - 2022-01-07
+
+### Fixed
+
+-   Bug with sensitive routes on mobile
+
+### Added
+
+-   Sending graphql operation type and name on activities
+
 ## [3.7.5] - 2021-12-22
 
-## Fixed
+### Fixed
 
 -   Allows extraction of login credentials via a custom static class method
 
 ## [3.7.4] - 2021-12-20
 
-## Added
+### Added
 
 -   Option to extract login credentials via custom callback function
 
