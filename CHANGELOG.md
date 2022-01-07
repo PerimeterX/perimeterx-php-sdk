@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [3.7.6] - 2022-01-07
 
-## Fixed
+### Fixed
 
 -   Bug with sensitive routes on mobile
 
