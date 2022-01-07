@@ -55,10 +55,11 @@ class PerimeterxCookieValidator
                     }
                     return false;
                 }
+            } else {
+                $this->pxCtx->setCookieOrigin("cookie");
             }
             $cookie = PerimeterxPayload::pxPayloadFactory($this->pxCtx, $this->pxConfig);
             $this->pxConfig['logger']->debug("Cookie {$this->pxCtx->getCookieVersion()} found, Evaluating");
-            $this->pxCtx->setCookieOrigin("cookie");
 
             if (!$cookie->deserialize()) {
                 $this->pxConfig['logger']->debug("Cookie decryption failed, value: {$this->pxCtx->getPxCookie()}");
