@@ -139,11 +139,9 @@ final class Perimeterx
                 return 1;
             }
             
-            if (!is_null($this->pxFieldExtractorManager)) {
-                $extractedCredentials = $this->pxFieldExtractorManager->extractFields();
-            }
+            $additionalFields = $this->createAdditionalFields();
 
-            $pxCtx = new PerimeterxContext($this->pxConfig, $extractedCredentials);
+            $pxCtx = new PerimeterxContext($this->pxConfig, $additionalFields);
             $this->pxConfig['logger']->debug('Request context created successfully');
 
             $validator = new PerimeterxCookieValidator($pxCtx, $this->pxConfig);
@@ -399,11 +397,51 @@ final class Perimeterx
      * @return PerimeterxFieldExtractorManager
      */
 
-     private function createFieldExtractorManager() {
+    private function createFieldExtractorManager() {
         if (empty($this->pxConfig['px_enable_login_creds_extraction']) || empty($this->pxConfig['px_login_creds_extraction'])) {
             return null;
         }
         $extractorMap = PerimeterxFieldExtractorManager::createExtractorMap($this->pxConfig['px_login_creds_extraction']);
         return new PerimeterxFieldExtractorManager($extractorMap, $this->pxConfig['logger']);
-     }
+    }
+
+    private function createAdditionalFields() {
+        $additionalFields = array();
+
+        if (!is_null($this->pxFieldExtractorManager)) {
+            $extractedCredentials = $this->pxFieldExtractorManager->extractFields();
+            if (isset($extractedCredentials)) {
+                $additionalFields = array_merge($additionalFields, $extractedCredentials);
+            }
+        }
+
+        if (strpos($_SERVER['REQUEST_URI'], "graphql") !== false) {
+            $graphqlFields = $this->extractGraphqlFields();
+            if (isset($graphqlFields)) {
+                $additionalFields = array_merge($additionalFields, [
+                    'graphql_operation_type' => $graphqlFields->getOperationType(),
+                    'graphql_operation_name' => $graphqlFields->getOperationName()
+                ]);
+            }
+        }
+
+        return $additionalFields;
+    }
+
+    private function extractGraphqlFields() {
+        try {
+            $this->pxConfig['logger']->debug("GraphQL endpoint identified");
+            $graphqlFields = GraphqlExtractor::ExtractGraphqlFields();
+            if (!is_null($graphqlFields)) {
+                $this->pxConfig['logger']->debug('Successfully extracted graphql fields');
+                return $graphqlFields;
+            } else {
+                $this->pxConfig['logger']->debug("Unable to extract graphql fields");
+                return null;
+            }
+        } catch (\Exception $e) {
+            $this->pxConfig['logger']->error('Exception while handling graphql body: ' . $e->getMessage());
+            return null;
+        }
+    }
 }
