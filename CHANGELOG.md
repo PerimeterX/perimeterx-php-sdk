@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.7.7] - 2022-01-11
+
+### Added
+
+-   Added default cookie origin on context creation
+
 ## [3.7.6] - 2022-01-07
 
 ### Fixed
