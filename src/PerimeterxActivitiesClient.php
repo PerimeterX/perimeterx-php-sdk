@@ -64,50 +64,8 @@ class PerimeterxActivitiesClient
     }
 
     public function sendToPerimeterx($activityType, $pxCtx, $details) {
-        $details['http_method'] = $pxCtx->getHttpMethod();
-        $details['http_version'] = $pxCtx->getHttpVersion();
-        $details['client_uuid'] = $pxCtx->getUuid();
-        $details['module_version'] = $this->pxConfig['sdk_name'];
-        $cookieOrigin = $pxCtx->getCookieOrigin();
-        if ($cookieOrigin != '') {
-            $details['cookie_origin'] = $cookieOrigin;
-        }
-        $riskRtt = $pxCtx->getRiskRtt();
-        if ($riskRtt != 0) {
-            $details['risk_rtt'] = $riskRtt;
-        }
-
-        $pxData = [];
-        $pxData['type'] = $activityType;
-        $pxData['headers'] = $this->filterSensitiveHeaders($pxCtx);
-        $pxData['timestamp'] = time();
-        $pxData['socket_ip'] = $pxCtx->getIp();
-        $pxData['px_app_id'] = $this->pxConfig['app_id'];
-        $pxData['url'] = $pxCtx->getFullUrl();
-        $pxData['details'] = $details;
-
-        $additionalFields = $pxCtx->getAdditionalFields();
-        $this->addAdditionalFieldsToDetails($pxData['details'], $additionalFields);
-
-        $vid = $pxCtx->getVid();
-        if (isset($vid)) {
-            $pxData['vid'] = $vid;
-        }
-
-        if ($pxCtx->getPxhdCookie() != null) {
-            $pxData['pxhd'] = $pxCtx->getPxhdCookie();
-        }
-
-        if (isset($this->pxConfig['enrich_custom_params'])) {
-            $this->pxUtils->handleCustomParams($this->pxConfig, $pxData['details']);
-        }
-
-        $activities = [$pxData];
-        $headers = [
-            'Authorization' => 'Bearer ' . $this->pxConfig['auth_token'],
-            'Content-Type' => 'application/json'
-        ];
-        $this->httpClient->send('/api/v1/collector/s2s', 'POST', $activities, $headers, $this->pxConfig['activities_timeout'], $this->pxConfig['activities_connect_timeout']);
+        $activity = $this->generateActivity($activityType, $pxCtx, $details);
+        $this->sendActivity($activity);
     }
 
     /**
@@ -162,20 +120,86 @@ class PerimeterxActivitiesClient
         $details['s2s_error_http_message'] = $pxCtx->getS2SErrorHttpMessage();
     }
 
-    private function addAdditionalFieldsToDetails(&$details, &$additionalFields) {
-        if (!function_exists('is_iterable')) {
-            function is_iterable($var)
-            {
-                return is_array($var) || $var instanceof \Traversable;
+    /**
+     * @param PerimeterxContext $pxCtx
+     * @param array $details
+     */
+    private function addAdditionalFieldsToDetails(&$pxCtx, &$details) {
+        $loginCredentials = $pxCtx->getLoginCredentials();
+        if (!is_null($loginCredentials)) {
+            $details['ci_version'] = $loginCredentials->getCIVersion();
+            $details['credentials_compromised'] = $pxCtx->areCredentialsCompromised();
+            if (!empty($loginCredentials->getSsoStep())) {
+                $details['sso_step'] = $loginCredentials->getSsoStep();
             }
         }
-        if (!is_iterable($additionalFields)) {
-            return;
+        $graphqlFields = $pxCtx->getGraphqlFields();
+        if (!is_null($graphqlFields)) {
+            $details['graphql_operation_type'] = $graphqlFields->getOperationType();
+            $details['graphql_operation_name'] = $graphqlFields->getOperationName();
         }
-        foreach ($additionalFields as $key => $value) {
-            if (!isset($details[$key])) {
-                $details[$key] = $value;
+    }
+
+    public function generateActivity($activityType, $pxCtx, $details) {
+        $pxData = [];
+        $pxData['type'] = $activityType;
+        $pxData['timestamp'] = time();
+        $pxData['socket_ip'] = $pxCtx->getIp();
+        $pxData['px_app_id'] = $this->pxConfig['app_id'];
+        $pxData['url'] = $pxCtx->getFullUrl();
+
+        $vid = $pxCtx->getVid();
+        if (isset($vid)) {
+            $pxData['vid'] = $vid;
+        }
+
+        $details['client_uuid'] = $pxCtx->getUuid();
+        $details['request_id'] = $pxCtx->getRequestId();
+        $this->addAdditionalFieldsToDetails($pxCtx, $details);
+
+        if ($activityType !== 'additional_s2s') {
+            $pxData['headers'] = $this->filterSensitiveHeaders($pxCtx);
+
+            $details['http_method'] = $pxCtx->getHttpMethod();
+            $details['http_version'] = $pxCtx->getHttpVersion();
+            $details['module_version'] = $this->pxConfig['sdk_name'];
+
+            $cookieOrigin = $pxCtx->getCookieOrigin();
+            if ($cookieOrigin != '') {
+                $details['cookie_origin'] = $cookieOrigin;
+            }
+
+            $riskRtt = $pxCtx->getRiskRtt();
+            if ($riskRtt != 0) {
+                $details['risk_rtt'] = $riskRtt;
+            }
+
+            if ($pxCtx->getPxhdCookie() != null) {
+                $pxData['pxhd'] = $pxCtx->getPxhdCookie();
+            }
+
+            if (isset($this->pxConfig['enrich_custom_params'])) {
+                $this->pxUtils->handleCustomParams($this->pxConfig, $pxData['details']);
             }
         }
+
+        $pxData['details'] = $details;
+        return $pxData;
+    }
+
+    public function sendActivity($activity) {
+        $activities = [$activity];
+        $headers = [
+            'Authorization' => 'Bearer ' . $this->pxConfig['auth_token'],
+            'Content-Type' => 'application/json'
+        ];
+        $this->httpClient->send(
+            '/api/v1/collector/s2s',
+            'POST',
+            $activities,
+            $headers,
+            $this->pxConfig['activities_timeout'],
+            $this->pxConfig['activities_connect_timeout']
+        );
     }
 }

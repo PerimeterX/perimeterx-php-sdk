@@ -25,9 +25,12 @@
 
 namespace Perimeterx;
 
-
 use Psr\Log\LoggerInterface;
-
+use Perimeterx\CredentialsIntelligence\Protocol\CIVersion;
+use Perimeterx\CredentialsIntelligence\PerimeterxFieldExtractorManager;
+use Perimeterx\CredentialsIntelligence\Protocol\CredentialsIntelligenceProtocolFactory;
+use Perimeterx\CredentialsIntelligence\LoginSuccess\LoginSuccessfulReportingMethod;
+use Perimeterx\CredentialsIntelligence\LoginSuccess\LoginSuccessfulParserFactory;
 final class Perimeterx
 {
     /**
@@ -65,7 +68,6 @@ final class Perimeterx
 
     private function __construct(array $pxConfig = [])
     {
-
         if (!isset($pxConfig['app_id'])) {
             throw new PerimeterxException(PerimeterxException::$APP_ID_MISSING);
         }
@@ -111,7 +113,15 @@ final class Perimeterx
                 'defer_activities' => true,
                 'enable_json_response' => false,
                 'return_response' => false,
-                'px_compromised_credentials_header' => 'px-compromised-credentials'
+                'px_login_credentials_extraction_enabled' => false,
+                'px_login_credentials_extraction' => [],
+                'px_compromised_credentials_header' => 'px-compromised-credentials',
+                'px_credentials_intelligence_version' => CIVersion::V1,
+                'px_additional_s2s_activity_header_enabled' => false,
+                'px_automatic_additional_s2s_activity_enabled' => true,
+                'px_send_raw_username_on_additional_s2s_activity' => false,
+                'px_login_successful_reporting_method' => LoginSuccessfulReportingMethod::STATUS,
+                'px_login_successful_status' => 200
             ], $pxConfig);
 
             if (empty($this->pxConfig['logger'])) {
@@ -121,7 +131,7 @@ final class Perimeterx
             $httpClient = new PerimeterxHttpClient($this->pxConfig);
             $this->pxConfig['http_client'] = $httpClient;
             $this->pxActivitiesClient = new PerimeterxActivitiesClient($this->pxConfig);
-            $this->pxFieldExtractorManager = $this->createFieldExtractorManager();
+            $this->initializeLoginCredentialsExtraction();
         } catch (\Exception $e) {
             throw new PerimeterxException('Uncaught exception ' . $e->getCode() . ' ' . $e->getMessage());
         }
@@ -131,7 +141,6 @@ final class Perimeterx
     public function pxVerify()
     {
         $pxCtx = null;
-        $extractedCredentials = null;
         $this->pxConfig['logger']->debug('Starting request verification');
         try {
             if (!$this->pxConfig['module_enabled']) {
@@ -154,6 +163,7 @@ final class Perimeterx
                 $s2sValidator = new PerimeterxS2SValidator($pxCtx, $this->pxConfig);
                 $s2sValidator->verify();
             }
+            $_REQUEST["pxCtx"] = $pxCtx;
             return $this->handleVerification($pxCtx);
         } catch (\RuntimeException $e) {
             if (!empty($pxCtx)) {
@@ -214,6 +224,9 @@ final class Perimeterx
         if (!isset($score) or $score < $this->pxConfig['blocking_score']) {
             $this->setCompromisedCredentialsHeaderIfNeeded($pxCtx);
             $this->pxActivitiesClient->sendPageRequestedActivity($pxCtx);
+            if (!is_null($pxCtx->getLoginCredentials())) {
+                $this->handleAdditionalS2SActivity($pxCtx);
+            }
             return 1;
         }
 
@@ -393,35 +406,27 @@ final class Perimeterx
         return $this->pxConfig;
     }
 
-    /**
-     * @return PerimeterxFieldExtractorManager
-     */
-
-    private function createFieldExtractorManager() {
-        if (empty($this->pxConfig['px_enable_login_creds_extraction']) || empty($this->pxConfig['px_login_creds_extraction'])) {
-            return null;
+    private function initializeLoginCredentialsExtraction() {
+        if (empty($this->pxConfig['px_login_credentials_extraction_enabled']) || empty($this->pxConfig['px_login_credentials_extraction'])) {
+            return;
         }
-        $extractorMap = PerimeterxFieldExtractorManager::createExtractorMap($this->pxConfig['px_login_creds_extraction']);
-        return new PerimeterxFieldExtractorManager($extractorMap, $this->pxConfig['logger']);
+        $this->pxFieldExtractorManager = $this->createFieldExtractorManager();
     }
 
     private function createAdditionalFields() {
         $additionalFields = array();
 
         if (!is_null($this->pxFieldExtractorManager)) {
-            $extractedCredentials = $this->pxFieldExtractorManager->extractFields();
-            if (isset($extractedCredentials)) {
-                $additionalFields = array_merge($additionalFields, $extractedCredentials);
+            $loginCredentials = $this->pxFieldExtractorManager->extractFields();
+            if (isset($loginCredentials)) {
+                $additionalFields["loginCredentials"] = $loginCredentials;
             }
         }
 
         if (strpos($_SERVER['REQUEST_URI'], "graphql") !== false) {
             $graphqlFields = $this->extractGraphqlFields();
             if (isset($graphqlFields)) {
-                $additionalFields = array_merge($additionalFields, [
-                    'graphql_operation_type' => $graphqlFields->getOperationType(),
-                    'graphql_operation_name' => $graphqlFields->getOperationName()
-                ]);
+                $additionalFields['graphqlFields'] = $graphqlFields;
             }
         }
 
@@ -443,5 +448,77 @@ final class Perimeterx
             $this->pxConfig['logger']->error('Exception while handling graphql body: ' . $e->getMessage());
             return null;
         }
+    }
+     private function createFieldExtractorManager() {
+        $extractorMap = PerimeterxFieldExtractorManager::createExtractorMap($this->pxConfig['px_login_credentials_extraction']);
+        $ciProtocol = CredentialsIntelligenceProtocolFactory::Create($this->pxConfig['px_credentials_intelligence_version']);
+        return new PerimeterxFieldExtractorManager($extractorMap, $ciProtocol, $this->pxConfig['logger']);
+    }
+
+    private function handleAdditionalS2SActivity($pxCtx) {
+        if ($this->pxConfig['px_automatic_additional_s2s_activity_enabled']) {
+            register_shutdown_function(function() {
+                $isLoginSuccessful = false;
+                $loginSuccessParser = LoginSuccessfulParserFactory::Create($this->pxConfig);
+                if (isset($loginSuccessParser)) {
+                    $isLoginSuccessful = $loginSuccessParser->IsLoginSuccessful();
+                }
+                $this->pxSendAdditionalS2SActivity(http_response_code(), $isLoginSuccessful);
+            });
+        }
+        if ($this->pxConfig['px_additional_s2s_activity_header_enabled']) {
+            $this->setAdditionalActivityHeaders($pxCtx);
+        }
+    }
+
+    /**
+     * Public function to send an additional_s2s activity
+     * Reports the response status code
+     * @param int $responseStatusCode
+     * @param boolean $wasLoginSuccessful
+     */
+    public function pxSendAdditionalS2SActivity($responseStatusCode, $wasLoginSuccessful = null) {
+        $pxCtx = $_REQUEST['pxCtx'];
+        if (!isset($pxCtx)) {
+            return;
+        }
+
+        $loginCredentials = $pxCtx->getLoginCredentials();
+        if (!isset($loginCredentials)) {
+            return;
+        }
+
+        $credentialsCompromised = $pxCtx->areCredentialsCompromised();
+        $details = array(
+            'http_status_code' => $responseStatusCode,
+            'login_successful' => $wasLoginSuccessful,
+            'credentials_compromised' => $credentialsCompromised
+        );
+        
+        if ($this->pxConfig['px_send_raw_username_on_additional_s2s_activity'] && $wasLoginSuccessful && $credentialsCompromised) {
+            $details['raw_username'] = $loginCredentials->getRawUsername();
+        }
+        $this->pxConfig['logger']->debug('Sending additional_s2s activity');
+        $this->pxActivitiesClient->sendToPerimeterx("additional_s2s", $pxCtx, $details);
+    }
+
+    /**
+     * @param PerimeterxContext $pxCtx
+     */
+    private function setAdditionalActivityHeaders($pxCtx) {
+        $loginCredentials = $pxCtx->getLoginCredentials();
+        $credentialsCompromised = $pxCtx->areCredentialsCompromised();
+        $details = array(
+            'http_status_code' => null,
+            'login_successful' => null,
+            'credentials_compromised' => $credentialsCompromised
+        );
+        if ($credentialsCompromised && $this->config['px_send_raw_username_on_additional_s2s_activity']) {
+            // purposefully ignoring if login is successful because we don't know yet
+            $details['raw_username'] = $loginCredentials->getRawUsername();
+        }
+        $activity = $this->pxActivitiesClient->generateActivity('additional_s2s', $pxCtx, $details);
+        $_REQUEST['px-additional-activity'] = json_encode($activity);
+        $_REQUEST['px-additional-activity-url'] = $this->pxConfig['perimeterx_server_host'] . '/api/v1/collector/s2s';
     }
 }
