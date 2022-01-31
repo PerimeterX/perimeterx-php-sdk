@@ -2,6 +2,7 @@
     "version": "3.7.8",
     "supported_features": [
         "additional_activity_handler",
+        "additional_s2s",
         "advanced_blocking_response",
         "block_activity",
         "block_page_captcha",
