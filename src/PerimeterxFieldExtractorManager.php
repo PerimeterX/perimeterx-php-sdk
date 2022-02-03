@@ -24,8 +24,10 @@ class PerimeterxFieldExtractorManager {
         try {
             $uriWithoutQuery = strtok($_SERVER['REQUEST_URI'], "?");
             $extractorKey = self::generateMapKey($uriWithoutQuery, $_SERVER["REQUEST_METHOD"]);
-            $extractor = $this->extractorMap[$extractorKey];
-            return isset($extractor) ? $extractor->extractFields() : null;
+            if(array_key_exists($extractorKey, $this->extractorMap)) {
+                $extractor = $this->extractorMap[$extractorKey];
+                return $extractor->extractFields();
+            }
         } catch (\Exception $e) {
             $this->logger->error("Exception thrown while extracting fields: " . $e->getMessage());
         } catch (\Error $e) {

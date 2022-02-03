@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.7.8] - 2022-02-03
+
+### Fixed
+
+-   Minor index not found verbosity error fixed
+
 ## [3.7.7] - 2022-01-11
 
 ### Added
