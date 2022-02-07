@@ -15,8 +15,8 @@ class LoginSuccessfulParserFactory {
                 return new HeaderLoginSuccessfulParser($config);
             case LoginSuccessfulReportingMethod::CUSTOM:
                 return new CustomLoginSuccessfulParser($config);
-            case LoginSuccessfulReportingMethod::NONE:
             default:
+                $config['logger']->error('No px_login_successful_reporting_method with value ' . $config['px_login_successful_reporting_method'] . ' found');
                 return null;
         }
     }

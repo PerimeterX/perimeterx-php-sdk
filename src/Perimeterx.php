@@ -121,7 +121,9 @@ final class Perimeterx
                 'px_automatic_additional_s2s_activity_enabled' => true,
                 'px_send_raw_username_on_additional_s2s_activity' => false,
                 'px_login_successful_reporting_method' => LoginSuccessfulReportingMethod::STATUS,
-                'px_login_successful_status' => 200
+                'px_login_successful_status' => 200,
+                'px_login_successful_header_name' => 'x-px-login-successful',
+                'px_login_successful_header_value' => '1'
             ], $pxConfig);
 
             if (empty($this->pxConfig['logger'])) {
