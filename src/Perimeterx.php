@@ -460,12 +460,16 @@ final class Perimeterx
     private function handleAdditionalS2SActivity($pxCtx) {
         if ($this->pxConfig['px_automatic_additional_s2s_activity_enabled']) {
             register_shutdown_function(function() {
-                $isLoginSuccessful = false;
-                $loginSuccessParser = LoginSuccessfulParserFactory::Create($this->pxConfig);
-                if (isset($loginSuccessParser)) {
-                    $isLoginSuccessful = $loginSuccessParser->IsLoginSuccessful();
+                try {
+                    $isLoginSuccessful = false;
+                    $loginSuccessParser = LoginSuccessfulParserFactory::Create($this->pxConfig);
+                    if (isset($loginSuccessParser)) {
+                        $isLoginSuccessful = $loginSuccessParser->IsLoginSuccessful();
+                    }
+                    $this->pxSendAdditionalS2SActivity(http_response_code(), $isLoginSuccessful);
+                } catch (\Exception $e) {
+                    $this->pxConfig['logger']->error('Caught exception while sending additional_s2s activity: ' . $e->getMessage());
                 }
-                $this->pxSendAdditionalS2SActivity(http_response_code(), $isLoginSuccessful);
             });
         }
         if ($this->pxConfig['px_additional_s2s_activity_header_enabled']) {
