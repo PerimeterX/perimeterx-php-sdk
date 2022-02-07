@@ -82,6 +82,14 @@ class PerimeterxUtilsTest extends PHPUnit_Framework_TestCase {
             [[$root => [$nested => [$nested => $value]]], [$root, $nested, $nested], $value]
         ];
     }
+
+    public function testCreateUuidV4() {
+        $uuid1 = PerimeterxUtils::createUuidV4();
+        $uuid2 = PerimeterxUtils::createUuidV4();
+        $this->assertNotEquals($uuid1, $uuid2);
+        $this->assertNotFalse(preg_match('/[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3‌​}\-[a-f0-9]{12}/', $uuid1));
+        $this->assertNotFalse(preg_match('/[a-f0-9]{8}\-[a-f0-9]{4}\-4[a-f0-9]{3}\-(8|9|a|b)[a-f0-9]{3‌​}\-[a-f0-9]{12}/', $uuid2));
+    }
 }
 
 ?>

@@ -1,15 +1,35 @@
 <?php
 
-use Perimeterx\PerimeterxFieldExtractor;
-use Perimeterx\PerimeterxFieldExtractorManager;
 use Psr\Log\AbstractLogger;
+use Perimeterx\CredentialsIntelligence\PerimeterxFieldExtractor;
+use Perimeterx\CredentialsIntelligence\PerimeterxFieldExtractorManager;
+use Perimeterx\CredentialsIntelligence\Protocol\V1CredentialsIntelligenceProtocol;
 
 class PerimeterxFieldExtractorManagerTest extends PHPUnit_Framework_TestCase
 {
     const LOGIN_REQUEST_URI = "/login";
     const LOGIN_REQUEST_METHOD = "POST";
-    const EXPECTED_RETURN_VALUE = "returnValue";
+
+    const USER_FIELD = "user";
+    const PASS_FIELD = "pass";
+
+    const USER_VALUE = "pxUser";
+    const PASS_VALUE = "1234";
+
+    const HASHED_USER_VALUE = "9620f4cab3b3a50b9cbcb9a8d01328874ec33eb6882ae31c022f6986fc516851";
+    const HASHED_PASS_VALUE = "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4";
+
+    const CI_VERSION_FIELD = "ci_version";
+
+    const EXPECTED_RETURN_VALUE = [
+        self::USER_FIELD => self::HASHED_USER_VALUE,
+        self::PASS_FIELD => self::HASHED_PASS_VALUE,
+        self::CI_VERSION_FIELD => 'v1'
+    ];
     
+    /**
+     * @var PerimeterxFieldExtractorManager
+     */
     private $fieldExtractorManager;
 
     public function setUp() {
@@ -17,9 +37,13 @@ class PerimeterxFieldExtractorManagerTest extends PHPUnit_Framework_TestCase
         $mockExtractor = $this->createMock(PerimeterxFieldExtractor::class);
         $mockExtractor
             ->method('extractFields')
-            ->willReturn(self::EXPECTED_RETURN_VALUE);
+            ->willReturn([
+                self::USER_FIELD => self::USER_VALUE,
+                self::PASS_FIELD => self::PASS_VALUE
+            ]);
         $extractionMap = [ $mapKey => $mockExtractor ];
-        $this->fieldExtractorManager = new PerimeterxFieldExtractorManager($extractionMap, $this->getMockLogger());
+        $protocol = new V1CredentialsIntelligenceProtocol();
+        $this->fieldExtractorManager = new PerimeterxFieldExtractorManager($extractionMap, $protocol, $this->getMockLogger());
     }
 
     /**
@@ -28,7 +52,13 @@ class PerimeterxFieldExtractorManagerTest extends PHPUnit_Framework_TestCase
     public function testExtractCredentials($method, $uri, $expectedReturnValue) {
         self::initializeRequest($method, $uri);
         $actualReturnValue = $this->fieldExtractorManager->extractFields();
-        $this->assertEquals($expectedReturnValue, $actualReturnValue);
+        if (is_null($expectedReturnValue)) {
+            $this->assertNull($actualReturnValue);
+        } else {
+            $this->assertEquals($expectedReturnValue[self::USER_FIELD], $actualReturnValue->getUser());
+            $this->assertEquals($expectedReturnValue[self::PASS_FIELD], $actualReturnValue->getPass());
+            $this->assertEquals($expectedReturnValue[self::CI_VERSION_FIELD], $actualReturnValue->getCIVersion());
+        }
     }
 
     public function provideExtractCredentialsData() {

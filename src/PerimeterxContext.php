@@ -64,7 +64,9 @@ class PerimeterxContext
         }
         $this->http_method = $_SERVER['REQUEST_METHOD'];
         $this->sensitive_route = $this->checkSensitiveRoutePrefix($pxConfig['sensitive_routes'], $this->uri);
-        $this->additionalFields = $additionalFields;
+        $this->loginCredentials = array_key_exists('loginCredentials', $additionalFields) ? $additionalFields['loginCredentials'] : null;
+        $this->graphqlFields = array_key_exists('graphqlFields', $additionalFields) ? $additionalFields['graphqlFields'] : null;
+        $this->requestId = PerimeterxUtils::createUuidV4();
     }
 
     private function extractIP($pxConfig, $headers)
@@ -264,10 +266,20 @@ class PerimeterxContext
     protected $request_cookie_names;
 
     /**
-     * @var array - additional fields to add to acivities
+     * @var Perimeterx\CredentialsIntelligence\LoginCredentialsFields
      */
-    protected $additionalFields;
+    protected $loginCredentials;
 
+    /**
+     * @var string - id to identify the request on enforcer activities
+     */
+    protected $requestId;
+
+    /**
+     * @var GraphqlFields
+     */
+    protected $graphqlFields;
+    
     /**
      * @return string
      */
@@ -820,9 +832,30 @@ class PerimeterxContext
     }
 
     /**
-     * @return array
+     * @return Perimeterx\CredentialsIntelligence\LoginCredentialsFields
      */
-    public function getAdditionalFields() {
-        return $this->additionalFields;
+    public function getLoginCredentials() {
+        return $this->loginCredentials;
+    }
+
+    /**
+     * @return GraphqlFields
+     */
+    public function getGraphqlFields() {
+        return $this->graphqlFields;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRequestId() {
+        return $this->requestId;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function areCredentialsCompromised() {
+        return isset($this->pxde) && isset($this->pxde->breached_account) && $this->pxde->breached_account;
     }
 }

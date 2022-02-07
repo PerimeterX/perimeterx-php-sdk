@@ -103,6 +103,12 @@ class PerimeterxCookieValidator
                 return false;
             }
 
+            if (!is_null($this->pxCtx->getLoginCredentials())) {
+                $this->pxConfig['logger']->debug("Login credentials successfully extracted, sending Risk API. path: {$this->pxCtx->getUri()}");
+                $this->pxCtx->setS2SCallReason('sensitive_route');
+                return false;
+            }
+
             $this->pxCtx->setPassReason('cookie');
             $this->pxConfig['logger']->debug("Cookie evaluation ended successfully, risk score: {$cookie->getScore()}");
 

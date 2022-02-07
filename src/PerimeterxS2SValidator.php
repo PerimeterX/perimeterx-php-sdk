@@ -66,7 +66,8 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
                 'risk_mode' => $this->pxConfig['module_mode'] == Perimeterx::$ACTIVE_MODE ? 'active_blocking' : 'monitor',
                 'px_cookie_hmac' => $this->pxCtx->getCookieHmac(),
                 'cookie_origin' => $this->pxCtx->getCookieOrigin(),
-                'request_cookie_names' => $this->pxCtx->getCookieNames()
+                'request_cookie_names' => $this->pxCtx->getCookieNames(),
+                'request_id' => $this->pxCtx->getRequestId()
             ]
         ];
 
@@ -128,14 +129,22 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
             $this->pxUtils->handleCustomParams($this->pxConfig, $requestBody['additional']);
         }
 
-        $additionalFields = $this->pxCtx->getAdditionalFields();
-        if (isset($additionalFields)) {
-            foreach ($additionalFields as $key => $val) {
-                if (!isset($requestBody['additional'][$key])) {
-                    $requestBody['additional'][$key] = $val;
-                }
+        $loginCredentials = $this->pxCtx->getLoginCredentials();
+        if (!is_null($loginCredentials)) {
+            $requestBody['additional']['user'] = $loginCredentials->getUser();
+            $requestBody['additional']['pass'] = $loginCredentials->getPass();
+            $requestBody['additional']['ci_version'] = $loginCredentials->getCIVersion();
+            if (!empty($loginCredentials->getSsoStep())) {
+                $requestBody['additional']['sso_step'] = $loginCredentials->getSsoStep();
             }
         }
+
+        $graphqlFields = $this->pxCtx->getGraphqlFields();
+        if (!is_null($graphqlFields)) {
+            $requestBody['additional']['graphql_operation_type'] = $graphqlFields->getOperationType();
+            $requestBody['additional']['graphql_operation_name'] = $graphqlFields->getOperationName();
+        }
+
         return $requestBody;
     }
 
