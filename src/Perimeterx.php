@@ -1,5 +1,5 @@
 <?php
-/** Copyright © 2016 PerimeterX, Inc.
+/** Copyright © 2022 PerimeterX, Inc.
  ** Permission is hereby granted, free of charge, to any
  ** person obtaining a copy of this software and associated
  ** documentation files (the "Software"), to deal in the
@@ -96,7 +96,7 @@ final class Perimeterx
                 'max_buffer_len' => 1,
                 'send_page_activities' => true,
                 'send_block_activities' => true,
-                'sdk_name' => 'PHP SDK v3.7.8',
+                'sdk_name' => 'PHP SDK v3.8.0',
                 'debug_mode' => false,
                 'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
                 'captcha_script_host' => 'https://captcha.px-cdn.net',

@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.8.0] - 2022-02-08
+
+### Added
+
+- Support for credentials intelligence protocols `v1` and `multistep_sso`
+- Support for login successful reporting methods `header`, `status`, and `custom`
+- Support for automatic sending of `additional_s2s` activity
+- Support for manual sending of `additional_s2s` activity via header or API call
+- Support for sending raw username on `additional_s2s` activity
+- New `request_id` field to all enforcer activities
+
+### Changed
+
+- Login credentials extraction handles body encoding based on `Content-Type` request header
+- Successful login credentials extraction automatically triggers risk_api call without needing to enable sensitive routes
+
 ## [3.7.8] - 2022-02-03
 
 ### Fixed
