@@ -6,7 +6,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) PHP SDK
 
-> Latest stable version: [v3.7.8](https://packagist.org/packages/perimeterx/php-sdk#3.7.8)
+> Latest stable version: [v3.8.0](https://packagist.org/packages/perimeterx/php-sdk#3.8.0)
 
 ## Table of Contents
 
@@ -34,6 +34,7 @@
 *   [Data-Enrichment](#data-enrichment)
 *   [Enrich Custom Params](#enrich-custom-params)
 *   [Login Credentials Extraction](#login-credentials-extraction)
+*   [Additional S2S Activity](#additional-s2s-activity)
 *   [Logging](#logging)
 *   [Module Mode](#module-mode)
 *   [Debug Mode](#debug-mode)
@@ -91,7 +92,6 @@ $px->pxVerify();
 Download the new version from packagist.
 
 For more information contact [PerimeterX Support](support@perimeterx.com).
-
 ## <a name="configuration"></a> Configuration Options
 
 ### Configuring Required Parameters
@@ -560,30 +560,28 @@ $perimeterxConfig['enrich_custom_params'] = function ($customParamsArray)
 
 ### <a name="login-credentials-extraction"></a> Login Credentials Extraction
 
-This feature extracts credentials (hashed username and password) from requests and sends them to PerimeterX as additional info in the risk api call. The feature can be toggled on and off, and may be set for any number of unique paths. The settings are adjusted by modifying the `px_enable_login_creds_extraction` and `px_login_creds_extraction` properties on the `$perimeterxConfig` array.
+This feature extracts credentials (hashed username and password) from requests and sends them to PerimeterX as additional info in the risk api call. The feature can be toggled on and off, and may be set for any number of unique paths. The settings are adjusted by modifying the `px_login_credentials_extraction_enabled` and `px_login_credentials_extraction` properties on the `$perimeterxConfig` array.
 
 If credentials are found to be compromised, the field `px-compromised-credentials` will be added to the `$_REQUEST` object with the value `"1"`. You may configure the name of this field with the `px_compromised_credentials_header` configuration.
 
 **Default:**
 
-px_enable_login_creds_extraction: false
+px_login_credentials_extraction_enabled: false
 
-px_login_creds_extraction: []
+px_login_credentials_extraction: []
 
 px_compromised_credentials_header: "px-compromised-credentials"
 
 ```php
 $perimeterxConfig['px_compromised_credentials_header'] = 'px-comp-creds';
-$perimeterxConfig['px_enable_login_creds_extraction'] = true;
-$perimeterxConfig['px_login_creds_extraction'] = [
+$perimeterxConfig['px_login_credentials_extraction_enabled'] = true;
+$perimeterxConfig['px_login_credentials_extraction'] = [
     [
-        "path" => "/login",             // login path
-        "method" => "POST",             // supported methods: POST
-        "sentThrough" => "body",        // supported sentThroughs: body, header, query-param
-        "contentType" => "json",        // supported contentTypes: json, form
-        "encoding" => "clear-text",     // supported encodings: clear-text, url-encode
-        "passField" => "password",      // name of the password field in the request
-        "userField" => "username"       // name of the username field in the request
+        "path" => "/login",           // login path, automatically added to sensitive routes
+        "method" => "POST",           // supported methods: POST
+        "sent_through" => "body",     // supported sent_throughs: body, header, query-param
+        "pass_field" => "password",   // name of the password field in the request
+        "user_field" => "username"    // name of the username field in the request
     ], [ ... ], ...
 ]
 ```
@@ -597,7 +595,7 @@ $perimeterxConfig['px_login_creds_extraction'] = [
     [
         "path" => "/login",                 // login path
         "method" => "POST",                 // supported methods: POST
-        "callbackName" => "extractCreds"    // name of custom extraction callback
+        "callback_name" => "extractCreds"   // name of custom extraction callback
     ], ...
 ];
 
@@ -610,6 +608,169 @@ function extractCreds() {
         "user" => $username,
         "pass" => $password
     ];
+}
+```
+
+### <a name="additional-s2s-activity"></a> Additional S2S Activity
+
+To enhance detection on login credentials extraction endpoints, the following additional information is sent to PerimeterX
+via an `additional_s2s` activity:
+
+* __Response Code__ - The numerical HTTP status code of the response. This is sent automatically.
+* __Login Success__ - A boolean indicating whether the login completed successfully. See the options listed below for how to provide this data.
+* __Raw Username__ - The original username used for the login attempt. In order to report this information, make sure the configuration `px_send_raw_username_on_additional_s2s_activity` is set to `true`.
+#### Login Success Reporting
+
+There are a number of different possible ways to report the success or failure of the login attempt. If left empty, the
+login successful status will always be reported as `false`.
+
+**Default**: Empty
+
+```php
+$perimeterxConfig['px_login_successful_reporting_method'] = 'status';
+```
+
+__Status__
+
+Provide a status or array of statuses that represent a successful login. If a response's status code matches the provided
+value or one of the values in the provided array, the login successful status is set to `true`. Otherwise, it's set to `false`.
+
+> Note: To define a range of statuses, use the `custom` reporting method.
+
+**Default Values**
+
+px_login_successful_status: 200
+
+```php
+$perimeterxConfig['px_login_successful_reporting_method'] = 'status';
+$perimeterxConfig['px_login_successful_status'] = [200, 202]; // number or array of numbers
+```
+
+__Header__
+
+Provide a header name and value. If the header exists on the response (accessed via the `headers_list()` function ) and matches the provided value, the login successful status is set to `true`. If the header is not found on the response, or if the header value does not match the value in the configuration, the login successful status is set to `false`.
+
+**Default Values**
+
+px_login_successful_header_name: x-px-login-successful
+
+px_login_successful_header_value: 1
+
+```php
+$perimeterxConfig['px_login_successful_reporting_method'] = 'header';
+$perimeterxConfig['px_login_successful_header_name'] = 'login-successful';
+$perimeterxConfig['px_login_successful_header_value'] = 'true';
+```
+
+__Custom__
+
+Provide a custom callback that returns a boolean indicating if the login was successful. The value of the configuration field can be either an anonymous function or the name of the defined function as a string.
+
+**Default Values**
+
+px_login_successful_custom_callback: null
+
+```php
+$perimeterxConfig['px_login_successful_reporting_method'] = 'custom';
+
+// anonymous callback function
+$perimeterxConfig['px_login_successful_custom_callback'] = function() {
+    // ...
+    return $isLoginSuccessful;
+};
+
+// name of defined function as string
+$perimeterxConfig['px_login_successful_custom_callback'] = 'isLoginSuccessfulCallback';
+
+function isLoginSuccessfulCallback() {
+    // ...
+    return $isLoginSuccessful;
+}
+```
+
+#### Raw Username
+
+When enabled, the raw username used for logins on login credentials extraction endpoints will be reported to PerimeterX
+if (1) the credentials were identified as compromised, and (2) the login was successful as reported via the property above.
+
+**Default**: false
+
+```php
+$perimeterxConfig['px_send_raw_username_on_additional_s2s_activity'] = true;
+```
+
+#### Manually Sending Additional S2S Activity
+
+By default, this `additional_s2s` activity is sent automatically. If it is preferable to send this activity manually,
+it's possible to disable automatic sending by configuring the value of `px_automatic_additional_s2s_activity_enabled` to `false`.
+
+**Default Value*: true
+
+```php
+$perimeterxConfig['px_automatic_additional_s2s_activity_enabled'] = false;
+```
+
+
+The activity can then be sent manually by invoking the function `$px->pxSendAdditionalS2SActivity()`, which accepts the following parameters:
+
+| Parameter Name | Type | Required | Default Value |
+| :--            | :--  | :--      | :-- |
+| `$responseStatusCode` | int | yes | n/a |
+| `$wasLoginSuccessful` | bool | no | null |
+
+__Example Usage__
+
+```php
+// $px is an instance of the Perimeterx class
+
+function handleLogin() {
+    // login flow resulting in boolean $isLoginSuccessful
+    $px->pxSendAdditionalS2SActivity($isLoginSuccessful ? 200 : 401, $isLoginSuccessful);
+}
+```
+
+If further flexibility is needed, a JSON representation of the `additional_s2s` activity can be added to the `$_REQUEST` array. This activity can then be sent to another server if needed, parsed, modified, and sent via XHR POST as a JSON to PerimeterX. To do this, disable automatic sending and enable the additional activity header configuration.
+
+**Default Value**
+
+px_additional_s2s_activity_header_enabled: false
+
+```php
+$perimeterxConfig['px_automatic_additional_s2s_activity_enabled'] = false;
+$perimeterxConfig['px_additional_s2s_activity_header_enabled'] = true;
+```
+
+The activity payload and URL destination will then be available by accessing `$_REQUEST['px-additional-activity']` and `$_REQUEST['px-additional-activity-url']`, respectively.
+
+```php
+function handleLogin() {
+    // custom flow resulting in boolean $isLoginSuccessful
+    $activity = json_decode($_REQUEST['px-additional-activity'], true);
+    $activity['additional']['http_status_code'] = http_status_code();
+    $activity['additional']['login_successful'] = $isLoginSuccessful;
+
+    if ($isLoginSuccessful && $activity['additional']['credentials_compromised']) {
+        $activity['additional']['raw_username'] = $_REQUEST['username'];
+    }
+
+    $url = $_REQUEST['px-additional-activity-url'];
+    $headers = [
+        'Content-Type: application/json',
+        'Authorization: Bearer ' . $_ENV['PX_AUTH_TOKEN']
+    ];
+    $body = json_encode($activity);
+
+    sendPostRequest($url, $headers, $body);
+}
+
+function sendPostRequest($url, $headers, $body) {
+    $curl = curl_init($url);
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_POST, true);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
+    curl_exec($curl);
 }
 ```
 
@@ -730,20 +891,20 @@ Specifies if sending page activities should be deferred until shutdown or not.
 
 **Default:** true
 
-````php
+```php
 $perimeterxConfig = [
     ..
     'defer_activities' => false
     ..
 ]
+```
 
 
-
-#### <a name=“bypass-monitor-header”></a> Test Block Flow on Monitoring Mode
+#### <a name="bypass-monitor-header"></a> Test Block Flow on Monitoring Mode
 
 Allows you to test an enforcer’s blocking flow while you are still in Monitor Mode.
 
-When the header name is set(eg. `x-px-block`) and the value is set to `1`, when there is a block response (for example from using a User-Agent header with the value of `PhantomJS/1.0`) the Monitor Mode is bypassed and full block mode is applied. If one of the conditions is missing you will stay in Monitor Mode. This is done per request.
+When the header name is set (eg. `x-px-block`) and the value is set to `1`, when there is a block response (for example from using a User-Agent header with the value of `PhantomJS/1.0`) the Monitor Mode is bypassed and full block mode is applied. If one of the conditions is missing you will stay in Monitor Mode. This is done per request.
 To stay in Monitor Mode, set the header value to `0`.
 
 The Header name is configurable using the `bypass_monitor_header` property.
@@ -756,7 +917,7 @@ $perimeterxConfig = [
     'bypass_monitor_header' => 'x-px-block'
     ..
 ]
-````
+```
 
 ## <a name="advanced-blocking-response"></a> Advanced Blocking Response
 

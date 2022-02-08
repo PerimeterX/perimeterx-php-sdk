@@ -1,29 +1,21 @@
 <?php
 
-namespace Perimeterx;
-
+namespace Perimeterx\CredentialsIntelligence;
+use Perimeterx\PerimeterxUtils;
 
 class PerimeterxFieldExtractor {
-
     private static $NESTED_OBJECT_SEPARATOR = ".";
-    private static $HASH_ALGO = "sha256";
     private $sentThrough;
-    private $contentType;
-    private $encoding;
     private $extractionFields;
     private $callbackName;
 
     /**
      * @param string $sentThrough
-     * @param string $contentType
-     * @param string $encoding
      * @param array $desiredFields
      * @param string $callbackName
      */
-    public function __construct($sentThrough, $contentType, $encoding, $desiredFields, $callbackName) {
+    public function __construct($sentThrough, $desiredFields, $callbackName) {
         $this->sentThrough = $sentThrough;
-        $this->contentType = $contentType;
-        $this->encoding = $encoding;
         $this->extractionFields = $desiredFields;
         $this->callbackName = $callbackName;
     }
@@ -37,9 +29,7 @@ class PerimeterxFieldExtractor {
             return null;
         }
 
-        return array_map(function($value) {
-            return hash(PerimeterxFieldExtractor::$HASH_ALGO, $value);
-        }, $extractedCredentials);
+        return $extractedCredentials;
     }
 
     private function getCredentials() {
@@ -67,26 +57,18 @@ class PerimeterxFieldExtractor {
     }
 
     private function getBodyContainer() {
-        switch ($this->contentType) {
-            case "json":
-                return $this->getJsonBodyContainer();
-            case "form":
-            case "form-data":
-                return $this->getFormBodyContainer();
-            default:
-                return null;
+        $contentType = $_SERVER['Content-Type'];
+        if (!isset($contentType)) {
+            $contentType = getallheaders()['Content-Type'];
         }
-    }
-
-    private function getFormBodyContainer() {
-        switch ($this->encoding) {
-            case "url-encode":
-            case "url-encoded":
-                return $this->getUrlEncodedBodyContainer();
-            case "clear-text": 
-                return $this->getMultipartFormDataBodyContainer();
-            default:
-                return null;
+        if (strpos($contentType, "json") !== false) {
+            return $this->getJsonBodyContainer();
+        } else if (strpos($contentType, "x-www-form-urlencode") !== false) {
+            return $this->getUrlEncodedBodyContainer();
+        } else if (strpos($contentType, "multipart/form-data") !== false) {
+            return $this->getMultipartFormDataBodyContainer();
+        } else {
+            return null;
         }
     }
 
@@ -132,11 +114,16 @@ class PerimeterxFieldExtractor {
         }
 
         $fields = [];
-        foreach ($desiredFields as $originalRequestFieldName => $resultActivityFieldName) {
-            $propertyArray = explode(PerimeterxFieldExtractor::$NESTED_OBJECT_SEPARATOR, $originalRequestFieldName);
-            $value = PerimeterxUtils::getNestedArrayProperty($container, $propertyArray);
+        foreach ($desiredFields as $originalFieldName => $desiredFieldName) {
+            $value = $container[str_replace(".", "_", $originalFieldName)];
+
+            if (empty($value)) {
+                $propertyArray = explode(PerimeterxFieldExtractor::$NESTED_OBJECT_SEPARATOR, $originalFieldName);
+                $value = PerimeterxUtils::getNestedArrayProperty($container, $propertyArray);
+            }
+
             if (!empty($value)) {
-                $fields[$resultActivityFieldName] = $value;
+                $fields[$desiredFieldName] = $value;
             }
         }
         return $fields;
