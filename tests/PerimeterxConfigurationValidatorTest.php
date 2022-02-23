@@ -42,13 +42,11 @@ class PerimeterxConfigurationValidatorTest extends PHPUnit_Framework_TestCase
         $customParams = array_merge([
             'css_ref' => 'http://www.google.com/stylesheet.css',
             'js_ref' => 'http://www.google.com/script.js',
-            'custom_logo' => 'http://www.google.com/logo.png',
         ], $this->params);
 
         $this->px = Perimeterx::Instance($customParams);
         $pxConfig = $this->px->getPxConfig();
 
-        $this->assertEquals($pxConfig['custom_logo'], 'http://www.google.com/logo.png');
         $this->assertEquals($pxConfig['js_ref'], 'http://www.google.com/script.js');
         $this->assertEquals($pxConfig['css_ref'], 'http://www.google.com/stylesheet.css');
     }
