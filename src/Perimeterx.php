@@ -313,7 +313,8 @@ final class Perimeterx
                     'vid' => $templateInputs['vid'],
                     'uuid' => $templateInputs['uuid'],
                     'hostUrl' => $templateInputs['hostUrl'],
-                    'blockScript' => $templateInputs['blockScript']
+                    'blockScript' => $templateInputs['blockScript'],
+                    'altBlockScript' => $templateInputs['altBlockScript']
                 );
                 if ($this->pxConfig['return_response']) {
                     return $result;
