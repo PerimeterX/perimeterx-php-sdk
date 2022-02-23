@@ -100,6 +100,7 @@ final class Perimeterx
                 'debug_mode' => false,
                 'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
                 'captcha_script_host' => 'https://captcha.px-cdn.net',
+                'alternate_captcha_script_host' => 'https://captcha.px-cloud.net',
                 'module_mode' => Perimeterx::$MONITOR_MODE,
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,
@@ -261,19 +262,18 @@ final class Perimeterx
         ));
 
         $collectorUrl = 'https://collector-' . strtolower($this->pxConfig['app_id']) . '.perimeterx.net';
-        $blockScript = $this->getCaptchaScript($this->pxConfig, $pxCtx);
+        $appId = $this->pxConfig['app_id'];
 
         $templateInputs = array(
-            'refId' => $block_uuid,
             'appId' => $this->pxConfig['app_id'],
             'vid' => $pxCtx->getVid(),
             'uuid' => $block_uuid,
-            'logoVisibility' => isset($this->pxConfig['custom_logo']) ? 'visible' : 'hidden',
-            'customLogo' => isset($this->pxConfig['custom_logo']) ? $this->pxConfig['custom_logo'] : '',
             'cssRef' => $this->getCssRef(),
             'jsRef' => $this->getJsRef(),
             'hostUrl' => $collectorUrl,
-            'blockScript' => $blockScript,
+            'blockScript' => $this->getCaptchaScript($this->pxConfig['captcha_script_host'], $appId, $pxCtx),
+            'altBlockScript' => $this->getCaptchaScript($this->pxConfig['alternate_captcha_script_host'], $appId, $pxCtx),
+            'firstPartyEnabled' => 'false',
             'jsClientSrc' => "//client.perimeterx.net/{$this->pxConfig['app_id']}/main.min.js"
         );
 
@@ -332,7 +332,7 @@ final class Perimeterx
                 'action' => $pxCtx->getBlockAction(),
                 'uuid' => $block_uuid,
                 'vid' => $pxCtx->getVid(),
-                'appId' => $this->pxConfig['app_id'],
+                'appId' => $appId,
                 'page' => base64_encode($html),
                 'collectorUrl' => $collectorUrl
             );
@@ -347,9 +347,9 @@ final class Perimeterx
     /*
      * Method for assembling the Captcha script tag source
      */
-    private function getCaptchaScript($pxConfig, $pxCtx) {
+    private function getCaptchaScript($host, $appId, $pxCtx) {
         $isMobile = ($pxCtx->getCookieOrigin() == 'header') ? "1" : "0";
-        return "{$pxConfig['captcha_script_host']}/{$pxConfig['app_id']}/captcha.js?a={$pxCtx->getResponseBlockAction()}&u={$pxCtx->getUuid()}&v={$pxCtx->getVid()}&m=$isMobile";
+        return "{$host}/{$appId}/captcha.js?a={$pxCtx->getResponseBlockAction()}&u={$pxCtx->getUuid()}&v={$pxCtx->getVid()}&m=$isMobile";
     }
 
     /**
