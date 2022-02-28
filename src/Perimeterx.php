@@ -271,6 +271,7 @@ final class Perimeterx
             'cssRef' => $this->getCssRef(),
             'jsRef' => $this->getJsRef(),
             'hostUrl' => $collectorUrl,
+            'customLogo' => isset($this->pxConfig['custom_logo']) ? $this->pxConfig['custom_logo'] : '',
             'blockScript' => $this->getCaptchaScript($this->pxConfig['captcha_script_host'], $appId, $pxCtx),
             'altBlockScript' => $this->getCaptchaScript($this->pxConfig['alternate_captcha_script_host'], $appId, $pxCtx),
             'firstPartyEnabled' => 'false',
