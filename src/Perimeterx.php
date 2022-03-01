@@ -315,7 +315,8 @@ final class Perimeterx
                     'uuid' => $templateInputs['uuid'],
                     'hostUrl' => $templateInputs['hostUrl'],
                     'blockScript' => $templateInputs['blockScript'],
-                    'altBlockScript' => $templateInputs['altBlockScript']
+                    'altBlockScript' => $templateInputs['altBlockScript'],
+                    'customLogo' => $templateInputs['customLogo']
                 );
                 if ($this->pxConfig['return_response']) {
                     return $result;
