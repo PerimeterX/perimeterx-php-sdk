@@ -124,9 +124,13 @@ class PerimeterxActivitiesClient
      * @param PerimeterxContext $pxCtx
      * @param array $details
      */
-    private function addAdditionalFieldsToDetails(&$pxCtx, &$details) {
+    private function addAdditionalFieldsToDetails($activityType, &$pxCtx, &$details) {
         $loginCredentials = $pxCtx->getLoginCredentials();
         if (!is_null($loginCredentials)) {
+            if ($activityType !== "additional_s2s") {
+                $details['user'] = $loginCredentials->getUser();
+                $details['pass'] = $loginCredentials->getPass();
+            }
             $details['ci_version'] = $loginCredentials->getCIVersion();
             $details['credentials_compromised'] = $pxCtx->areCredentialsCompromised();
             if (!empty($loginCredentials->getSsoStep())) {
@@ -155,7 +159,7 @@ class PerimeterxActivitiesClient
 
         $details['client_uuid'] = $pxCtx->getUuid();
         $details['request_id'] = $pxCtx->getRequestId();
-        $this->addAdditionalFieldsToDetails($pxCtx, $details);
+        $this->addAdditionalFieldsToDetails($activityType, $pxCtx, $details);
 
         if ($activityType !== 'additional_s2s') {
             $pxData['headers'] = $this->filterSensitiveHeaders($pxCtx);
