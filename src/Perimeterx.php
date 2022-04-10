@@ -337,7 +337,8 @@ final class Perimeterx
                 'vid' => $pxCtx->getVid(),
                 'appId' => $appId,
                 'page' => base64_encode($html),
-                'collectorUrl' => $collectorUrl
+                'collectorUrl' => $collectorUrl,
+                'customLogo' => $this->pxConfig['custom_logo']
             );
             if ($this->pxConfig['return_response']) {
                 return $result;
