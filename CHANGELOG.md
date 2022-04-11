@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.9.0] - 2022-04-11
+
+### Added
+
+- Custom logo added to JSON block response
+### Changed
+
+- Updated block page to use new template
+
 ## [3.8.0] - 2022-02-08
 
 ### Added
