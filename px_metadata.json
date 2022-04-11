@@ -1,5 +1,5 @@
 {
-    "version": "3.9.0",
+    "version": "3.9.1",
     "supported_features": [
         "additional_activity_handler",
         "additional_s2s",
