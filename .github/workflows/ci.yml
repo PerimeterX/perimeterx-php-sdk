@@ -1,0 +1,30 @@
+name: CI
+on: pull_request
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        uses: php-actions/composer@v5
+        with:
+          php_version: '7.4'
+      - name: Run linter
+        uses: michaelw90/PHP-Lint@master
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '5.6'
+          tools: composer:2.2
+      - name: Bootstrap tests
+        run: cp tests/bootstrap.php.dist tests/bootstrap.php
+      - name: Install dependencies
+        run: composer install
+      - name: Run unit tests
+        run: ./vendor/phpunit/phpunit/phpunit tests/
