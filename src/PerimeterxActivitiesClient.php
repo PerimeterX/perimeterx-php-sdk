@@ -36,13 +36,7 @@ class PerimeterxActivitiesClient
      */
     private function filterSensitiveHeaders($pxCtx)
     {
-        $retval = [];
-        foreach ($pxCtx->getHeaders() as $key => $value) {
-            if (isset($key, $value) and !in_array($key, $this->pxConfig['sensitive_headers'])) {
-                $retval[$key] = $value;
-            }
-        }
-        return $retval;
+        return PerimeterxUtils::filterSensitiveHeaders($pxCtx->getHeaders(), $this->pxConfig['sensitive_headers']);
     }
 
     /**

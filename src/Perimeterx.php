@@ -31,6 +31,8 @@ use Perimeterx\CredentialsIntelligence\PerimeterxFieldExtractorManager;
 use Perimeterx\CredentialsIntelligence\Protocol\CredentialsIntelligenceProtocolFactory;
 use Perimeterx\CredentialsIntelligence\LoginSuccess\LoginSuccessfulReportingMethod;
 use Perimeterx\CredentialsIntelligence\LoginSuccess\LoginSuccessfulParserFactory;
+use Perimeterx\Utils\GuzzleHttpClient;
+
 final class Perimeterx
 {
     /**
@@ -114,6 +116,7 @@ final class Perimeterx
                 'defer_activities' => true,
                 'enable_json_response' => false,
                 'return_response' => false,
+                'px_first_party_enabled' => true,
                 'px_login_credentials_extraction_enabled' => false,
                 'px_login_credentials_extraction' => [],
                 'px_compromised_credentials_header' => 'px-compromised-credentials',
@@ -150,7 +153,16 @@ final class Perimeterx
                 $this->pxConfig['logger']->debug('Request will not be verified, module is disabled');
                 return 1;
             }
-            
+
+            if ($this->pxConfig['px_first_party_enabled']) {
+                $pxFirstParty = new PerimeterxFirstPartyClient($this->pxConfig, new GuzzleHttpClient());
+                $response = $pxFirstParty->handleFirstParty();
+                if (isset($response)) {
+                    echo $response;
+                    die();
+                }
+            }
+
             $additionalFields = $this->createAdditionalFields();
 
             $pxCtx = new PerimeterxContext($this->pxConfig, $additionalFields);
@@ -261,21 +273,30 @@ final class Perimeterx
             'loader' => new \Mustache_Loader_FilesystemLoader(dirname(__FILE__) . '/templates'),
         ));
 
-        $collectorUrl = 'https://collector-' . strtolower($this->pxConfig['app_id']) . '.perimeterx.net';
         $appId = $this->pxConfig['app_id'];
+        $collectorUrl = 'https://collector-' . strtolower($appId) . '.perimeterx.net';
+
+        $captchaScript = $this->getCaptchaScript("{$this->pxConfig['captcha_script_host']}/$appId", $pxCtx);
+        $jsClientSrc = "//client.perimeterx.net/$appId/main.min.js";
+        if ($this->pxConfig['px_first_party_enabled']) {
+            $appIdWithoutPx = substr($appId, 2);
+            $captchaScript = $this->getCaptchaScript("/$appIdWithoutPx", $pxCtx);
+            $jsClientSrc = "/$appIdWithoutPx/init.js";
+            $collectorUrl = "/$appIdWithoutPx/xhr";
+        }
 
         $templateInputs = array(
-            'appId' => $this->pxConfig['app_id'],
+            'appId' => $appId,
             'vid' => $pxCtx->getVid(),
             'uuid' => $block_uuid,
             'cssRef' => $this->getCssRef(),
             'jsRef' => $this->getJsRef(),
             'hostUrl' => $collectorUrl,
             'customLogo' => isset($this->pxConfig['custom_logo']) ? $this->pxConfig['custom_logo'] : '',
-            'blockScript' => $this->getCaptchaScript($this->pxConfig['captcha_script_host'], $appId, $pxCtx),
-            'altBlockScript' => $this->getCaptchaScript($this->pxConfig['alternate_captcha_script_host'], $appId, $pxCtx),
-            'firstPartyEnabled' => 'false',
-            'jsClientSrc' => "//client.perimeterx.net/{$this->pxConfig['app_id']}/main.min.js"
+            'blockScript' => $captchaScript,
+            'altBlockScript' => $this->getCaptchaScript("{$this->pxConfig['alternate_captcha_script_host']}/$appId", $pxCtx),
+            'firstPartyEnabled' => $this->pxConfig['px_first_party_enabled'],
+            'jsClientSrc' => $jsClientSrc
         );
 
         http_response_code(403);
@@ -351,9 +372,9 @@ final class Perimeterx
     /*
      * Method for assembling the Captcha script tag source
      */
-    private function getCaptchaScript($host, $appId, $pxCtx) {
+    private function getCaptchaScript($prefix, $pxCtx) {
         $isMobile = ($pxCtx->getCookieOrigin() == 'header') ? "1" : "0";
-        return "{$host}/{$appId}/captcha.js?a={$pxCtx->getResponseBlockAction()}&u={$pxCtx->getUuid()}&v={$pxCtx->getVid()}&m=$isMobile";
+        return "$prefix/captcha.js?a={$pxCtx->getResponseBlockAction()}&u={$pxCtx->getUuid()}&v={$pxCtx->getVid()}&m=$isMobile";
     }
 
     /**
