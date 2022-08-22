@@ -29,6 +29,7 @@
 *   [Sensitive Route](#sensitive-routes)
 *   [API Timeouts](#api-timeout)
 *   [Activities API Timeouts](#activities-api-timeout)
+*   [First Party](#first-party)
 *   [Send Page Activities](#send-page-activities)
 *   [Additional Page Activity Handler](#additional-page-activity-handler)
 *   [Data-Enrichment](#data-enrichment)
@@ -385,7 +386,7 @@ The API Connection Timeout, in seconds (float), to wait for the connection to th
 
 ```php
 $perimeterxConfig = [
-  ..
+    ..
     'api_connect_timeout' => 2
     ..
 ]
@@ -401,7 +402,7 @@ The activities API Timeout, in seconds (float), to wait for the PerimeterX serve
 
 ```php
 $perimeterxConfig = [
-  ..
+    ..
     'activities_timeout' => 2
     ..
 ]
@@ -413,8 +414,22 @@ The activities API Connection Timeout, in seconds (float), to wait for the conne
 
 ```php
 $perimeterxConfig = [
-  ..
+    ..
     'activities_connect_timeout' => 2
+    ..
+]
+```
+
+#### <a name="first-party"></a>First Party
+
+A boolean flag to enable/disable first party mode.
+
+**Default:** true
+
+```php
+$perimeterxConfig = [
+    ..
+    'px_first_party_enabled' => false
     ..
 ]
 ```
