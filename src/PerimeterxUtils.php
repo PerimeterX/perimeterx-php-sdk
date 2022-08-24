@@ -92,8 +92,9 @@ class PerimeterxUtils
      */
     public static function filterSensitiveHeaders($headers, $sensitiveHeaders) {
         $retval = [];
+        $sensitiveHeaders = array_map("strtolower", $sensitiveHeaders);
         foreach ($headers as $key => $value) {
-            if (isset($key, $value) && !in_array($key, $sensitiveHeaders)) {
+            if (isset($key, $value) && !in_array(strtolower($key), $sensitiveHeaders)) {
                 $retval[$key] = $value;
             }
         }
