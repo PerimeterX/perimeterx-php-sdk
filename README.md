@@ -30,6 +30,7 @@
 *   [API Timeouts](#api-timeout)
 *   [Activities API Timeouts](#activities-api-timeout)
 *   [First Party](#first-party)
+*   [First Party for Code Defender](#first-party-code-defender)
 *   [Send Page Activities](#send-page-activities)
 *   [Additional Page Activity Handler](#additional-page-activity-handler)
 *   [Data-Enrichment](#data-enrichment)
@@ -430,6 +431,20 @@ A boolean flag to enable/disable first party mode.
 $perimeterxConfig = [
     ..
     'px_first_party_enabled' => false
+    ..
+]
+```
+
+#### <a name="first-party-code-defender"></a>First Party for Code Defender
+
+A boolean flag to enable/disable first party mode for Code Defender.
+
+**Default:** false
+
+```php
+$perimeterxConfig = [
+    ..
+    'px_cd_first_party_enabled' => true
     ..
 ]
 ```
