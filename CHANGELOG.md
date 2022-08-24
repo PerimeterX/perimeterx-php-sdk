@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Support for first party
+- Support for CI V2 hashing protocol
 
 ### Fixed
 
