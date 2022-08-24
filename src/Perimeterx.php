@@ -121,7 +121,7 @@ final class Perimeterx
                 'px_login_credentials_extraction_enabled' => false,
                 'px_login_credentials_extraction' => [],
                 'px_compromised_credentials_header' => 'px-compromised-credentials',
-                'px_credentials_intelligence_version' => CIVersion::V1,
+                'px_credentials_intelligence_version' => CIVersion::V2,
                 'px_additional_s2s_activity_header_enabled' => false,
                 'px_automatic_additional_s2s_activity_enabled' => true,
                 'px_send_raw_username_on_additional_s2s_activity' => false,
