@@ -391,9 +391,9 @@ final class Perimeterx
     /*
      * Method for assembling the Captcha script tag source
      */
-    private function getCaptchaScript($prefix, $appId, $pxCtx) {
+    private function getCaptchaScript($host, $appId, $pxCtx) {
         $isMobile = ($pxCtx->getCookieOrigin() == 'header') ? "1" : "0";
-        return "$prefix/$appId/captcha.js?a={$pxCtx->getResponseBlockAction()}&u={$pxCtx->getUuid()}&v={$pxCtx->getVid()}&m=$isMobile";
+        return "{$host}/{$appId}/captcha.js?a={$pxCtx->getResponseBlockAction()}&u={$pxCtx->getUuid()}&v={$pxCtx->getVid()}&m=$isMobile";
     }
 
     /**
