@@ -87,8 +87,8 @@ class PerimeterxFirstPartyClientTest extends PHPUnit_Framework_TestCase {
     public function provideFirstPartyPaths() {
         return [
             ['/_APP_ID/init.js', '/PX_APP_ID/main.min.js', 'client.perimeterx.net'],
-            ['/_APP_ID/captcha.js', '/PX_APP_ID/captcha.js', 'captcha.px-cdn.net'],
-            ['/_APP_ID/xhr/api/v2/collector', '/api/v2/collector', 'collector.perimeterx.net']
+            ['/_APP_ID/captcha/PX_APP_ID/captcha.js', '/PX_APP_ID/captcha.js', 'captcha.px-cdn.net'],
+            ['/_APP_ID/xhr/api/v2/collector', '/api/v2/collector', 'collector-px_app_id.perimeterx.net']
         ];
     }
 }

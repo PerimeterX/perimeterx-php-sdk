@@ -5,7 +5,7 @@ namespace Perimeterx;
 final class PerimeterxFirstPartyClient {
     const CLIENT_DOMAIN = 'client.perimeterx.net';
     const CAPTCHA_DOMAIN = 'captcha.px-cdn.net';
-    const XHR_DOMAIN = 'collector.perimeterx.net';
+    const XHR_DOMAIN = 'collector-{{app_id}}.perimeterx.net';
     const FIRST_PARTY_HEADER_NAME = 'X-PX-First-Party';
     const FIRST_PARTY_HEADER_VALUE = '1';
 
@@ -42,7 +42,7 @@ final class PerimeterxFirstPartyClient {
         } else if (strpos($uri, $xhrPath) !== false) {
             $retval = $this->handleFirstPartyXHR($xhrPath, $method, $uri);
         } else if (strpos($uri, $captchaJsPath) !== false) {
-            $retval = $this->handleFirstPartyCaptcha();
+            $retval = $this->handleFirstPartyCaptcha($uri, $captchaJsPath);
         } else {
             $this->logger->debug("$method $uri did not match any first party path");
         }
@@ -54,9 +54,10 @@ final class PerimeterxFirstPartyClient {
         return $this->handleFirstPartyScript(self::CLIENT_DOMAIN, "/{$this->pxConfig['app_id']}/main.min.js");
     }
 
-    private function handleFirstPartyCaptcha() {
+    private function handleFirstPartyCaptcha($uri, $captchaJsPath) {
         $this->logger->debug('first party captcha script detected');
-        return $this->handleFirstPartyScript(self::CAPTCHA_DOMAIN, "/{$this->pxConfig['app_id']}/captcha.js");
+        $uri = str_replace($captchaJsPath, "", $uri);
+        return $this->handleFirstPartyScript(self::CAPTCHA_DOMAIN, $uri);
     }
 
     private function handleFirstPartyXHR($xhrPath, $method, $uri) {
@@ -67,10 +68,11 @@ final class PerimeterxFirstPartyClient {
         $contentType = $isGifRequest ? "image/gif" : "application/json";
 
         try {
+            $domain = str_replace("{{app_id}}", strtolower($this->pxConfig['app_id']), self::XHR_DOMAIN);
             $body = $method === 'GET' ? null : PerimeterxUtils::getPostRequestBody();
             $query = $method === 'GET' ? $_SERVER['QUERY_STRING'] : '';
             $headers = $this->prepareXhrHeaders();
-            $rawResponse = $this->makeFirstPartyRequest(self::XHR_DOMAIN, $method, $thirdPartyUri, $headers, $query, $body);
+            $rawResponse = $this->makeFirstPartyRequest($domain, $method, $thirdPartyUri, $headers, $query, $body);
             return $this->returnFirstPartyResponseBasedOn($rawResponse, $contentType);
         } catch (\Exception $e) {
             $this->logger->debug("Error handling request to $uri - {$e->getMessage()}");
@@ -143,7 +145,6 @@ final class PerimeterxFirstPartyClient {
     private function returnFirstPartyResponse($contentType, $responseBody, $statusCode) {
         http_response_code($statusCode);
         header("Content-Type: $contentType");
-        header(self::FIRST_PARTY_HEADER_NAME . ': ' . self::FIRST_PARTY_HEADER_VALUE);
         return $responseBody;
     }
 }

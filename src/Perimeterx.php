@@ -276,11 +276,11 @@ final class Perimeterx
         $appId = $this->pxConfig['app_id'];
         $collectorUrl = 'https://collector-' . strtolower($appId) . '.perimeterx.net';
 
-        $captchaScript = $this->getCaptchaScript("{$this->pxConfig['captcha_script_host']}/$appId", $pxCtx);
+        $captchaScript = $this->getCaptchaScript($this->pxConfig['captcha_script_host'], $appId, $pxCtx);
         $jsClientSrc = "//client.perimeterx.net/$appId/main.min.js";
         if ($this->pxConfig['px_first_party_enabled']) {
             $appIdWithoutPx = substr($appId, 2);
-            $captchaScript = $this->getCaptchaScript("/$appIdWithoutPx", $pxCtx);
+            $captchaScript = $this->getCaptchaScript("/$appIdWithoutPx/captcha", $appId, $pxCtx);
             $jsClientSrc = "/$appIdWithoutPx/init.js";
             $collectorUrl = "/$appIdWithoutPx/xhr";
         }
@@ -294,7 +294,7 @@ final class Perimeterx
             'hostUrl' => $collectorUrl,
             'customLogo' => isset($this->pxConfig['custom_logo']) ? $this->pxConfig['custom_logo'] : '',
             'blockScript' => $captchaScript,
-            'altBlockScript' => $this->getCaptchaScript("{$this->pxConfig['alternate_captcha_script_host']}/$appId", $pxCtx),
+            'altBlockScript' => $this->getCaptchaScript($this->pxConfig['alternate_captcha_script_host'], $appId, $pxCtx),
             'firstPartyEnabled' => $this->pxConfig['px_first_party_enabled'],
             'jsClientSrc' => $jsClientSrc
         );
@@ -372,9 +372,9 @@ final class Perimeterx
     /*
      * Method for assembling the Captcha script tag source
      */
-    private function getCaptchaScript($prefix, $pxCtx) {
+    private function getCaptchaScript($prefix, $appId, $pxCtx) {
         $isMobile = ($pxCtx->getCookieOrigin() == 'header') ? "1" : "0";
-        return "$prefix/captcha.js?a={$pxCtx->getResponseBlockAction()}&u={$pxCtx->getUuid()}&v={$pxCtx->getVid()}&m=$isMobile";
+        return "$prefix/$appId/captcha.js?a={$pxCtx->getResponseBlockAction()}&u={$pxCtx->getUuid()}&v={$pxCtx->getVid()}&m=$isMobile";
     }
 
     /**
