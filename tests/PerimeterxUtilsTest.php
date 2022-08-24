@@ -1,6 +1,7 @@
 <?php
 
 use Perimeterx\PerimeterxUtils;
+use PerimeterxTests\TestUtils;
 
 class PerimeterxUtilsDouble extends PerimeterxUtils {
     public static function setInputStreamName($inputStreamName) {
@@ -26,7 +27,7 @@ class PerimeterxUtilsTest extends PHPUnit_Framework_TestCase {
      */
     public function testGetPostBody($readBodyCount) {
         $bodyString = json_encode([ "key1" => "value1", "key2" => "value2" ]);
-        self::initializeRequest("POST", "/", $bodyString);
+        TestUtils::initializeRequest("POST", "/", [], $bodyString, self::TEMP_STREAM_NAME);
         foreach (range(1, $readBodyCount) as $i) {
             $receivedBodyString = PerimeterxUtils::getPostRequestBody();
         }
@@ -35,22 +36,6 @@ class PerimeterxUtilsTest extends PHPUnit_Framework_TestCase {
 
     public function provideGetPostBodyData() {
         return [ [1], [2], [100] ];
-    }
-
-    private static function initializeRequest($method = "GET", $uri = "/", $body = null, $headers = []) {
-        $_SERVER['REQUEST_METHOD'] = $method;
-        $_SERVER['REQUEST_URI'] = $uri;
-        if ($method === "POST") {
-            self::initializePostRequest($uri, $body, $headers);
-        }
-    }
-
-    private static function initializePostRequest($uri, $body, $headers) {
-        if (!empty($body)) {
-            $stream = fopen(self::TEMP_STREAM_NAME, 'w');
-            fwrite($stream, $body);
-            fclose($stream);
-        }
     }
 
     /**

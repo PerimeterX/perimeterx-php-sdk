@@ -164,7 +164,8 @@ class PerimeterxS2SValidatorTest extends PHPUnit_Framework_TestCase
             'sdk_name' => $sdk_name,
             'module_mode' => $module_mode,
             'api_timeout' => $api_timeout,
-            'api_connect_timeout' => $api_connection_timeout
+            'api_connect_timeout' => $api_connection_timeout,
+            'sensitive_headers' => []
         ];
     }
 
