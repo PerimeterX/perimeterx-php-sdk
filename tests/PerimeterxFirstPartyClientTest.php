@@ -86,9 +86,36 @@ class PerimeterxFirstPartyClientTest extends PHPUnit_Framework_TestCase {
 
     public function provideFirstPartyPaths() {
         return [
-            ['/_APP_ID/init.js', '/PX_APP_ID/main.min.js', 'client.perimeterx.net'],
-            ['/_APP_ID/captcha/PX_APP_ID/captcha.js', '/PX_APP_ID/captcha.js', 'captcha.px-cdn.net'],
-            ['/_APP_ID/xhr/api/v2/collector', '/api/v2/collector', 'collector-px_app_id.perimeterx.net']
+            ['/_APP_ID/init.js', '/PX_APP_ID/main.min.js', PerimeterxFirstPartyClient::CLIENT_DOMAIN],
+            ['/_APP_ID/captcha/PX_APP_ID/captcha.js', '/PX_APP_ID/captcha.js', PerimeterxFirstPartyClient::CAPTCHA_DOMAIN],
+            ['/_APP_ID/xhr/api/v2/collector', '/api/v2/collector', str_replace("{{app_id}}", "px_app_id", PerimeterxFirstPartyClient::XHR_DOMAIN)]
         ];
+    }
+
+    public function testNonCodeDefenderFirstPartyPath() {
+        TestUtils::initializeRequest('GET', '/not/a/first_party/path');
+        $firstPartyClient = new PerimeterxFirstPartyClient($this->getTestPxConfig(), new MockHttpClient([]));
+        $this->assertNull($firstPartyClient->handleCodeDefenderFirstParty());
+    }
+
+    public function testCodeDefenderReportsPath() {
+        $thirdPartyUri = '/api/v1/PX_APP_ID/d/p';
+        TestUtils::initializeRequest('GET', "/_APP_ID/reports$thirdPartyUri");
+
+        $actualUri = '';
+        $actualHeaders = [];
+
+        $mockHttpClientCallbacks = ['GET' => function($uri, $httpOptions) use (&$actualUri, &$actualHeaders) {
+            $actualUri = $uri;
+            $actualHeaders = $httpOptions['headers'];
+            return new Response();
+        }];
+        $firstPartyClient = new PerimeterxFirstPartyClient($this->getTestPxConfig(), new MockHttpClient($mockHttpClientCallbacks));
+        $firstPartyClient->handleCodeDefenderFirstParty();
+
+        $this->assertEquals($thirdPartyUri, $actualUri);
+        $this->assertEquals(PerimeterxFirstPartyClient::CD_DOMAIN, $actualHeaders['Host']);
+        $this->assertEquals('1', $actualHeaders['X-PX-First-Party']);
+        $this->assertEquals($_SERVER['REMOTE_ADDR'], $actualHeaders['X-PX-Enforcer-True-IP']);
     }
 }

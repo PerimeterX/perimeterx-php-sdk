@@ -8,6 +8,10 @@ class TestUtils {
         $_SERVER['REQUEST_URI'] = $uri;
         $_SERVER['QUERY_STRING'] = self::extractQueryFromUri($uri);
         $_SERVER['REMOTE_ADDR'] = '1.1.1.1';
+        foreach ($headers as $headerName => $headerValue) {
+            $name = str_replace('-', "_", strtoupper($headerName));
+            $_SERVER["HTTP_$name"] = $headerValue;
+        }
         if ($method === "POST") {
             self::initializePostRequest($streamName, $body);
         }

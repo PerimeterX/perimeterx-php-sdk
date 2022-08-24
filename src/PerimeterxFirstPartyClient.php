@@ -6,6 +6,7 @@ final class PerimeterxFirstPartyClient {
     const CLIENT_DOMAIN = 'client.perimeterx.net';
     const CAPTCHA_DOMAIN = 'captcha.px-cdn.net';
     const XHR_DOMAIN = 'collector-{{app_id}}.perimeterx.net';
+    const CD_DOMAIN = 'b.px-cdn.net';
     const FIRST_PARTY_HEADER_NAME = 'X-PX-First-Party';
     const FIRST_PARTY_HEADER_VALUE = '1';
 
@@ -43,8 +44,6 @@ final class PerimeterxFirstPartyClient {
             $retval = $this->handleFirstPartyXHR($xhrPath, $method, $uri);
         } else if (strpos($uri, $captchaJsPath) !== false) {
             $retval = $this->handleFirstPartyCaptcha($uri, $captchaJsPath);
-        } else {
-            $this->logger->debug("$method $uri did not match any first party path");
         }
         return $retval;
     }
@@ -146,5 +145,36 @@ final class PerimeterxFirstPartyClient {
         http_response_code($statusCode);
         header("Content-Type: $contentType");
         return $responseBody;
+    }
+
+    public function handleCodeDefenderFirstParty() {
+        $uri = strtok($_SERVER['REQUEST_URI'], "?");
+
+        $appIdSubstr = substr($this->pxConfig['app_id'], 2);
+        $reportsPath = "/$appIdSubstr/reports";
+
+        if (strpos($uri, $reportsPath) !== false) {
+            return $this->handleCodeDefenderReport($uri, $reportsPath);
+        }
+        return null;
+    }
+
+    private function handleCodeDefenderReport($uri, $reportsPath) {
+        $this->logger->debug("Code defender first party detected");
+
+        $thirdPartyUri = str_replace($reportsPath, "", $uri);
+        $method = $_SERVER['REQUEST_METHOD'];
+        $defaultContentType = "application/json";
+
+        try {
+            $body = $method === 'GET' ? null : PerimeterxUtils::getPostRequestBody();
+            $query = $method === 'GET' ? $_SERVER['QUERY_STRING'] : '';
+            $headers = $this->prepareXhrHeaders();
+            $rawResponse = $this->makeFirstPartyRequest(self::CD_DOMAIN, $method, $thirdPartyUri, $headers, $query, $body);
+            return $this->returnFirstPartyResponseBasedOn($rawResponse, $defaultContentType);
+        } catch (\Exception $e) {
+            $this->logger->debug("Error handling request to $uri - {$e->getMessage()}");
+            return $this->returnFirstPartyResponse($defaultContentType, '', 200);
+        }
     }
 }

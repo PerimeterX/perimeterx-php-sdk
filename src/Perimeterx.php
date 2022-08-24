@@ -117,6 +117,7 @@ final class Perimeterx
                 'enable_json_response' => false,
                 'return_response' => false,
                 'px_first_party_enabled' => true,
+                'px_cd_first_party_enabled' => false,
                 'px_login_credentials_extraction_enabled' => false,
                 'px_login_credentials_extraction' => [],
                 'px_compromised_credentials_header' => 'px-compromised-credentials',
@@ -154,13 +155,8 @@ final class Perimeterx
                 return 1;
             }
 
-            if ($this->pxConfig['px_first_party_enabled']) {
-                $pxFirstParty = new PerimeterxFirstPartyClient($this->pxConfig, new GuzzleHttpClient());
-                $response = $pxFirstParty->handleFirstParty();
-                if (isset($response)) {
-                    echo $response;
-                    die();
-                }
+            if ($this->pxConfig['px_first_party_enabled'] || $this->pxConfig['px_cd_first_party_enabled']) {
+                $this->handleFirstParty();
             }
 
             $additionalFields = $this->createAdditionalFields();
@@ -367,6 +363,29 @@ final class Perimeterx
             echo json_encode($result);
         }
         die();
+    }
+
+    /**
+     * Method for handling first party requests for both BD and CD
+     */
+    private function handleFirstParty() {
+        $pxFirstParty = new PerimeterxFirstPartyClient($this->pxConfig, new GuzzleHttpClient());
+
+        if ($this->pxConfig['px_first_party_enabled']) {
+            $response = $pxFirstParty->handleFirstParty();
+            if (isset($response)) {
+                echo $response;
+                die();
+            }
+        }
+
+        if ($this->pxConfig['px_cd_first_party_enabled']) {
+            $response = $pxFirstParty->handleCodeDefenderFirstParty();
+            if (isset($response)) {
+                echo $response;
+                die();
+            }
+        }
     }
 
     /*
