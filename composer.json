@@ -1,7 +1,7 @@
 {
   "name": "perimeterx/php-sdk",
   "description": "PerimeterX SDK for PHP",
-  "version" : "3.9.1",
+  "version" : "3.10.0",
   "keywords": [
     "perimeterx",
     "websecurity",
@@ -33,7 +33,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Perimeterx\\Tests\\": "tests/"
+      "PerimeterxTests\\": "tests/"
     }
   }
 }

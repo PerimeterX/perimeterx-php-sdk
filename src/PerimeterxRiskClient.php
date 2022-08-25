@@ -42,13 +42,12 @@ abstract class PerimeterxRiskClient
      */
     protected function formatHeaders()
     {
-        $retval = [];
-        foreach ($this->pxCtx->getHeaders() as $key => $value) {
-            if (!in_array(strtolower($key), $this->pxConfig['sensitive_headers'])) {
-                array_push($retval, ['name' => $key, 'value' => $value]);
-            }
-        }
+        $headers = PerimeterxUtils::filterSensitiveHeaders($this->pxCtx->getHeaders(), $this->pxConfig['sensitive_headers']);
 
+        $retval = [];
+        foreach ($headers as $key => $value) {
+            array_push($retval, ['name' => $key, 'value' => $value]);
+        }
         return $retval;
     }
 

@@ -69,4 +69,57 @@ class PerimeterxUtils
 	public static function sha256($text) {
 		return hash("sha256", $text);
 	}
+
+	public static function getAllHeaders() {
+		$headers = [];
+		if (function_exists('getallheaders')) {
+            $headers = getallheaders();
+        } else {
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
+            }
+        }
+
+        return $headers;
+	}
+
+    /**
+     * @param array $headers
+     * @param array $sensitiveHeaders
+     * @return array
+     */
+    public static function filterSensitiveHeaders($headers, $sensitiveHeaders) {
+        $retval = [];
+        $sensitiveHeaders = array_map("strtolower", $sensitiveHeaders);
+        foreach ($headers as $key => $value) {
+            if (isset($key, $value) && !in_array(strtolower($key), $sensitiveHeaders)) {
+                $retval[$key] = $value;
+            }
+        }
+        return $retval;
+    }
+
+    public static function getCookieValue($name) {
+        if (!isset($_SERVER['HTTP_COOKIE'])) {
+            return null;
+        }
+
+        foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
+            if (empty($rawcookie)) {
+                continue;
+            }
+            $equalIndex = strpos($rawcookie, '=');
+            if ($equalIndex !== false && substr($rawcookie, 0, $equalIndex) === $name) {
+                return substr($rawcookie, $equalIndex + 1);
+            }
+        }
+        return null;
+    }
+
+    public static function isEmailAddress($string) {
+        $emailRegex = "/^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,7}$/";
+        return !!preg_match($emailRegex, $string);
+    }
 }

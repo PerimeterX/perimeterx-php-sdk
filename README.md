@@ -6,7 +6,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) PHP SDK
 
-> Latest stable version: [v3.9.1](https://packagist.org/packages/perimeterx/php-sdk#3.9.1)
+> Latest stable version: [v3.10.0](https://packagist.org/packages/perimeterx/php-sdk#3.10.0)
 
 ## Table of Contents
 
@@ -29,6 +29,8 @@
 *   [Sensitive Route](#sensitive-routes)
 *   [API Timeouts](#api-timeout)
 *   [Activities API Timeouts](#activities-api-timeout)
+*   [First Party](#first-party)
+*   [First Party for Code Defender](#first-party-code-defender)
 *   [Send Page Activities](#send-page-activities)
 *   [Additional Page Activity Handler](#additional-page-activity-handler)
 *   [Data-Enrichment](#data-enrichment)
@@ -385,7 +387,7 @@ The API Connection Timeout, in seconds (float), to wait for the connection to th
 
 ```php
 $perimeterxConfig = [
-  ..
+    ..
     'api_connect_timeout' => 2
     ..
 ]
@@ -401,7 +403,7 @@ The activities API Timeout, in seconds (float), to wait for the PerimeterX serve
 
 ```php
 $perimeterxConfig = [
-  ..
+    ..
     'activities_timeout' => 2
     ..
 ]
@@ -413,8 +415,36 @@ The activities API Connection Timeout, in seconds (float), to wait for the conne
 
 ```php
 $perimeterxConfig = [
-  ..
+    ..
     'activities_connect_timeout' => 2
+    ..
+]
+```
+
+#### <a name="first-party"></a>First Party
+
+A boolean flag to enable/disable first party mode.
+
+**Default:** true
+
+```php
+$perimeterxConfig = [
+    ..
+    'px_first_party_enabled' => false
+    ..
+]
+```
+
+#### <a name="first-party-code-defender"></a>First Party for Code Defender
+
+A boolean flag to enable/disable first party mode for Code Defender.
+
+**Default:** false
+
+```php
+$perimeterxConfig = [
+    ..
+    'px_cd_first_party_enabled' => true
     ..
 ]
 ```

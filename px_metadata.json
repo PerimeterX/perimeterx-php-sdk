@@ -1,8 +1,7 @@
 {
-    "version": "3.9.1",
+    "version": "3.10.0",
     "supported_features": [
         "additional_activity_handler",
-        "additional_s2s",
         "advanced_blocking_response",
         "block_activity",
         "block_page_captcha",
@@ -14,9 +13,10 @@
         "css_ref",
         "custom_logo",
         "custom_parameters",
+        "first_party",
         "js_ref",
         "logger",
-        "login_credentials_extraction",
+        "credentials_intelligence",
         "mobile_support",
         "module_enable",
         "module_mode",

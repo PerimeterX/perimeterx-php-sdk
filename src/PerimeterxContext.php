@@ -15,17 +15,7 @@ class PerimeterxContext
     {
         $this->cookie_origin = "cookie";
         $this->start_time = microtime(true);
-        if (function_exists('getallheaders')) {
-            $this->headers = getallheaders();
-        } else {
-            $this->headers = [];
-            foreach ($_SERVER as $name => $value) {
-                if (substr($name, 0, 5) == 'HTTP_') {
-                    $this->headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
-                }
-            }
-        }
-
+        $this->headers = PerimeterxUtils::getAllHeaders();
         $headers = array_change_key_case($this->headers, CASE_UPPER);
         $this->request_cookie_names = [];
         if (isset($headers[PerimeterxContext::$MOBILE_SDK_HEADER])) {
@@ -73,8 +63,9 @@ class PerimeterxContext
     {
         if (isset($pxConfig['ip_headers'])) {
             foreach ($pxConfig['ip_headers'] as $header) {
-                if (isset($headers[strtoupper($header)])) {
-                    return $headers[$header];
+                $headerUpper = strtoupper($header);
+                if (isset($headers[$headerUpper])) {
+                    return $headers[$headerUpper];
                 }
             }
         }

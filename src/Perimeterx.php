@@ -31,6 +31,8 @@ use Perimeterx\CredentialsIntelligence\PerimeterxFieldExtractorManager;
 use Perimeterx\CredentialsIntelligence\Protocol\CredentialsIntelligenceProtocolFactory;
 use Perimeterx\CredentialsIntelligence\LoginSuccess\LoginSuccessfulReportingMethod;
 use Perimeterx\CredentialsIntelligence\LoginSuccess\LoginSuccessfulParserFactory;
+use Perimeterx\Utils\GuzzleHttpClient;
+
 final class Perimeterx
 {
     /**
@@ -96,7 +98,7 @@ final class Perimeterx
                 'max_buffer_len' => 1,
                 'send_page_activities' => true,
                 'send_block_activities' => true,
-                'sdk_name' => 'PHP SDK v3.9.1',
+                'sdk_name' => 'PHP SDK v3.10.0',
                 'debug_mode' => false,
                 'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.perimeterx.net',
                 'captcha_script_host' => 'https://captcha.px-cdn.net',
@@ -114,10 +116,12 @@ final class Perimeterx
                 'defer_activities' => true,
                 'enable_json_response' => false,
                 'return_response' => false,
+                'px_first_party_enabled' => true,
+                'px_cd_first_party_enabled' => false,
                 'px_login_credentials_extraction_enabled' => false,
                 'px_login_credentials_extraction' => [],
                 'px_compromised_credentials_header' => 'px-compromised-credentials',
-                'px_credentials_intelligence_version' => CIVersion::V1,
+                'px_credentials_intelligence_version' => CIVersion::V2,
                 'px_additional_s2s_activity_header_enabled' => false,
                 'px_automatic_additional_s2s_activity_enabled' => true,
                 'px_send_raw_username_on_additional_s2s_activity' => false,
@@ -150,7 +154,11 @@ final class Perimeterx
                 $this->pxConfig['logger']->debug('Request will not be verified, module is disabled');
                 return 1;
             }
-            
+
+            if ($this->pxConfig['px_first_party_enabled'] || $this->pxConfig['px_cd_first_party_enabled']) {
+                $this->handleFirstParty();
+            }
+
             $additionalFields = $this->createAdditionalFields();
 
             $pxCtx = new PerimeterxContext($this->pxConfig, $additionalFields);
@@ -261,21 +269,30 @@ final class Perimeterx
             'loader' => new \Mustache_Loader_FilesystemLoader(dirname(__FILE__) . '/templates'),
         ));
 
-        $collectorUrl = 'https://collector-' . strtolower($this->pxConfig['app_id']) . '.perimeterx.net';
         $appId = $this->pxConfig['app_id'];
+        $collectorUrl = 'https://collector-' . strtolower($appId) . '.perimeterx.net';
+
+        $captchaScript = $this->getCaptchaScript($this->pxConfig['captcha_script_host'], $appId, $pxCtx);
+        $jsClientSrc = "//client.perimeterx.net/$appId/main.min.js";
+        if ($this->pxConfig['px_first_party_enabled']) {
+            $appIdWithoutPx = substr($appId, 2);
+            $captchaScript = $this->getCaptchaScript("/$appIdWithoutPx/captcha", $appId, $pxCtx);
+            $jsClientSrc = "/$appIdWithoutPx/init.js";
+            $collectorUrl = "/$appIdWithoutPx/xhr";
+        }
 
         $templateInputs = array(
-            'appId' => $this->pxConfig['app_id'],
+            'appId' => $appId,
             'vid' => $pxCtx->getVid(),
             'uuid' => $block_uuid,
             'cssRef' => $this->getCssRef(),
             'jsRef' => $this->getJsRef(),
             'hostUrl' => $collectorUrl,
             'customLogo' => isset($this->pxConfig['custom_logo']) ? $this->pxConfig['custom_logo'] : '',
-            'blockScript' => $this->getCaptchaScript($this->pxConfig['captcha_script_host'], $appId, $pxCtx),
+            'blockScript' => $captchaScript,
             'altBlockScript' => $this->getCaptchaScript($this->pxConfig['alternate_captcha_script_host'], $appId, $pxCtx),
-            'firstPartyEnabled' => 'false',
-            'jsClientSrc' => "//client.perimeterx.net/{$this->pxConfig['app_id']}/main.min.js"
+            'firstPartyEnabled' => $this->pxConfig['px_first_party_enabled'],
+            'jsClientSrc' => $jsClientSrc
         );
 
         http_response_code(403);
@@ -310,7 +327,7 @@ final class Perimeterx
                 $result = array(
                     'appId' => $this->pxConfig['app_id'],
                     'jsClientSrc' => $templateInputs['jsClientSrc'],
-                    'firstPartyEnabled' => false,
+                    'firstPartyEnabled' => $this->pxConfig['px_first_party_enabled'],
                     'vid' => $templateInputs['vid'],
                     'uuid' => $templateInputs['uuid'],
                     'hostUrl' => $templateInputs['hostUrl'],
@@ -346,6 +363,29 @@ final class Perimeterx
             echo json_encode($result);
         }
         die();
+    }
+
+    /**
+     * Method for handling first party requests for both BD and CD
+     */
+    private function handleFirstParty() {
+        $pxFirstParty = new PerimeterxFirstPartyClient($this->pxConfig, new GuzzleHttpClient());
+
+        if ($this->pxConfig['px_first_party_enabled']) {
+            $response = $pxFirstParty->handleFirstParty();
+            if (isset($response)) {
+                echo $response;
+                die();
+            }
+        }
+
+        if ($this->pxConfig['px_cd_first_party_enabled']) {
+            $response = $pxFirstParty->handleCodeDefenderFirstParty();
+            if (isset($response)) {
+                echo $response;
+                die();
+            }
+        }
     }
 
     /*

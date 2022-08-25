@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.10.0] - 2022-08-25
+
+### Added
+
+- Support for first party
+- Support for CI V2 hashing protocol
+
+### Fixed
+
+- Bug in client IP extraction feature
+
 ## [3.9.1] - 2022-04-11
 
 ### Fixed
