@@ -327,7 +327,7 @@ final class Perimeterx
                 $result = array(
                     'appId' => $this->pxConfig['app_id'],
                     'jsClientSrc' => $templateInputs['jsClientSrc'],
-                    'firstPartyEnabled' => false,
+                    'firstPartyEnabled' => $this->pxConfig['px_first_party_enabled'],
                     'vid' => $templateInputs['vid'],
                     'uuid' => $templateInputs['uuid'],
                     'hostUrl' => $templateInputs['hostUrl'],

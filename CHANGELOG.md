@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Support for first party
 
+### Fixed
+
+- Bug in client IP extraction feature
+
 ## [3.9.1] - 2022-04-11
 
 ### Fixed

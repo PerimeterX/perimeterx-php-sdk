@@ -63,8 +63,9 @@ class PerimeterxContext
     {
         if (isset($pxConfig['ip_headers'])) {
             foreach ($pxConfig['ip_headers'] as $header) {
-                if (isset($headers[strtoupper($header)])) {
-                    return $headers[$header];
+                $headerUpper = strtoupper($header);
+                if (isset($headers[$headerUpper])) {
+                    return $headers[$headerUpper];
                 }
             }
         }
