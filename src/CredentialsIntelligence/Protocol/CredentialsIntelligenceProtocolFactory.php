@@ -11,6 +11,8 @@ class CredentialsIntelligenceProtocolFactory {
         switch($version) {
             case CIVersion::V1:
                 return new V1CredentialsIntelligenceProtocol();
+            case CIVersion::V2:
+                return new V2CredentialsIntelligenceProtocol();
             case CIVersion::MULTISTEP_SSO:
                 return new MultistepSSOCredentialsIntelligenceProtocol();
             default:

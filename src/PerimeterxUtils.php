@@ -117,4 +117,9 @@ class PerimeterxUtils
         }
         return null;
     }
+
+    public static function isEmailAddress($string) {
+        $emailRegex = "/^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,7}$/";
+        return !!preg_match($emailRegex, $string);
+    }
 }
