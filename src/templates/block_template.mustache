@@ -17,7 +17,12 @@
         window._pxHostUrl = '{{{hostUrl}}}';
         window._pxCustomLogo = '{{{customLogo}}}';
         window._pxJsClientSrc = '{{{jsClientSrc}}}';
-        window._pxFirstPartyEnabled = {{firstPartyEnabled}};
+	{{#firstPartyEnabled}}
+		window._pxFirstPartyEnabled = true;
+	{{/firstPartyEnabled}}
+	{{^firstPartyEnabled}}
+		window._pxFirstPartyEnabled = false;
+	{{/firstPartyEnabled}}
         var script = document.createElement('script');
         script.src = '{{{blockScript}}}';
         document.head.appendChild(script);
