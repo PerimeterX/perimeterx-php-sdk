@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
+## [3.10.1] - 2022-12-06
+
+### Fixed
+
+- Bug in block page challenge rendering on 3rd party configuration
 
 ## [3.10.0] - 2022-08-25
 
