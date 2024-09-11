@@ -173,7 +173,7 @@ class PerimeterxActivitiesClient
             }
 
             if (isset($this->pxConfig['enrich_custom_params'])) {
-                $this->pxUtils->handleCustomParams($this->pxConfig, $pxData['details']);
+                $this->pxUtils->handleCustomParams($this->pxConfig, $details);
             }
         }
 
